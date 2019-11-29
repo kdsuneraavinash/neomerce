@@ -1,0 +1,30 @@
+{
+    "name": "neomerce",
+    "version": "0.0.1",
+    "description": "Simple e-commerse web application",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon start",
+        "lint": "./node_modules/.bin/eslint --ext .js config/ models/ routes/ seeders/ index.js",
+        "lint-fix": "./node_modules/.bin/eslint --fix --ext .js config/ models/ routes/ seeders/ index.js",
+        "test": "./node_modules/lab/bin/lab --verbose -m 180000 -M 30000"
+    },
+    "author": "teampulse",
+    "license": "MIT",
+    "dependencies": {
+        "@hapi/joi": "^16.1.8",
+        "cors": "^2.8.5",
+        "dotenv": "^6.2.0",
+        "ejs": "^3.0.1",
+        "express": "^4.16.4",
+        "express-session": "^1.15.6",
+        "pg": "^7.14.0",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "eslint": "^6.7.1",
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-plugin-import": "^2.18.2"
+    }
+}

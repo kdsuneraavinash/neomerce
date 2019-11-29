@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
+        integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+    <title>Neomerce</title>
+</head>
+
+<body>
+    <h1>Home Page</h1>
+
+    <% if (locals.rows) {%>
+    <% const keys = Object.keys(rows[0]) %>
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <% for (const key of keys) {%>
+                <th><%- key %></th>
+                <% } %>
+            </tr>
+        </thead>
+        <tbody>
+            <% rows.forEach((row) => { %>
+            <tr>
+                <% for (const key of keys) {%>
+                <td><%- row[key] %></td>
+                <% } %>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <%}%>
+
+    <% if (locals.error) {%>
+    <p style="color: red;">
+        <%- error %>
+    </p>
+    <%}%>
+
+</body>
+
+</html>
