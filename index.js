@@ -20,7 +20,11 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-/* Define the api routes */
+/* Define the static files and routes */
+app.use('/css', express.static('public/css'));
+app.use('/js', express.static('public/js'));
+app.use('/fonts', express.static('public/fonts'));
+app.use('/img', express.static('public/img'));
 app.use(require('./routes'));
 
 const port = process.env.PORT || 3000;
