@@ -1,7 +1,7 @@
 {
     "name": "neomerce",
     "version": "0.0.1",
-    "description": "Simple e-commerse web application",
+    "description": "Simple e-commerce web application",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",

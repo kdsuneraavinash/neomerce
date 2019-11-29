@@ -1,5 +1,7 @@
 # Neomerce
 
+Simple e-commerce web application
+
 [Current chosen frontend template](https://colorlib.com/preview/#karma)
 
 ## Guide
@@ -31,7 +33,7 @@ Then in the shell, create a test table.
 
 ```sql
 create table test(id varchar(10) primary key);
-insert into test values ("Hello");
+insert into test values ('Hello');
 \q
 ```
 
@@ -46,7 +48,7 @@ git clone https://github.com/kdsuneraavinash/neomerce
 Install 
 
 * [node.js v10.17.0 dubnium](https://nodejs.org/en/) 
-* [yarn](https://yarnpkg.com/lang/en/)
+* [yarn](https://yarnpkg.com/en/docs/install)
 * [nodemon](https://www.npmjs.com/package/nodemon)
 
 ```bash
