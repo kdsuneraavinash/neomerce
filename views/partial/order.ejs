@@ -1,0 +1,105 @@
+<section class="order_details section_gap">
+    <div class="container">
+        <% if (show_thanks) { %>
+        <h3 class="title_confirmation">Thank you. Your order has been received.</h3>
+        <% } %>
+        <div class="row order_d_inner">
+            <div class="col-lg-4">
+                <div class="details_item">
+                    <h4>Order Info</h4>
+                    <ul class="list">
+                        <li><a href="#"><span>Order id</span> : <%= order.id %></a></li>
+                        <li><a href="#"><span>Date</span> : <%= order.date %></a></li>
+                        <li><a href="#"><span>Payment Method</span> : <%= order.payment_method %></a></li>
+                        <li><a href="#"><span>Delivery method</span> : <%= order.delivery_method %></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="details_item">
+                    <h4>Delivery Address</h4>
+                    <ul class="list">
+                        <li><a href="#"><span>Address Line 1</span> : <%= deliveryaddress.address1 %> </a></li>
+                        <li><a href="#"><span>Address Line 2</span> : <%= deliveryaddress.address2 %> </a></li>
+                        <li><a href="#"><span>City</span> : <%= deliveryaddress.city %> </a></li>
+                        <li><a href="#"><span>Postal code </span> : <%= deliveryaddress.postal %> </a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="details_item">
+                    <h4>User Information</h4>
+                    <ul class="list">
+                        <li><a href="#"><span>Name</span> : <%= user.firstname %> &nbsp; <%= user.lastname %></a></li>
+                        <li><a href="#"><span>Phone Number</span> : <%= user.phonenumber %></a></li>
+                        <li><a href="#"><span>Email</span> : <%= user.email %></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="order_details_table">
+            <h2>Order Details</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <% for (const item of items) {%>
+                        <tr>
+                            <td>
+                                <p><%= item.variant%></p>
+                            </td>
+                            <td>
+                                <h5>x <%= item.quantity%></h5>
+                            </td>
+                            <td>
+                                <p><%= item.totalprice%></p>
+                            </td>
+                        </tr>
+                        <% } %>
+
+                        <tr>
+                            <td>
+                                <h4>Subtotal</h4>
+                            </td>
+                            <td>
+                                <h5></h5>
+                            </td>
+                            <td>
+                                <p><%= subtotal%></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>Shipping</h4>
+                            </td>
+                            <td>
+                                <h5></h5>
+                            </td>
+                            <td>
+                                <p><%= delivery%></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>Total</h4>
+                            </td>
+                            <td>
+                                <h5></h5>
+                            </td>
+                            <td>
+                                <p><%= total%></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
