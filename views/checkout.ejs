@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('common/head') %>
+
+<body>
+    <%- include('common/navbar') %>
+    <%- include('common/banner', {'title': 'Checkout'}) %>
+
+    <%- include ('partial/checkout', {
+        items: items,
+        subtotal: subtotal,
+        estdelivery: estdelivery,
+        withdelivery: withdelivery
+    }) %>
+
+    <%- include('common/footer') %>
+    <%- include('common/scripts') %>
+
+    <%# Vue app %>
+    <script>
+        let app = new Vue({
+            el: "#checkout_form",
+            data: {
+                delivery_method: 'deliver'
+            }
+        })
+    </script>
+</body>
+
+</html>

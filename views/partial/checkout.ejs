@@ -1,0 +1,146 @@
+<section class="checkout_area section_gap" id="checkout_form">
+    <div class="container">
+        <div class="returning_customer">
+            <div class="check_title">
+                <h2>Returning Customer? <a href="/login">&nbsp;Click here to login</a></h2>
+            </div>
+            <p>If you have shopped with us before, please login using the above link. If you are a new
+                customer, please proceed to the Billing & Shipping section.<br />
+                You may create a new account using this link.&nbsp; <a href="/register">&nbsp;Click here to register</a>
+                <br />
+                However please note that login is not required to make a purchase.
+            </p>
+        </div>
+
+        <div class="billing_details">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h3>Your Details</h3>
+                    <form class="row contact_form" action="#" method="post" novalidate="novalidate">
+                        <div class="col-md-6 form-group p_star">
+                            <input type="text" class="form-control" id="first" name="name">
+                            <span class="placeholder" data-placeholder="First name"></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input type="text" class="form-control" id="last" name="name">
+                            <span class="placeholder" data-placeholder="Last name"></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input type="text" class="form-control" id="number" name="number">
+                            <span class="placeholder" data-placeholder="Phone number"></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input type="text" class="form-control" id="email" name="compemailany">
+                            <span class="placeholder" data-placeholder="Email Address"></span>
+                        </div>
+
+                        <div class="col-md-12 form-group">
+                            <textarea class="form-control" name="message" id="message" rows="1"
+                                placeholder="Order Notes"></textarea>
+                        </div>
+
+                        <div class="col-md-12 form-group p_star">
+                            <select style="display: none;">
+                                <option value="deliver">Deliver to an address </option>
+                                <option value="pickup">Store pickup </option>
+                            </select>
+                            <div class="nice-select wide" tabindex="0"><span class="current">Deliver to an
+                                    address</span>
+                                <ul class="list">
+                                    <li class="option" v-on:click="delivery_method = 'deliver'" value="deliver">
+                                        Deliver to an address
+                                    </li>
+                                    <li class="option" v-on:click="delivery_method = 'pickup'" value="pickup">
+                                        Store pickup
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div v-if="delivery_method === 'deliver'" class="col-md-12 p-0 m-0">
+                            <div class="col-md-12 form-group p_star">
+                                <p class="text-muted">
+                                    The order will be delivered to the below address.
+                                </p>
+                            </div>
+
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add1" name="add1">
+                                <span class="placeholder" data-placeholder="Delivery Address line 01"></span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add2" name="add2">
+                                <span class="placeholder" data-placeholder="Delivery Address line 02"></span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="city" name="city">
+                                <span class="placeholder" data-placeholder="Delivery Town/City"></span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="zip" name="zip">
+                                <span class="placeholder" data-placeholder="Delivery Postcode/ZIP"></span>
+                            </div>
+                        </div>
+                        <div v-else class="col-md-12 p-0 m-0">
+                            <div class="col-md-12 form-group p_star">
+                                <p class="text-muted">
+                                    You are required to come to the shop and collect the order yourself.
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4">
+                    <div class="order_box">
+                        <h2>Your Order</h2>
+                        <ul class="list">
+                            <li><a href="#">Product <span>Total (LKR)</span></a></li>
+                            <% for (const item of items) {%>
+                            <li><a href="#"><%= item.variant.substring(0, 12) -%>... <span class="middle">x
+                                        <%= item.quantity %></span> <span class="last"><%= item.totalprice %></span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                        <ul class="list list_2">
+                            <li><a href="#">Subtotal <span><%= subtotal %></span></a></li>
+                            <li v-if="delivery_method === 'deliver'"><a href="#">Shipping <span>
+                                        <%= estdelivery %> </span></a></li>
+                            <li><a href="#">Total <span>
+                                        {{delivery_method==='deliver' ? '<%= withdelivery %>' : '<%= subtotal %>'}}
+                                    </span></a></li>
+                        </ul>
+                        <div class="payment_item">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option5" name="selector">
+                                <label for="f-option5">Pay on delivery</label>
+                                <div class="check"></div>
+                            </div>
+                            <p v-if="delivery_method === 'deliver'">
+                                You have to pay the total cost to the delivery person after you recieved the item.
+                            </p>
+                            <p v-else>
+                                You can come to the store and pay the item cost to receive the items.
+                            </p>
+                        </div>
+                        <div class="payment_item active">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option6" name="selector">
+                                <label for="f-option6">Paypal </label>
+                                <img src="img/product/card.jpg" alt="">
+                                <div class="check"></div>
+                            </div>
+                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                account.</p>
+                        </div>
+                        <div class="creat_account">
+                            <input type="checkbox" id="f-option4" name="selector">
+                            <label for="f-option4">I’ve read and accept the </label>
+                            <a href="#">terms & conditions*</a>
+                        </div>
+                        <a class="primary-btn" href="#">Proceed to Paypal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
