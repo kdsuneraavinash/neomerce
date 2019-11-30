@@ -15,6 +15,7 @@
     </ul>
 </li>
 <% }else { %>
-<li class="main-nav-list"><a href="#" style="padding-left: <%=depth*padding_multip %>px;"> <%= category.name %><span
-            class=" number">(<%= category.count %>)</span></a></li>
+<li class="main-nav-list"><a href="/category?category=<%= category.id -%>"
+        style="padding-left: <%=depth*padding_multip %>px;">
+        <%= category.name %><span class=" number">(<%= category.count %>)</span></a></li>
 <% } %>

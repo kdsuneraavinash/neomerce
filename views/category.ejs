@@ -6,65 +6,25 @@
     <%- include('common/navbar') %>
     <%- include('common/banner', {'title': 'Search By Category'}) %>
 
-    <%# Each category should have count, optionally children%>
+    <%# Each category should have count, optionally children %>
     <%- include ('partial/category', {
-        categories: [{
-                id: '232323',
-                name: 'Fruits and Vegetable',
-                count: 10,
-                children: [{
-                        id: '23232s3',
-                        name: 'Frozen Fish',
-                        count: 4
-                    },
-                    {
-                        id: 'fdasf',
-                        name: 'Dried Fishing',
-                        count: 6,
-                        children: [{
-                                id: 'hfgdg',
-                                name: 'Frozen Fish',
-                                count: 4,
-                            },
-                            {
-                                id: 'reyj',
-                                name: 'Frozen Fish',
-                                count: 2,
-                            }
-                        ]
-                    }
-                ],
-            },
-            {
-                id: 'svsdvs',
-                name: 'Dried Fish',
-                count: 6,
-                children: [{
-                        id: 'asdsadsadad',
-                        name: 'Frozen Fish',
-                        count: 4
-                    },
-                    {
-                        id: 'rewr4eyj',
-                        name: 'Frozen Fish',
-                        count: 2
-                    }
-                ]
-            }
-        ],
+       categories: categories
     }) %>
 
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
+
+
+    <%# Script to handle price range selector %>
     <script>
         $(function () {
             if (document.getElementById("price-range")) {
-                let priceUp = 10000;
+                let priceUp = "<%= topprice %>" - 0;
                 let nonLinearSlider = document.getElementById('price-range');
                 noUiSlider.create(nonLinearSlider, {
                     connect: true,
                     behaviour: 'tap',
-                    start: [500, 4000],
+                    start: [0, priceUp],
                     range: {
                         'min': [0],
                         '10%': [priceUp / 20, priceUp / 20],
@@ -85,52 +45,13 @@
         });
     </script>
 
+    <%# Vue app %>
     <script>
         let app = new Vue({
             el: "#category_view",
-            data: JSON.parse(`
-                    <%- JSON.stringify(
-                        {
-                            products: [
-                                {
-                                    id: 'asdsad',
-                                    show: true,
-                                    image: '/img/product/p1.jpg',
-                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
-                                    price: 3000
-                                },
-                                {
-                                    id: 'sadasdasd',
-                                    show: true,
-                                    image: '/img/product/p2.jpg',
-                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
-                                    price: 4000
-                                },
-                                {
-                                    id: 'sadasreterydasd',
-                                    show: true,
-                                    image: '/img/product/p3.jpg',
-                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
-                                    price: 2000
-                                },
-                                {
-                                    id: '675w',
-                                    show: true,
-                                    image: '/img/product/p4.jpg',
-                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
-                                    price: 5300
-                                },
-                                {
-                                    id: '67dsf5w',
-                                    show: true,
-                                    image: '/img/product/p5.jpg',
-                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
-                                    price: 900
-                                }
-                            ],
-                        }    
-                    ) %> 
-                `),
+            data: {
+                products: JSON.parse(`<%- JSON.stringify(products) %> `),
+            }
         })
     </script>
 </body>
