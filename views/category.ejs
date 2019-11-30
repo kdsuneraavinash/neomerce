@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('common/head') %>
+
+<body id="category">
+    <%- include('common/navbar') %>
+    <%- include('common/banner', {'title': 'Product Details'}) %>
+
+    <%# Each category should have count, optionally children%>
+    <%- include ('partial/category', {
+        categories: [{
+                id: '232323',
+                name: 'Fruits and Vegetable',
+                count: 10,
+                children: [{
+                        id: '23232s3',
+                        name: 'Frozen Fish',
+                        count: 4
+                    },
+                    {
+                        id: 'fdasf',
+                        name: 'Dried Fishing',
+                        count: 6,
+                        children: [{
+                                id: 'hfgdg',
+                                name: 'Frozen Fish',
+                                count: 4,
+                            },
+                            {
+                                id: 'reyj',
+                                name: 'Frozen Fish',
+                                count: 2,
+                            }
+                        ]
+                    }
+                ],
+            },
+            {
+                id: 'svsdvs',
+                name: 'Dried Fish',
+                count: 6,
+                children: [{
+                        id: 'asdsadsadad',
+                        name: 'Frozen Fish',
+                        count: 4
+                    },
+                    {
+                        id: 'rewr4eyj',
+                        name: 'Frozen Fish',
+                        count: 2
+                    }
+                ]
+            }
+        ],
+    }) %>
+
+    <%- include('common/footer') %>
+    <%- include('common/scripts') %>
+</body>
+
+</html>

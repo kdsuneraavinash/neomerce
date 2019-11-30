@@ -1,0 +1,103 @@
+<div class="product_image_area">
+    <div class="container">
+        <div class="row s_product_inner">
+            <div class="col-lg-6">
+                <div class="s_Product_carousel">
+                    <%# Image tags %>
+                    <% for (const image of images) { %>
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="<%= image %>" alt="">
+                    </div>
+                    <%  } %>
+                </div>
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <div class="s_product_text">
+                    <h3><%= name %></h3> <%# Name %>
+                    <h2><%= price %></h2> <%# Price %>
+                    <ul class="list">
+                        <%# Category %>
+                        <li><a class="active" href="#"><span>Category</span> : <%= category %></a></li>
+                        <li><a href="#"><span>Availibility</span> :
+                                <%# Stock %>
+                                <%= (quantity == 0) ? 'Out of Stock' : 'In Stock' %>
+                            </a></li>
+                    </ul>
+                    <%# Snippet %>
+                    <p><%= description.substring(0, 250) -%>...</p>
+                    <div class="product_count">
+                        <label for="qty">Quantity:</label>
+                        <%# Initial quantity %>
+                        <input type="text" name="qty" id="sst" maxlength="12" value=" <%= Math.min(quantity, 1) %>"
+                            title="Quantity:" class="input-text qty">
+                        <button onclick="increaseSst()" class="increase items-count" type="button"><i
+                                class="lnr lnr-chevron-up"></i></button>
+                        <button onclick="decreaseSst()" class="reduced items-count" type="button"><i
+                                class="lnr lnr-chevron-down"></i></button>
+                    </div>
+                    <div class="card_area d-flex align-items-center">
+                        <a class="primary-btn" href="#">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function increaseSst() {
+        const result = document.getElementById('sst');
+        const sst = result.value;
+        const stock = "<%= quantity %>" - 0;
+        if (!isNaN(sst) && sst < stock) result.value++;
+        return false;
+    }
+
+    function decreaseSst() {
+        const result = document.getElementById('sst');
+        const sst = result.value;
+        if (!isNaN(sst) && sst > 0) result.value--;
+        return false;
+    }
+</script>
+
+
+<section class="product_description_area">
+    <div class="container">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link show active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                    aria-controls="home" aria-selected="true">Description</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                    aria-controls="profile" aria-selected="false">Attributes</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <%# Description %>
+                <%= description %>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <% for (const key of Object.keys(attributes)) {%>
+                            <tr>
+                                <td>
+                                    <h5><%- key %></h5>
+                                </td>
+                                <td>
+                                    <h5><%- attributes[key] %></h5>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

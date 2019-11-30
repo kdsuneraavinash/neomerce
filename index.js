@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const Ouch = require('ouch');
 
 /* Make all variables from our .env file available in our process */
 require('dotenv').config();
@@ -30,8 +31,16 @@ app.use(require('./routes'));
 const port = process.env.PORT || 3000;
 const address = process.env.SERVER_ADDRESS || '127.0.0.1';
 
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _) => {
+    (new Ouch()).pushHandler(new Ouch.handlers.PrettyPageHandler('orange'))
+        .handleException(err, req, res,
+            () => {
+                console.log(`Error occurred: ${err}`);
+            });
+});
+
 /* Listen on the port for requests */
 app.listen(port, address, () => console.log(`Server running on http://${address}:${port}`));
-
 
 module.exports = app;
