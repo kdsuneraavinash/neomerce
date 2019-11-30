@@ -31,6 +31,37 @@
 
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
+    <script>
+        let app = new Vue({
+            el: '#single_product',
+            data: {
+                current: 0,
+                variants: JSON.parse(`
+                    <%- JSON.stringify([
+                        {
+                            id: 'var_1_1',
+                            title: 'BLue Colored variant',
+                            price: 'LKR 4900',
+                            amount: 5,
+                            attributes: {
+                                'Color': 'blue'
+                            }
+                        },
+                        {
+                            id: 'var_1_2',
+                            title: 'Red Colored variant with 1GB',
+                            price: 'LKR 5440',
+                            amount: 0,
+                            attributes: {
+                                'Color': 'red'
+                            }
+                        }
+                    ]) %> 
+                `),
+                selectedQuantity: 1
+            }
+        });
+    </script>
 </body>
 
 </html>
