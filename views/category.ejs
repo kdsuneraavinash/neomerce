@@ -4,7 +4,7 @@
 
 <body id="category">
     <%- include('common/navbar') %>
-    <%- include('common/banner', {'title': 'Product Details'}) %>
+    <%- include('common/banner', {'title': 'Search By Category'}) %>
 
     <%# Each category should have count, optionally children%>
     <%- include ('partial/category', {
@@ -56,6 +56,83 @@
 
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
+    <script>
+        $(function () {
+            if (document.getElementById("price-range")) {
+                let priceUp = 10000;
+                let nonLinearSlider = document.getElementById('price-range');
+                noUiSlider.create(nonLinearSlider, {
+                    connect: true,
+                    behaviour: 'tap',
+                    start: [500, 4000],
+                    range: {
+                        'min': [0],
+                        '10%': [priceUp / 20, priceUp / 20],
+                        '50%': [priceUp / 2, priceUp / 8],
+                        'max': [priceUp]
+                    }
+                });
+                let nodes = [
+                    document.getElementById('lower-value'), // 0
+                    document.getElementById('upper-value')  // 1
+                ];
+                nonLinearSlider.noUiSlider.on('update', function (values, handle, unencoded, isTap, positions) {
+                    nodes[handle].innerHTML = values[handle];
+                    app.products.forEach((v) => { v.show = true });
+                    app.products.filter((v) => v.price > (values[1] - 0) || v.price < (values[0] - 0)).forEach((v) => { v.show = false });
+                });
+            }
+        });
+    </script>
+
+    <script>
+        let app = new Vue({
+            el: "#category_view",
+            data: JSON.parse(`
+                    <%- JSON.stringify(
+                        {
+                            products: [
+                                {
+                                    id: 'asdsad',
+                                    show: true,
+                                    image: '/img/product/p1.jpg',
+                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
+                                    price: 3000
+                                },
+                                {
+                                    id: 'sadasdasd',
+                                    show: true,
+                                    image: '/img/product/p2.jpg',
+                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
+                                    price: 4000
+                                },
+                                {
+                                    id: 'sadasreterydasd',
+                                    show: true,
+                                    image: '/img/product/p3.jpg',
+                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
+                                    price: 2000
+                                },
+                                {
+                                    id: '675w',
+                                    show: true,
+                                    image: '/img/product/p4.jpg',
+                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
+                                    price: 5300
+                                },
+                                {
+                                    id: '67dsf5w',
+                                    show: true,
+                                    image: '/img/product/p5.jpg',
+                                    title: 'ADDIDAS NEW HAMMER SOLE FOR SPORTS PERSON',
+                                    price: 900
+                                }
+                            ],
+                        }    
+                    ) %> 
+                `),
+        })
+    </script>
 </body>
 
 </html>
