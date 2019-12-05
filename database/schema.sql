@@ -147,7 +147,7 @@ CREATE TABLE Product (
     primary key (product_id)
 );
 
--- Categoories that products belong to
+-- Categories that products belong to
 CREATE TABLE ProductCategory (
     category_id char(36),
     product_id char(36),
@@ -330,3 +330,40 @@ CREATE TABLE GuestInfomation (
     primary key (order_id),
     foreign key (order_id) references OrderData(order_id)
 );
+
+/* Adding to all parent categories on new product category addition */
+
+-- Procedure to add all parent categories to a product (category_id, product_id)
+CREATE OR REPLACE PROCEDURE addProductToCategories(VARCHAR(36), VARCHAR(36))
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+       parent_id VARCHAR(36);
+BEGIN
+    if $1 is not distinct from null THEN RETURN;
+    end if;
+    
+    select parent_id into parent_id from Categories where product_id=$1;
+    insert into ProductCategory values (parent_id, $2);
+    commit;
+END;
+$$;
+
+-- Trigger afterProductCategoryInsert statements
+CREATE OR REPLACE FUNCTION afterProductCategoryInsert()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE NOTICE 'Trigger on Category %', NEW.category_id;
+    call addProductToCategories(NEW.category_id, NEW.product_id);
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to add product to parent categories as well
+DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+CREATE TRIGGER afterProductCategoryInsertTrigger
+AFTER INSERT
+ON ProductCategory 
+FOR EACH ROW EXECUTE PROCEDURE afterProductCategoryInsert();
+
+
