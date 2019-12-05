@@ -2,15 +2,19 @@
     <div class="row">
         <div class="col-xl-3 col-lg-4 col-md-5">
 
+            <% if (categories.length !== 0) {%>
             <div class="sidebar-categories">
                 <div class="head">Browse Categories</div>
-                <ul class="main-categories">
-                    <%# Main category tree goes here %>
-                    <% for (let category of categories) {%>
-                    <%- include('_category_tree', {category, depth: 0}) %>
-                    <% }; %>
+                <ul id="category">
+                    <% for(let category of categories) {%>
+                    <li class="main-nav-list"><a href="/category?category=<%= category.category_id %>">
+                            <%= category.title %>
+                        </a>
+                    </li>
+                    <% } %>
                 </ul>
             </div>
+            <% } %>
 
             <%# Sorting %>
             <div class="sidebar-filter mt-50">

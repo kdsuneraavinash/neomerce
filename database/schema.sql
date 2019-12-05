@@ -1,27 +1,33 @@
-DROP TABLE IF EXISTS GuestInfomation;
-DROP TABLE IF EXISTS Delivery;
-DROP TABLE IF EXISTS DeliveryMethod;
-DROP TABLE IF EXISTS DeliveryStatus;
-DROP TABLE IF EXISTS Payment;
-DROP TABLE IF EXISTS PaymentStatus;
-DROP TABLE IF EXISTS PaymentMethod;
-DROP TABLE IF EXISTS OrderItem;
-DROP TABLE IF EXISTS OrderData;
-DROP TABLE IF EXISTS CartItem;
-DROP TABLE IF EXISTS VariantAttribute;
-DROP TABLE IF EXISTS Variant;
-DROP TABLE IF EXISTS ProductAttribute;
-DROP TABLE IF EXISTS ProductCategory;
-DROP TABLE IF EXISTS Product;
-DROP TABLE IF EXISTS Category;
-DROP TABLE IF EXISTS AccountCredential;
-DROP TABLE IF EXISTS Session;
-DROP TABLE IF EXISTS TelephoneNumber;
-DROP TABLE IF EXISTS UserInformation;
-DROP TABLE IF EXISTS Customer;
-DROP TABLE IF EXISTS AccountType;
-DROP TABLE IF EXISTS City;
-DROP TABLE IF EXISTS CityType;
+DROP TABLE IF EXISTS GuestInfomation cascade;
+DROP TABLE IF EXISTS Delivery cascade;
+DROP TABLE IF EXISTS DeliveryMethod cascade;
+DROP TABLE IF EXISTS DeliveryStatus cascade;
+DROP TABLE IF EXISTS Payment cascade;
+DROP TABLE IF EXISTS PaymentStatus cascade;
+DROP TABLE IF EXISTS PaymentMethod cascade;
+DROP TABLE IF EXISTS OrderItem cascade;
+DROP TABLE IF EXISTS OrderData cascade;
+DROP TABLE IF EXISTS CartItem cascade;
+DROP TABLE IF EXISTS VariantAttribute cascade;
+DROP TABLE IF EXISTS Variant cascade;
+DROP TABLE IF EXISTS ProductAttribute cascade;
+DROP TABLE IF EXISTS ProductCategory cascade;
+DROP TABLE IF EXISTS Product cascade;
+DROP TABLE IF EXISTS Category cascade;
+DROP TABLE IF EXISTS AccountCredential cascade;
+DROP TABLE IF EXISTS Session cascade;
+DROP TABLE IF EXISTS TelephoneNumber cascade;
+DROP TABLE IF EXISTS UserInformation cascade;
+DROP TABLE IF EXISTS Customer cascade;
+DROP TABLE IF EXISTS AccountType cascade;
+DROP TABLE IF EXISTS City cascade;
+DROP TABLE IF EXISTS CityType cascade;
+DROP TABLE IF EXISTS CategorySuggestion cascade;
+DROP TABLE IF EXISTS ProductImage cascade;
+DROP TABLE IF EXISTS Tag cascade;
+DROP TABLE IF EXISTS ProductTag cascade;
+DROP TABLE IF EXISTS CartItemStatus cascade;
+DROP TABLE IF EXISTS OrderStatus cascade;
 
 
 -- Function to check if positive
@@ -29,7 +35,7 @@ CREATE OR REPLACE FUNCTION is_positive(val numeric) RETURNS BOOLEAN AS
 $$ 
 BEGIN 
 IF val IS NULL THEN RETURN true;
-IF val >= 0 THEN RETURN true;
+ELSEIF val >= 0 THEN RETURN true;
 ELSE RETURN false;
 END IF;
 END;
