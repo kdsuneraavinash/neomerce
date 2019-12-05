@@ -28,6 +28,7 @@ DROP TABLE IF EXISTS CityType;
 CREATE OR REPLACE FUNCTION is_positive(val numeric) RETURNS BOOLEAN AS 
 $$ 
 BEGIN 
+IF val IS NULL THEN RETURN true;
 IF val >= 0 THEN RETURN true;
 ELSE RETURN false;
 END IF;
@@ -121,6 +122,15 @@ CREATE TABLE Category (
     foreign key (parent_id) references Category(category_id)
 );
 
+-- Category Relations for suggestions
+CREATE TABLE CategorySuggestion (
+    category_id char(36),
+    suggestion_category_id char(36),
+    primary key (category_id, suggestion_category_id),
+    foreign key (category_id) references Category(category_id),
+    foreign key (suggestion_category_id) references Category(category_id)
+);
+
 -- Products
 CREATE TABLE Product (
     product_id char(36),
@@ -138,6 +148,31 @@ CREATE TABLE ProductCategory (
     primary key (category_id, product_id),
     foreign key (category_id) references Category(category_id),
     foreign key (product_id) references Product(product_id)
+);
+
+-- Images of a product
+CREATE TABLE ProductImage (
+    image_id char(36),
+    product_id char(36),
+    image_url varchar(255) not null,
+    primary key (image_id),
+    foreign key (product_id) references Product(product_id)
+);
+
+-- Tags
+CREATE TABLE Tag (
+    tag_id char(36),
+    tag varchar(255) not null,
+    primary key (tag_id)
+);
+
+-- Tags of a product
+CREATE TABLE ProductTag (
+    product_id char(36),
+    tag_id char(36),
+    primary key (product_id, tag_id),
+    foreign key (product_id) references Product(product_id),
+    foreign key (tag_id) references Tag(tag_id)
 );
 
 -- Attributes common to a product
@@ -173,23 +208,41 @@ CREATE TABLE VariantAttribute (
     foreign key (variant_id) references Variant(variant_id)
 );
 
+-- Cart Item State (ENUM)
+CREATE TABLE CartItemStatus (
+    cart_item_status varchar(15),
+    description varchar(127),
+    primary key (cart_item_status)
+);
+
 -- Items in cart
 CREATE TABLE CartItem (
     customer_id char(36),
     variant_id char(36),
+    cart_item_status varchar(15) not null,
     quantity int not null check(is_positive(quantity)),
     added_time timestamp not null default now(),
     primary key (customer_id, variant_id),
     foreign key (customer_id) references Customer(customer_id),
+    foreign key (cart_item_status) references CartItemStatus(cart_item_status),
     foreign key (variant_id) references Variant(variant_id)
+);
+
+-- Order Status (ENUM)
+CREATE TABLE OrderStatus (
+    order_status varchar(15),
+    description varchar(127),
+    primary key (order_status)
 );
 
 -- Orders
 CREATE TABLE OrderData (
     order_id char(36),
     customer_id char(36) not null,
+    order_status varchar(15) not null,
     order_date timestamp,
     primary key (order_id),
+    foreign key (order_status) references OrderStatus(order_status),
     foreign key (customer_id) references Customer(customer_id)
 );
 
