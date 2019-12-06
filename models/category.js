@@ -2,24 +2,7 @@ const connection = require('../config/db');
 const helper = require('./helper');
 
 
-const getAllItems = (req, res, callback) => {
-    if (connection.connect) {
-        const queryString = 'SELECT * FROM category;';
-        connection.query(queryString, (err, rows) => {
-            if (err) {
-                helper.errorResponse(res, err);
-            } else {
-                callback(rows.rows);
-            }
-        });
-    } else {
-        helper.errorResponse(res, 'Database connection error');
-    }
-};
-
-
 const getChildren = (req, res, categoryId, callback) => {
-    console.log(categoryId === undefined ? null : categoryId);
     if (connection.connect) {
         const query = {
             name: 'fetch-children-categories',
@@ -37,4 +20,4 @@ const getChildren = (req, res, categoryId, callback) => {
 };
 
 
-module.exports = { getAllItems, getChildren };
+module.exports = { getChildren };
