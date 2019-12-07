@@ -89,19 +89,12 @@ $$ LANGUAGE PLpgSQL;
 */
 
 CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
-CREATE DOMAIN VALID_EMAIL AS VARCHAR(255) CHECK(
-    VALUE ~ '(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})'
-);
-CREATE DOMAIN VALID_PHONE AS CHAR(15) CHECK(
-    VALUE ~ '[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*'
-);
+CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
+CREATE DOMAIN VALID_PHONE AS CHAR(15);
 CREATE DOMAIN UUID4 AS VARCHAR(36) CHECK(
     VALUE ~ '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 );
-CREATE DOMAIN URL AS VARCHAR(1023) CHECK(
-    VALUE ~ 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,255}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
-    OR TRUE -- TODO: Fix this bug?
-);
+CREATE DOMAIN URL AS VARCHAR(1023);
 
 
 /* 
@@ -481,11 +474,14 @@ BEGIN
 END;
 $$;
 
--- Procedure to add a product (title, description, weight, brand, 
+-- Procedure to add a product (
+--  product_id (if null generates new), cariant_id (if null generates new),
+--  title, description, weight, brand, 
 --  default_variant_title, default_variant_quantity, default_variant_sku_id, 
 --  default_variant_listed_price, default_variant_selling_price,
 --  default_image_url, default_leaf_category_id)
 CREATE OR REPLACE PROCEDURE addProduct(
+    UUID4, UUID4,
     VARCHAR(255), TEXT, NUMERIC(7, 2), VARCHAR(255),
     VARCHAR(255), INT, VARCHAR(127),
     MONEY_UNIT, MONEY_UNIT,
@@ -494,20 +490,26 @@ CREATE OR REPLACE PROCEDURE addProduct(
 LANGUAGE plpgsql
 AS $$
 DECLARE
-       var_product_id uuid4;
        var_default_image_id uuid4;
 BEGIN
     -- set default_variant_selling_price as same as default_variant_listed_price if null
-    if $9 is null then $9 := $8;
+    if $11 is null then $11 := $10;
     end if;
+
+    -- set product_id
+    if $1 is null then $1 := generate_uuid4();
+    end if;
+
+    if $2 is null then $2 := generate_uuid4();
+    end if;
+
     -- add rows
-    var_product_id := generate_uuid4();
     var_default_image_id := generate_uuid4();
-    insert into Product values (var_product_id, $1, $2, $3, $4);
-    insert into ProductImage values (var_default_image_id, var_product_id, $10);
-    insert into Variant values (default, var_product_id, $7, $6, $5, $8, $9);
-    insert into ProductCategory values ($11, var_product_id);
-    raise notice 'Added product with id %', var_product_id;
+    insert into Product values ($1, $3, $4, $5, $6);
+    insert into ProductImage values (var_default_image_id, $1, $12);
+    insert into Variant values ($2, $1, $9, $8, $7, $10, $11);
+    insert into ProductCategory values ($13, $1);
+    raise notice 'Added product with id %', $1;
 END;
 $$;
 
@@ -523,6 +525,7 @@ $$;
 
 CREATE INDEX ON ProductImage(product_id);
 CREATE INDEX ON Variant(product_id);
+CREATE INDEX ON Product(title);
 
 /*
         _                   

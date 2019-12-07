@@ -9,10 +9,10 @@
     <%- include ('partial/item', {
         name: name,
         category: category,
-        description: description, 
-        quantity: quantity,
+        description: description,
         images: images ,
-        attributes: attributes,
+        brand: brand,
+        weight: weight,
     }) %>
 
     <%- include('common/footer') %>
@@ -23,6 +23,7 @@
             data: {
                 current: 0,
                 variants: JSON.parse(`<%- JSON.stringify(variants) %>`),
+                variant_attributes: JSON.parse(`<%- JSON.stringify(variant_attributes) %>`),
                 selectedQuantity: 1
             }
         });

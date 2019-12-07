@@ -7,19 +7,28 @@
                         <%# Image tags %>
                         <% for (const image of images) { %>
                         <div class="single-prd-item">
-                            <img class="img-fluid" src="<%= image %>" alt="">
+                            <img style="height: 400px; width: 400px; object-fit: contain;" src="<%= image %>" alt="">
                         </div>
                         <%  } %>
                     </div>
                 </div>
                 <div class="col-lg-5 offset-lg-1">
                     <div class="s_product_text">
-                        <h3><%= name %></h3> <%# Name %>
+                        <h3><%= name.length > 45 ? name.substring(0, 45) + '...' : name %></h3> <%# Name %>
                         <h2 style="-webkit-text-fill-color: #ff6c00; background: transparent;"
-                            v-bind:text="variants[current].price">{{variants[current].price}}</h2> <%# Price %>
+                            v-bind:text="variants[current].price">LKR {{variants[current].price}}
+                            <span style="-webkit-text-fill-color: #e28843; background: transparent;"
+                                class="text-muted px-3" v-bind:text="variants[current].price">
+                                <small><del>LKR {{variants[current].old_price}}</del></small>
+                            </span>
+                        </h2> <%# Price %>
+
                         <ul class="list">
-                            <%# Category %>
-                            <li><a class="active" href="#"><span>Category</span> : <%= category %></a></li>
+                            <%# Brand %>
+                            <li><a><span>Brand</span> :
+                                    <%= brand === null ? 'Not branded': brand %></a></li>
+                            <li><a><span>Weight (kg)</span> :
+                                    <%= brand === null ? 'Not specified': weight %></a></li>
                             <li><a><span>Availibility</span> :
                                     <%# Stock %>
                                     {{  (variants[current].amount == 0) ? 'Out of Stock' : 'In Stock' }}
@@ -27,7 +36,9 @@
                         </ul>
 
                         <%# Snippet %>
-                        <p style="margin-bottom: 20px !important;"><%= description.substring(0, 250) -%>...</p>
+                        <p style="margin-bottom: 20px !important;">
+                            <i> <%= name %></i>
+                        </p>
 
                         <div class="mb-3">
                             <div class="default-select" id="product_variant">
@@ -90,22 +101,23 @@
                         <table class="table">
                             <tbody>
                                 <%# Variant Attributes %>
-                                <tr v-for="key in Object.keys(variants[current].attributes)">
+                                <tr v-for="attrib of variant_attributes"
+                                    v-if="attrib['variant_id'] === variants[current].variant_id">
                                     <td>
-                                        <h5>{{key}}</h5>
+                                        <h5>{{attrib['key']}}</h5>
                                     </td>
                                     <td>
-                                        <h5>{{variants[current].attributes[key]}}</h5>
+                                        <h5>{{attrib['value']}}</h5>
                                     </td>
                                 </tr>
                                 <%# Product Attributes %>
-                                <% for (const key of Object.keys(attributes)) {%>
+                                <% for (const attrib of attributes) {%>
                                 <tr>
                                     <td>
-                                        <h5><%- key %></h5>
+                                        <h5><%- attrib['key'] %></h5>
                                     </td>
                                     <td>
-                                        <h5><%- attributes[key] %></h5>
+                                        <h5><%- attrib['value'] %></h5>
                                     </td>
                                 </tr>
                                 <% } %>
