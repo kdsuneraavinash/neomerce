@@ -4,11 +4,14 @@
 
 <body id="category">
     <%- include('common/navbar') %>
-    <%- include('common/banner', {'title': 'Search By Category'}) %>
+    <%- include('common/banner', {'title':  categorytitle === null ? 'Search By Category ' : categorytitle}) %>
 
     <%# Each category should have count, optionally children %>
     <%- include ('partial/category', {
-       categories: categories
+       title,
+       categories: categories,
+       parentid: parentid,
+       categorytitle: categorytitle
     }) %>
 
     <%- include('common/footer') %>
@@ -51,8 +54,13 @@
             el: "#category_view",
             data: {
                 products: JSON.parse(`<%- JSON.stringify(products) %> `),
+                per_page: 9,
             }
         })
+    </script>
+
+    <script>
+        document.getElementById("pag0-tab").click();
     </script>
 </body>
 

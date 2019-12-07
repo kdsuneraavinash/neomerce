@@ -2,19 +2,28 @@
     <div class="row">
         <div class="col-xl-3 col-lg-4 col-md-5">
 
-            <% if (categories.length !== 0) {%>
             <div class="sidebar-categories">
+                <% if (categorytitle === null){ %>
                 <div class="head">Browse Categories</div>
-                <ul id="category">
-                    <% for(let category of categories) {%>
-                    <li class="main-nav-list"><a href="/category?category=<%= category.category_id %>">
+                <% }else{ %>
+                <div class="head"><%= categorytitle %></div>
+                <% } %>
+                <ul class="main-categories">
+                    <li class="main-nav-list">
+                        <% if (parentid !== null) { %>
+                        <a href="/category?category=<%= parentid %>">
+                            Back
+                        </a>
+                        <% } %>
+                        <% for(let category of categories) {%>
+                        <a href="/category?category=<%= category.category_id %>">
+                            <span class="lnr lnr-arrow-right"></span>
                             <%= category.title %>
                         </a>
+                        <% } %>
                     </li>
-                    <% } %>
                 </ul>
             </div>
-            <% } %>
 
             <%# Sorting %>
             <div class="sidebar-filter mt-50">
@@ -65,29 +74,67 @@
 
             <!-- Start Filter Bar -->
             <div class="filter-bar text-center p-2">
-                <h2 class="text-white">Search Results</h2>
+                <h3 class="text-white"><%= title %></h3>
             </div>
             <!-- End Filter Bar -->
 
-            <!-- Start Best Seller -->
-            <section class="lattest-product-area pb-40 category-list">
-                <div class="row">
+            <div class="tab-content">
+                <div v-for="number in [...Array(11).keys()]" :id="'pag' + number" role="tabpanel"
+                    :aria-labelledby="'pag' + number + '-tab'" class="tab-pane fade">
 
-                    <!-- single product -->
-                    <div class="col-lg-4 col-md-6" v-for="product in products" v-if="product.show">
-                        <div class="single-product">
-                            <img class="img-fluid" v-bind:src="product.image" alt="">
-                            <div class="product-details">
-                                <h6>{{product.title}} <span style="color: #ff6c00;">[LKR&nbsp;{{product.price}}]</span>
-                                </h6>
-                                <a href="/item/show"
-                                    class="genric-btn primary-border medium btn-block text-center">View</a>
+                    <!-- Start Best Seller -->
+                    <section class="lattest-product-area pb-40 category-list">
+                        <div v-if="products.filter((v) => v.show).length === 0" class="p-5 m-5">
+                            <h4 class="text-center"> No results found</h4>
+                        </div>
+
+                        <div class="row">
+
+                            <!-- single product -->
+                            <div class="col-lg-4 col-md-6" v-for="(product, index) in products.filter((v) => v.show)"
+                                v-if="product.show && index < (number+1)*per_page && index  >= number*per_page">
+                                <div class="single-product">
+                                    <img style="height: 300px; object-fit: contain;" v-bind:src="product.image" alt="">
+                                    <div class="product-details">
+                                        <h6>{{product.title.length > 45 ? product.title.substring(0, 45) + '...' : product.title}}
+                                        </h6>
+                                        <h5 style="color: #ff6c00;">[LKR&nbsp;{{product.price}}]</h5>
+                                        <a :href="'/item/show/' + product.id"
+                                            class="genric-btn primary-border medium btn-block text-center">View</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </section>
+                    <!-- End Best Seller -->
+
+                </div>
+            </div>
+
+            <div class="filter-bar d-flex flex-wrap">
+                <div class="sorting mr-auto">
+                    <div class="nice-select" tabindex="0"><span class="current">Show {{per_page}}</span>
+                        <ul class="list">
+                            <li v-for="value_s in [9, 12, 24]" class="option" v-on:click="per_page = value_s"
+                                v-bind:data-value="value_s">
+                                Show {{value_s}}
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </section>
-            <!-- End Best Seller -->
+                <div class="pagination">
+                    <ul role="tablist" class="nav nav-tabs">
+                        <li v-for="number in [...Array(11).keys()]"
+                            v-if="products.filter((v) => v.show).length > number*per_page || number===0">
+                            <a :id="'pag' + number + '-tab'" data-toggle="tab" v-bind:href="'#pag' + number" role="tab"
+                                aria-controls="'pag' + number" aria-selected="false" class="px-2">
+                                {{number+1}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

@@ -34,6 +34,8 @@ DROP DOMAIN IF EXISTS VALID_EMAIL cascade;
 DROP DOMAIN IF EXISTS VALID_PHONE cascade;
 DROP DOMAIN IF EXISTS UUID4 cascade;
 DROP DOMAIN IF EXISTS URL cascade;
+DROP VIEW IF EXISTS ProductMinPricesView cascade;
+DROP VIEW IF EXISTS ProductMainImageView cascade;
 
 /* 
    __                  _   _                 
@@ -520,3 +522,27 @@ $$;
 */
 
 CREATE INDEX ON ProductImage(product_id);
+CREATE INDEX ON Variant(product_id);
+
+/*
+        _                   
+       (_)                  
+ __   ___  _____      _____ 
+ \ \ / / |/ _ \ \ /\ / / __|
+  \ V /| |  __/\ V  V /\__ \
+   \_/ |_|\___| \_/\_/ |___/ 
+*/
+
+CREATE VIEW ProductMinPricesView AS
+    SELECT product_id, min(selling_price) as min_selling_price
+    FROM Variant
+    GROUP BY product_id;
+
+CREATE VIEW ProductMainImageView AS
+    SELECT DISTINCT ON (product_id) product_id, image_url
+    FROM ProductImage;
+
+CREATE VIEW ProductBasicView AS
+    SELECT product_id, title, min_selling_price, image_url 
+    FROM Product NATURAL JOIN ProductMinPricesView NATURAL JOIN ProductMainImageView;
+
