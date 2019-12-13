@@ -17,6 +17,15 @@ const saveSession = (req,res)=> {
 }
 
 
+// middleware function to check for logged-in users
+var sessionChecker = (req, res, next) => {
+    console.log(req.session.cookie)
+    if (req.session.user && req.session.cookie) {
+        res.render('dashboard');
+    } else {
+        next();
+    }    
+};
 
 
 
@@ -26,4 +35,6 @@ const saveSession = (req,res)=> {
 
 
 
-module.exports = {saveSession}
+
+
+module.exports = {saveSession,sessionChecker}

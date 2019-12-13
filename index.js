@@ -27,7 +27,7 @@ app.use(session({
     // }),
     secret: 'test',
     resave: false,
-    cookie: { maxAge: 600000}, // 30 days
+    cookie: { maxAge: 86400000}, // 1day
     rolling:true
   }));
 
@@ -47,15 +47,7 @@ app.use((req,res,next)=>{
     next()
  }) 
 
-// middleware function to check for logged-in users
-var sessionChecker = (req, res, next) => {
-    console.log(req.session.cookie)
-    if (req.session.user && req.session.cookie) {
-        res.redirect('/dashboard');
-    } else {
-        next();
-    }    
-};
+
 
 
 

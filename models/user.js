@@ -23,6 +23,43 @@ const createUser = async (sessionID,email,firstName,lastName,addressLine1,addres
   }
 
 
+  const validatePassword = async(username,password) => {
+    const queryString = 'SELECT accountcredential.password from userinformation,accountcredential where userinformation.email=$1 and userinformation.customer_id=accountcredential.customer_id'
+    const values = [username]
+    return new Promise((resolve,reject)=>{
+      pool.query(queryString,values,(err, rows) => {
+        if (err) {
+          reject(err)
+        } else {
+          //req.session.user = {'username':username,'email':email,'password':password}
+          //bcrypt compare
+          resolve(rows.rows[0].password)
+        }
+      })
+  
+    })
+  }
 
 
-  module.exports  = {createUser}
+  const assignCustomerId = async (sessionID,username)=> {
+    let queryString = 'CALL assign_customer_id($1,$2)'
+    const values = [sessionID,username]
+    return new Promise((resolve,reject)=>{
+      pool.query(queryString,values,(err, rows) => {
+        if (err) {
+          reject(err)
+        } else {
+          //req.session.user = {'username':username,'email':email,'password':password}
+          //bcrypt compare
+          console.log('yaay')
+          resolve(true)
+        }
+      })
+  
+    })
+  }  
+
+
+
+
+  module.exports  = {createUser,validatePassword,assignCustomerId}

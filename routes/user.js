@@ -25,7 +25,7 @@ router.post('/register',async (req,res)=>{
         if(true){
             req.session.user = true;
             console.log(req.session.user)
-            res.render('index')
+            res.redirect('/')
             // send dashboard
         }else{
             //redirect sign up
@@ -53,6 +53,55 @@ router.get('/logout',(req,res)=>{
 
 
 })
+
+
+router.get('/login',(req,res)=>{
+
+    res.render('login')
+
+    // TODO remove register button after log in
+
+
+})
+
+
+router.post('/login',async (req,res)=>{
+
+    const{body:{username,password}} = req
+    console.log(username)
+    console.log(password)
+    try {
+        let result1 = await User.validatePassword(username)
+        console.log(result1)
+        if(!result1){
+            res.redirect('/')
+        }else{
+            console.log('pass')
+            try {
+                let result2 = User.assignCustomerId(req.sessionID,username)
+                if(result2){
+                    req.session.user = true;
+                    res.redirect('/')
+                }else{
+                    res.redirect('/login')
+                }
+            } catch (error) {
+                console.log(error)
+            }
+            
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+
+
+
+
+
+
+})
+
 
 
 

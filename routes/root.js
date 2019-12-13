@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const connection = require('../config/db');
+const auth = require('../utils/auth')
 
 
-router.get('/', (req, res) => {
+router.get('/', auth.sessionChecker,(req, res) => {
     const queryString = 'SELECT * FROM test';
     connection.query(queryString, (error, rows) => {
         if (error) {
