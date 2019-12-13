@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 
 
 app.use((req,res,next)=>{
-    console.log(req.sessionID)
+    //console.log(req.sessionID)
     auth.saveSession(req)
     next()
  }) 

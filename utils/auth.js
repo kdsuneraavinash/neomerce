@@ -6,12 +6,12 @@ const saveSession = (req,res)=> {
 
     const queryString = 'CALL assign_session($1)'
     const values = [req.sessionID]
-    console.log('saveSession called')
+    //console.log('saveSession called')
     pool.query(queryString,values, (err, result) => {
         if (err) {
-            console.log(err)
+            // console.log(err)
         } else {
-            console.log('Session created')
+            //console.log('Session created')
         }
     })
 }
