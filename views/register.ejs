@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('common/head') %>
+
+<body>
+    <%- include('common/navbar') %>
+    <%- include('common/scripts') %>
+    <%- include('common/banner', {'title': 'Register'}) %>
+    
+    <section class="checkout_area section_gap">
+        <div class="container">
+            <div class="returning_customer">
+                <div class="check_title">
+                    <h2>Already have an account? <a href="">Click here to login</a></h2>
+                </div>
+                <p>If you have shopped with us before, please enter your details in the boxes below. If you are a new
+                    customer, please proceed to the Billing & Shipping section.</p>
+                <form class="row contact_form" action="/user/register" method="post" novalidate="novalidate" style="max-width:none">
+                    <div class="col-md-12 form-group p_star">
+                        <input type="text" class="form-control" id="username" name="username">
+                        <span class="placeholder" data-placeholder="Username or Email"></span>
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                        <input type="password" class="form-control" id="password" name="password">
+                        <span class="placeholder" data-placeholder="Password"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group p_star">
+                        <input type="password" class="form-control" id="retype-password" name="retype-password">
+                        <span class="placeholder" data-placeholder="Re-type Password"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group p_star">
+                        <input type="text" class="form-control" id="firstName" name="firstName">
+                        <span class="placeholder" data-placeholder="First name"></span>
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                        <input type="text" class="form-control" id="lastName" name="lastName">
+                        <span class="placeholder" data-placeholder="Last name"></span>
+                    </div>
+
+                    <div class="col-md-12 form-group p_star">
+                        <input type="text" class="form-control" id="addressLine1" name="addressLine1">
+                        <span class="placeholder" data-placeholder="Address Line 01"></span>
+                    </div>
+
+                    <div class="col-md-12 form-group p_star">
+                        <input type="text" class="form-control" id="addressLine2" name="addressLine2">
+                        <span class="placeholder" data-placeholder="Address Line 02"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group p_star">
+                        <input type="text" class="form-control" id="city" name="city">
+                        <span class="placeholder" data-placeholder="City"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group p_star">
+                        <input type="text" class="form-control" id="postalCode" name="postalCode">
+                        <span class="placeholder" data-placeholder="Postal code"></span>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <button type="submit" value="submit" class="primary-btn">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <%- include('common/footer') %>
+    
+</body>
+
+</html>

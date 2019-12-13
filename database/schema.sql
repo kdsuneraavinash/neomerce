@@ -141,7 +141,7 @@ CREATE TABLE Customer (
 CREATE TABLE UserInformation (
     customer_id uuid4,
     email valid_email not null,
-    first_name char(255) not null,
+    first_name varchar(255) not null,
     last_name varchar(255) not null,
     addr_line1 varchar(255) not null,
     addr_line2 varchar(255) not null,
@@ -512,6 +512,77 @@ BEGIN
     raise notice 'Added product with id %', $1;
 END;
 $$;
+
+
+
+/*
+
+####################################################################################################################
+####################################################################################################################
+
+*/
+
+
+CREATE OR REPLACE PROCEDURE assign_session(VARCHAR(32))
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+customer_id uuid4 := generate_uuid4();
+BEGIN
+
+    -- inserting to customer table
+    INSERT INTO customer values (customer_id,'guest'); 
+
+    -- inserting to session table, change session duration here
+    INSERT INTO session values ($1,customer_id,NOW(),NOW(),NOW()+ interval '5 minutes'); 
+ 
+    COMMIT;
+END;
+$$;
+
+
+
+CREATE OR REPLACE PROCEDURE create_user(VARCHAR(32),VARCHAR(255),VARCHAR(255),VARCHAR(255),
+										VARCHAR(255),VARCHAR(255),VARCHAR(127),VARCHAR(31),
+									   TIMESTAMP,CHAR(60))
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+customer_id uuid4 := (SELECT customer_id from session where session_id=$1);
+BEGIN
+
+ -- inserting to customer table
+    INSERT INTO userinformation values (customer_id,$2,$3,$4,$5,$6,$7,$8,$9,NOW()); 
+
+    -- inserting to session table
+    INSERT INTO accountcredential values (customer_id,$10); 
+ 	
+	UPDATE customer SET account_type = 'user';
+	
+    COMMIT;
+END;
+$$;
+
+
+
+
+
+
+
+
+
+/*
+
+#####################################################################################################################
+#####################################################################################################################
+
+*/
+
+
+
+
+
+
 
 
 /*
