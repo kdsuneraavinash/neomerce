@@ -11,29 +11,70 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
                     <ul class="nav navbar-nav menu_nav ml-auto">
-                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                        <li class="nav-item submenu dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
-                                aria-haspopup="true" aria-expanded="false">Categories</a>
-                            <ul class="dropdown-menu">
-                                <li class="nav-item"><a class="nav-link"
-                                        href="/category?category=760aa25b-f984-4a3d-9c5d-d1313f49fe08">
-                                        Electronics
-                                    </a>
+
+                            <% if (loggedIn) { %>
+                                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                                <li class="nav-item submenu dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                        aria-expanded="false">Categories</a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item"><a class="nav-link" href="/category?category=760aa25b-f984-4a3d-9c5d-d1313f49fe08">
+                                                Electronics
+                                            </a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="/category?category=e802a9e5-ba12-4ba1-8bb3-007bff45caf6">
+                                                Toys & Games
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li class="nav-item"><a class="nav-link"
-                                        href="/category?category=e802a9e5-ba12-4ba1-8bb3-007bff45caf6">
-                                        Toys & Games
-                                    </a>
+                                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                                <li class="nav-item submenu dropdown">
+                                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                            aria-expanded="false">Account</a>
+                                        <ul class="dropdown-menu">
+                                            <li class="nav-item"><a class="nav-link" href="">
+                                                    Profile
+                                                </a>
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link" href="user/logout">
+                                                    Log out
+                                                </a>
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link" href="">
+                                                Settings
+                                            </a>
+                                            </li>
+                                        </ul>
                                 </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="/user/login">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user/register">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+    
+                            <%} else { %>
+
+                                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                                <li class="nav-item submenu dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                        aria-expanded="false">Categories</a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item"><a class="nav-link" href="/category?category=760aa25b-f984-4a3d-9c5d-d1313f49fe08">
+                                                Electronics
+                                            </a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" href="/category?category=e802a9e5-ba12-4ba1-8bb3-007bff45caf6">
+                                                Toys & Games
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="/user/login">Login</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/user/register">Register</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                                
+                            <% } %>
+
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="nav-item"><a href="/cart" class="cart"><span class="ti-bag"></span></a></li>

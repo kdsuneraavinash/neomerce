@@ -527,15 +527,18 @@ CREATE OR REPLACE PROCEDURE assign_session(VARCHAR(32))
 LANGUAGE plpgsql    
 AS $$
 DECLARE
-customer_id uuid4 := generate_uuid4();
+customer_id uuid4 := (SELECT customer_id from session where session_id=$1);
 BEGIN
+
+    if customer_id is null then customer_id := generate_uuid4();
 
     -- inserting to customer table
     INSERT INTO customer values (customer_id,'guest'); 
 
     -- inserting to session table, change session duration here
     INSERT INTO session values ($1,customer_id,NOW(),NOW(),NOW()+ interval '1 day'); 
- 
+    end if;
+
     COMMIT;
 END;
 $$;

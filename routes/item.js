@@ -4,6 +4,7 @@ const Product = require('./../models/product');
 const ProductImage = require('./../models/productimage');
 
 router.get('/show/:id', async (req, res) => {
+    const loggedIn = req.session.user ? true : false
     const product = await Product.getProduct(req, res, req.params.id);
     if (product === null) return;
 
@@ -17,6 +18,7 @@ router.get('/show/:id', async (req, res) => {
     console.log(variantsData);
 
     res.render('item', {
+        loggedIn:loggedIn,
         name: product.title,
         category: 'clothes',
         description: product.description,

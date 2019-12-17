@@ -3,6 +3,7 @@ const category = require('./../models/category');
 const product = require('./../models/product');
 
 router.get('/', async (req, res) => {
+    const loggedIn = req.session.user ? true : false
     if (req.query.query === undefined && req.query.category === undefined) {
         if (req.query.category === undefined) {
             res.json({
@@ -21,6 +22,7 @@ router.get('/', async (req, res) => {
         if (productDetails === null) return;
 
         res.render('category', {
+            loggedIn:loggedIn,
             products: productDetails.result,
             categories,
             categorytitle: categoryDetails.title,

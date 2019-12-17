@@ -3,15 +3,13 @@ const UUID = require('uuid/v4')
 
 
 const saveSession = (req,res)=> {
-
     const queryString = 'CALL assign_session($1)'
     const values = [req.sessionID]
-    //console.log('saveSession called')
     pool.query(queryString,values, (err, result) => {
         if (err) {
-            // console.log(err)
+            console.log(err)
         } else {
-            //console.log('Session created')
+            // console.log('Working fine')
         }
     })
 }
@@ -21,20 +19,12 @@ const saveSession = (req,res)=> {
 var sessionChecker = (req, res, next) => {
     console.log(req.session.cookie)
     if (req.session.user && req.session.cookie) {
-        res.render('dashboard');
+        let loggedIn = true
+        res.render('index',{'loggedIn':loggedIn});
     } else {
         next();
     }    
 };
-
-
-
-
-
-
-
-
-
 
 
 module.exports = {saveSession,sessionChecker}

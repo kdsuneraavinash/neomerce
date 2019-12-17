@@ -1,7 +1,9 @@
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
+    const loggedIn = req.session.user ? true : false
     res.render('cart', {
+        loggedIn:loggedIn,
         subtotal: 'LKR13800.00',
         items: [
             {

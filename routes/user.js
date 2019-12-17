@@ -9,9 +9,6 @@ router.get('/register',(req,res)=>{
 
     res.render('register')
 
-    
-
-
 })
 
 /* POST endpoint for user registration.*/
@@ -19,7 +16,6 @@ router.post('/register',async (req,res)=>{
 
     // TODO validation here
 
-    console.log(req.body)
     const {body : {username,password,firstName,lastName,addressLine1,addressLine2,city,postalCode}} = req;
     let encryptedPassword = bcrypt.hashSync(password,10)
     try {
@@ -42,16 +38,12 @@ router.post('/register',async (req,res)=>{
 
 router.get('/logout',(req,res)=>{
     if (req.session.user && req.session.cookie) {
-        console.log('HERE destroy')
         res.clearCookie('user_sid');
         req.session.destroy()
         res.redirect('/')
     } else {
-        console.log('HERE')
         res.render('index')
     }
-
-
 
 })
 
@@ -60,7 +52,6 @@ router.get('/login',(req,res)=>{
 
     res.render('login')
 
-    // TODO remove register button after log in
 
 
 })
@@ -69,22 +60,19 @@ router.get('/login',(req,res)=>{
 router.post('/login',async (req,res)=>{
 
     const{body:{username,password}} = req
-    console.log(username)
-    console.log(password)
     try {
         let result1 = await User.validatePassword(username,password)
         console.log(result1)
         if(!result1){
-            res.redirect('/')
+            res.redirect('/user/login')
         }else{
-            console.log('pass')
             try {
                 let result2 = await User.assignCustomerId(req.sessionID,username)
                 if(result2){
                     req.session.user = true;
                     res.redirect('/')
                 }else{
-                    res.redirect('/login')
+                    res.redirect('/user/login')
                 }
             } catch (error) {
                 console.log(error)
@@ -93,6 +81,7 @@ router.post('/login',async (req,res)=>{
         }
     } catch (error) {
         console.log(error)
+        res.redirect('/user/login')
     }
 
 })
@@ -107,19 +96,6 @@ router.get('/check/:username',async (req,res)=>{
     }
 
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 module.exports = router;
