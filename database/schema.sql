@@ -165,7 +165,7 @@ CREATE TABLE TelephoneNumber (
 
 -- Session table
 CREATE TABLE Session (
-    session_id uuid4 default generate_uuid4(),
+    session_id char(32),
     customer_id uuid4 not null,
     created_time timestamp not null default now(),
     updated_time timestamp default now(),
