@@ -4,7 +4,7 @@ const pool = require('../config/db');
 
 const createUser = async (sessionID, email, firstName, lastName, addressLine1, addressLine2,
     city, postalCode, password) => {
-    const queryString = 'CALL create_user($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)';
+    const queryString = 'CALL createUser($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)';
     const values = [sessionID, email, firstName, lastName, addressLine1, addressLine2,
         city, postalCode, new Date(), password];
     await pool.query(queryString, values);
@@ -25,7 +25,7 @@ const validatePassword = async (username, password) => {
 
 
 const assignCustomerId = async (sessionID, username) => {
-    const queryString = 'CALL assign_customer_id($1,$2)';
+    const queryString = 'CALL assignCustomerId($1,$2)';
     const values = [sessionID, username];
     await pool.query(queryString, values);
     return true;

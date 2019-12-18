@@ -1,4 +1,9 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP PROCEDURE IF EXISTS addTagToCategory;
+DROP PROCEDURE IF EXISTS addProduct;
+DROP PROCEDURE IF EXISTS assignSession;
+DROP PROCEDURE IF EXISTS createUser;
+DROP PROCEDURE IF EXISTS assignCustomerId;
 DROP TABLE IF EXISTS GuestInfomation cascade;
 DROP TABLE IF EXISTS Delivery cascade;
 DROP TABLE IF EXISTS DeliveryMethod cascade;
@@ -33,6 +38,7 @@ DROP DOMAIN IF EXISTS MONEY_UNIT cascade;
 DROP DOMAIN IF EXISTS VALID_EMAIL cascade;
 DROP DOMAIN IF EXISTS VALID_PHONE cascade;
 DROP DOMAIN IF EXISTS UUID4 cascade;
+DROP DOMAIN IF EXISTS SESSION_UUID cascade;
 DROP DOMAIN IF EXISTS URL cascade;
 DROP VIEW IF EXISTS ProductMinPricesView cascade;
 DROP VIEW IF EXISTS ProductMainImageView cascade;
@@ -91,9 +97,10 @@ $$ LANGUAGE PLpgSQL;
 CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
 CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
 CREATE DOMAIN VALID_PHONE AS CHAR(15);
-CREATE DOMAIN UUID4 AS VARCHAR(36) CHECK(
+CREATE DOMAIN UUID4 AS CHAR(36) CHECK(
     VALUE ~ '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 );
+CREATE DOMAIN SESSION_UUID AS CHAR(32);
 CREATE DOMAIN URL AS VARCHAR(1023);
 
 
@@ -165,7 +172,7 @@ CREATE TABLE TelephoneNumber (
 
 -- Session table
 CREATE TABLE Session (
-    session_id char(32),
+    session_id session_uuid,
     customer_id uuid4 not null,
     created_time timestamp not null default now(),
     updated_time timestamp default now(),
@@ -370,8 +377,8 @@ CREATE TABLE Delivery (
     order_id uuid4,
     delivery_method varchar(15) not null,
     delivery_status varchar(15) not null,
-    addr_line1 varchar(12) not null,
-    addr_line2 varchar(32) not null,
+    addr_line1 varchar(255) not null,
+    addr_line2 varchar(255) not null,
     city varchar(127) not null,
     postcode varchar(31) not null,
     delivered_date timestamp,
@@ -513,96 +520,50 @@ BEGIN
 END;
 $$;
 
-
-
-/*
-
-####################################################################################################################
-####################################################################################################################
-
-*/
-
-
-CREATE OR REPLACE PROCEDURE assign_session(VARCHAR(32))
+-- Procedure to assign a session to a user (session_id)
+CREATE OR REPLACE PROCEDURE assignSession(SESSION_UUID)
 LANGUAGE plpgsql    
 AS $$
 DECLARE
 customer_id uuid4 := (SELECT customer_id from session where session_id=$1);
 BEGIN
-
-    if customer_id is null then customer_id := generate_uuid4();
-
-    -- inserting to customer table
-    INSERT INTO customer values (customer_id,'guest'); 
-
-    -- inserting to session table, change session duration here
-    INSERT INTO session values ($1,customer_id,NOW(),NOW(),NOW()+ interval '1 day'); 
+    if customer_id is null then 
+        customer_id := generate_uuid4();
+        INSERT INTO customer values (customer_id,'guest'); 
+        -- inserting to session table, change session duration here
+        INSERT INTO session values ($1, customer_id, NOW(), NOW(), NOW() + interval '1 day'); 
     end if;
-
-    COMMIT;
 END;
 $$;
 
-
-
-CREATE OR REPLACE PROCEDURE create_user(VARCHAR(32),VARCHAR(255),VARCHAR(255),VARCHAR(255),
-										VARCHAR(255),VARCHAR(255),VARCHAR(127),VARCHAR(31),
-									   TIMESTAMP,CHAR(60))
+-- Procedure to create a user (session_id, email, first_name, last_name, addr_line1,
+--   addr_line2, city, post_code, dob, last_login)
+CREATE OR REPLACE PROCEDURE createUser(SESSION_UUID, VARCHAR(255), VARCHAR(255), VARCHAR(255),
+										VARCHAR(255), VARCHAR(255), VARCHAR(127), VARCHAR(31),
+									   TIMESTAMP, CHAR(60))
 LANGUAGE plpgsql    
 AS $$
 DECLARE
-customer_id uuid4 := (SELECT customer_id from session where session_id=$1);
+customer_id uuid4 := (select customer_id from session where session_id=$1);
 BEGIN
-
-    -- inserting to userinformation table
-    INSERT INTO userinformation values (customer_id,$2,$3,$4,$5,$6,$7,$8,$9,NOW()); 
-
-    -- inserting to accountcredential table
-    INSERT INTO accountcredential values (customer_id,$10); 
- 	
+    INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
+    INSERT INTO accountcredential values (customer_id, $10); 
 	UPDATE customer SET account_type = 'user';
-	
-    COMMIT;
 END;
 $$;
 
-
-
-CREATE OR REPLACE PROCEDURE assign_customer_id(VARCHAR(32),VARCHAR(255))
+-- Procedure to assign a customer id for a logged in session (session_id, email)
+CREATE OR REPLACE PROCEDURE assignCustomerId(SESSION_UUID, VARCHAR(255))
 LANGUAGE plpgsql    
 AS $$
 DECLARE
-customer_id_ uuid4 := (SELECT customer_id from userinformation where email=$2);
-old_id uuid4 := (SELECT customer_id from session where session_id = $1);
+customer_id_ uuid4 := (select customer_id from userinformation where email=$2);
+old_id uuid4 := (select customer_id from session where session_id = $1);
 BEGIN
- 	-- updating customer_id in session table
 	UPDATE session SET customer_id = customer_id_ where session_id = $1;
-	-- deleting old customer_id in customer table
 	DELETE FROM customer where customer_id = old_id;
-    COMMIT;
 END;
 $$;
-
-
-
-
-
-
-
-
-
-/*
-
-#####################################################################################################################
-#####################################################################################################################
-
-*/
-
-
-
-
-
-
 
 
 /*

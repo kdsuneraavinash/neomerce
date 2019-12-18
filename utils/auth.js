@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 const saveSession = async (req) => {
-    const queryString = 'CALL assign_session($1)';
+    const queryString = 'CALL assignSession($1)';
     const values = [req.sessionID];
     await pool.query(queryString, values);
 };

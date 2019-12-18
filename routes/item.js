@@ -25,7 +25,6 @@ router.get('/show/:id', async (req, res) => {
             variant_attributes: variantsData.attributes,
         });
     } catch (error) {
-        console.log(error);
         helper.errorResponse(res, error);
     }
 });

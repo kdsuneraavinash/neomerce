@@ -3,10 +3,11 @@ const session = require('express-session');
 const cors = require('cors');
 const Ouch = require('ouch');
 const bodyParser = require('body-parser');
-const auth = require('./utils/auth');
 
 /* Make all variables from our .env file available in our process */
 require('dotenv').config();
+
+const auth = require('./utils/auth');
 
 /* Init express */
 const app = express();
@@ -28,8 +29,8 @@ app.use(session({
 
 
 /*
-This middleware will check if user's cookie is still saved in browser and user is not set,
-then automatically log the user out.
+This middleware will check
+if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 This usually happens when you stop your express server after login,
 your cookie still remains saved in the browser.
 */
