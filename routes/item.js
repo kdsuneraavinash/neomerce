@@ -15,8 +15,6 @@ router.get('/show/:id', async (req, res) => {
     const variantsData = await Product.getVariants(req, res, req.params.id);
     if (variantsData === null) return;
 
-    console.log(variantsData);
-
     res.render('item', {
         loggedIn:loggedIn,
         name: product.title,
