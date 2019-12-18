@@ -3,7 +3,7 @@
 <%- include('common/head') %>
 
 <body id="category">
-    <%- include('common/navbar') %>
+    <%- include('common/navbar',{'loggedIn':loggedIn}) %>
     <%- include('common/banner', {'title':  categorytitle === null ? 'Search By Category ' : categorytitle}) %>
 
     <%# Each category should have count, optionally children %>

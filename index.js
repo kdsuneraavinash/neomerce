@@ -2,9 +2,12 @@ const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const Ouch = require('ouch');
+const bodyParser = require('body-parser');
 
 /* Make all variables from our .env file available in our process */
 require('dotenv').config();
+
+const auth = require('./utils/auth');
 
 /* Init express */
 const app = express();
@@ -13,13 +16,41 @@ const app = express();
 app.set('view engine', 'ejs');
 
 /* Setup the middlewares & configs */
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 app.use(session({
-    secret: process.env.SESSION_SECRET,
-    cookie: { maxAge: 60000 },
+    key: 'user_sid',
+    secret: 'test',
     resave: false,
-    saveUninitialized: false,
+    cookie: { maxAge: 86400000 }, // 1 day
+    rolling: true,
 }));
+
+
+/*
+This middleware will check
+if user's cookie is still saved in browser and user is not set, then automatically log the user out.
+This usually happens when you stop your express server after login,
+your cookie still remains saved in the browser.
+*/
+// app.use((req, res, next) => {
+//     if (req.session.cookie && !req.session.user) {
+//         res.clearCookie('user_sid');
+//     }
+//     next();
+// });
+
+
+/*
+Middleware to save the sessions in the database.
+customer and session tables will be updated if a new session get created
+*/
+app.use((req, res, next) => {
+    auth.saveSession(req);
+    next();
+});
+
 
 /* Define the static files and routes */
 app.use('/css', express.static('public/css'));

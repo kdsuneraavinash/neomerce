@@ -1,0 +1,105 @@
+<section class="checkout_area section_gap">
+    <div class="container">
+        <div class="returning_customer">
+            <div class="check_title">
+                <h2>Already have an account? <a href="user/login">Click here to login</a></h2>
+            </div>
+            <p>If you have shopped with us before, please enter your details in the boxes below. If you are a new
+                customer, please proceed to the Billing & Shipping section.</p>
+            <form class="row contact_form" action="/user/register" method="post" novalidate="novalidate" style="max-width:none">
+                <div class="col-md-12 form-group p_star" id="username-div">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" onblur="checkAvailability();this.placeholder='Username'" onfocus="this.placeholder=''">
+                </div>
+                <div class="col-md-6 form-group p_star">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder=''" onblur="this.placeholder='Password'">
+                    
+                </div>
+
+                <div class="col-md-6 form-group p_star">
+                    <input type="password" class="form-control" id="retype-password" name="retype-password" placeholder="Re-type password" onfocus="this.placeholder=''" onblur="this.placeholder='Re-type password'">
+                    
+                </div>
+
+                <div class="col-md-6 form-group p_star">
+                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" onfocus="this.placeholder=''" onblur="this.placeholder='First Name'">
+                    
+                </div>
+                <div class="col-md-6 form-group p_star">
+                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" onfocus="this.placeholder=''" onblur="this.placeholder='Last Name'">
+                    
+                </div>
+
+                <div class="col-md-12 form-group p_star">
+                    <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="Address Line 01" onfocus="this.placeholder=''" onblur="this.placeholder='Address Line 01'">
+                   
+                </div>
+
+                <div class="col-md-12 form-group p_star">
+                    <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Address Line 02" onfocus="this.placeholder=''" onblur="this.placeholder='Address Line 02'">
+                   
+                </div>
+
+                <div class="col-md-6 form-group p_star">
+                    <input type="text" class="form-control" id="city" name="city" placeholder="City" onfocus="this.placeholder=''" onblur="this.placeholder='City'">
+                    
+                </div>
+
+                <div class="col-md-6 form-group p_star">
+                    <input type="text" class="form-control" id="postalCode" name="postalCode" placeholder="Postal Code" onfocus="this.placeholder=''" onblur="this.placeholder='Postal code'">
+                   
+                </div>
+                <div class="col-md-12 form-group">
+                    <button type="submit" value="submit" class="primary-btn">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+/*Check availability of the username*/
+const checkAvailability = () => {
+    const value = document.getElementById('username').value;
+    const xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if(document.getElementById('label-id')){
+                if(xhttp.responseText==='Username Valid'){
+                    document.getElementById('label-id').remove()
+                }else{
+                    document.getElementById('label-id').innerHTML = ''
+                    document.getElementById('label-id').innerHTML = xhttp.responseText
+                }
+               
+            }else{
+                const newlabel = document.createElement('Label')
+                newlabel.setAttribute('for','username')
+                newlabel.setAttribute('id','label-id')
+                
+                if(xhttp.responseText==='Username Valid'){
+                    
+                }else{
+                    newlabel.innerHTML = ''
+                    newlabel.innerHTML = xhttp.responseText
+                    document.getElementById('username-div').appendChild(newlabel)
+                    document.getElementById('label-id').style.color = 'red'
+                }
+                
+                
+            }
+           
+        }
+    };
+
+
+    if(value){
+        xhttp.open("GET", "/user/check/"+value, true);
+        xhttp.send();
+    }else{
+        if(document.getElementById('label-id')){
+            document.getElementById('label-id').remove()
+        }
+    }
+   
+}
+</script>

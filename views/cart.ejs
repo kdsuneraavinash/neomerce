@@ -3,7 +3,7 @@
 <%- include('common/head') %>
 
 <body>
-    <%- include('common/navbar') %>
+    <%- include('common/navbar',{'loggedIn':loggedIn}) %>
     <%- include('common/banner', {'title': 'Shopping Cart'}) %>
 
     <%- include ('partial/cart', {

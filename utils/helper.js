@@ -1,7 +1,11 @@
 const errorResponse = (res, message) => {
+    let failed = message;
+    if (message.message) {
+        failed = message.message;
+    }
     res.json({
         code: 400,
-        failed: message,
+        failed,
     });
 };
 

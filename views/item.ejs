@@ -3,12 +3,11 @@
 <%- include('common/head') %>
 
 <body>
-    <%- include('common/navbar') %>
+    <%- include('common/navbar',{'loggedIn':loggedIn}) %>
     <%- include('common/banner', {'title': 'Product Details'}) %>
 
     <%- include ('partial/item', {
         name: name,
-        category: category,
         description: description,
         images: images ,
         brand: brand,
