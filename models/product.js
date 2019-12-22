@@ -89,27 +89,26 @@ const getVariants = async (req, res, productId) => {
     return { result, attributes: outAtrribs.rows };
 };
 
+
 const addToCart = async (variant_id, qty, sessionID, res) => {
     //get session ID
     //get customerID acording to the sessionID from session table
     //put to cartItem table 
 
-    try {
-        // console.log("product : ")
-        // console.log("varient ID: " + variant_id);
-        // console.log("qty : " + qty);
-        console.log("sessionID: " + sessionID);
 
-        let query = `select customerID from session where sessionID = $1`;
-        const values = [sessionID];
-        const out = await connection.query(query, values);
-        const customerID = out.rows[0];
-        console.log("customerID : " + customerID);
-        return null;
-    } catch (error) {
-        helper.errorResponse(res, error.message);
-        return null;
-    }
+    // console.log("sessionID: " + sessionID);
+    let get_customerid_query = `select customer_id from session where session_id = $1`;
+    const get_customerid_query_values = [sessionID];
+    const out_customerid = await connection.query(get_customerid_query, get_customerid_query_values);
+    const customerID = out_customerid.rows[0].customer_id;
+    // console.log("customerID : " + customerID);
+
+    const add_to_cart_query = `insert into cartitem values($1,$2,$3,$4)`;
+    const add_to_cart_query_values = [customerID,variant_id,'added',qty];
+    const out_addToCart = await connection.query(add_to_cart_query, add_to_cart_query_values);
+
+    return null;
+
 };
 
 module.exports = {
