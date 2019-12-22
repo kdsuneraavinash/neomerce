@@ -1,4 +1,6 @@
 const connection = require('../config/db');
+const helper = require('../utils/helper');
+
 
 
 const getProduct = async (req, res, productId) => {
@@ -87,6 +89,29 @@ const getVariants = async (req, res, productId) => {
     return { result, attributes: outAtrribs.rows };
 };
 
+const addToCart = async (variant_id, qty, sessionID, res) => {
+    //get session ID
+    //get customerID acording to the sessionID from session table
+    //put to cartItem table 
+
+    try {
+        // console.log("product : ")
+        // console.log("varient ID: " + variant_id);
+        // console.log("qty : " + qty);
+        console.log("sessionID: " + sessionID);
+
+        let query = `select customerID from session where sessionID = $1`;
+        const values = [sessionID];
+        const out = await connection.query(query, values);
+        const customerID = out.rows[0];
+        console.log("customerID : " + customerID);
+        return null;
+    } catch (error) {
+        helper.errorResponse(res, error.message);
+        return null;
+    }
+};
+
 module.exports = {
-    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants,
+    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants, addToCart
 };

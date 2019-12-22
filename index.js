@@ -19,8 +19,8 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({
-    saveUninitialized: true,
     key: 'user_sid',
     secret: 'test',
     resave: false,
