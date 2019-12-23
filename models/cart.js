@@ -53,7 +53,7 @@ const getCartItems = async (sessionID) => {
         const out_image_url = await connection.query(get_image_url_query, [product_id]);
         const image_url = out_image_url.rows[0].image_url;
 
-        var total_price = (selling_price * cartItems[i].quantity).toFixed(2);
+        var total_price = selling_price * cartItems[i].quantity;
 
         var item = {
             id: variant_id,
@@ -66,13 +66,27 @@ const getCartItems = async (sessionID) => {
 
         };
         items.push(item);
-        subtotal = subtotal + parseFloat(total_price);
+        var subtotal = (subtotal + total_price);
     };
     // console.log(items);
-    return [items, subtotal];
+    return [items, subtotal.toFixed(2)];
 };
 
+const removeItemFromCart = async (session_id, variant_id) => {
+    // console.log("sessionID: " + sessionID);
+    let get_customerid_query = `select customer_id from session where session_id = $1`;
+    const get_customerid_query_values = [session_id];
+    const out_customerid = await connection.query(get_customerid_query, get_customerid_query_values);
+    const customerID = out_customerid.rows[0].customer_id;
+    // console.log("customerID : " + customerID);
+
+    let get_cart_items_query = `delete from cartitem where customer_id = $1 and variant_id = $2`;
+    const out_cart_items = await connection.query(get_cart_items_query, [customerID, variant_id]);
+
+    return null;
+
+};
 
 module.exports = {
-    getCartItems
+    getCartItems, removeItemFromCart
 };

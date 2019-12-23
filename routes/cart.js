@@ -19,4 +19,11 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.post("/remove/:id", async (req, res) => {
+    console.log("removed");
+    await Cart.removeItemFromCart(req.sessionID, req.params.id);
+
+    res.redirect('/cart');
+});
+
 module.exports = router;

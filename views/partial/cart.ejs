@@ -22,7 +22,7 @@
                                     <div class="media-body">
                                         <h5><%= item.product %></h5>
                                         <p><%= item.variant %></p>
-                                        <form action="/cart/remove/5de2acbf2a9751c69c33133d" method="post">
+                                        <form action="/cart/remove/<%= item.id %>" method="post">
                                             <button type="submit" class="genric-btn small danger-border">Remove</button>
                                         </form>
                                     </div>
@@ -53,10 +53,10 @@
                     </tbody>
                 </table>
                 <div class="checkout_btn_inner float-left d-none d-md-flex   align-items-center">
-                    <a class="gray_btn" href="/category">Continue Shopping</a>
+                    <a class="gray_btn" href="/">Continue Shopping</a>
                 </div>
                 <div class="checkout_btn_inner d-flex align-items-center float-right">
-                    <a class="primary-btn" href="/checkout">Proceed to Checkout</a>
+                    <a class="primary-btn" href="/">Proceed to Checkout</a>
                 </div>
             </div>
         </div>

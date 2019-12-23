@@ -33,7 +33,7 @@ router.get('/show/:id', async (req, res) => {
 
 router.post('/add/', async (req, res) => {
     // console.log("req body: ");
-    Product.addToCart(
+    await Product.addToCart(
         req.body.varient,
         req.body.qty,
         req.sessionID
