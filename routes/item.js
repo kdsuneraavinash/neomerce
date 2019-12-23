@@ -3,7 +3,6 @@ const router = require('express').Router();
 const Product = require('./../models/product');
 const ProductImage = require('./../models/productimage');
 const helper = require('../utils/helper');
-const bodyParser = require('body-parser');
 
 
 router.get('/show/:id', async (req, res) => {
@@ -31,13 +30,6 @@ router.get('/show/:id', async (req, res) => {
     }
 });
 
-router.post('/add/', async (req, res) => {
-    await Product.addToCart(
-        req.body.varient,
-        req.body.qty,
-        req.sessionID
-    );
-    res.redirect('/cart');
-});
+
 
 module.exports = router;

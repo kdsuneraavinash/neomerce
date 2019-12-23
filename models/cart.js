@@ -56,8 +56,6 @@ const removeItemFromCart = async (session_id, variant_id) => {
     let get_cart_items_query = `delete from cartitem where customer_id = $1 and variant_id = $2`;
     const out_cart_items = await connection.query(get_cart_items_query, [customerID, variant_id]);
 
-    return null;
-
 };
 
 module.exports = {

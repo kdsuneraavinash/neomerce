@@ -109,7 +109,6 @@ const addToCart = async (variant_id, qty, sessionID) => {
         const add_to_cart_query_values = [customerID, variant_id, 'added', qty];
         const out_addToCart = await connection.query(add_to_cart_query, add_to_cart_query_values);
     }
-    return true;
 
 };
 
