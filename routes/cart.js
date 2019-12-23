@@ -5,9 +5,7 @@ const Cart = require('./../models/cart');
 router.get('/', async (req, res) => {
     try {
         const loggedIn = req.session.user != null;
-
         const cartItems_subtotal = await Cart.getCartItems(req.sessionID);
-        console.log(cartItems_subtotal);
 
         res.render('cart', {
             loggedIn,
@@ -20,9 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post("/remove/:id", async (req, res) => {
-    console.log("removed");
     await Cart.removeItemFromCart(req.sessionID, req.params.id);
-
     res.redirect('/cart');
 });
 
