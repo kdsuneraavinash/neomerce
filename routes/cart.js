@@ -1,9 +1,13 @@
 const router = require('express').Router();
 const helper = require('../utils/helper');
+const Cart = require('./../models/cart');
 
 router.get('/', (req, res) => {
     try {
         const loggedIn = req.session.user != null;
+        console.log(req.sessionID);
+        cartItems = Cart.getCartItems(req.sessionID);
+
         res.render('cart', {
             loggedIn,
             subtotal: 'LKR13800.00',

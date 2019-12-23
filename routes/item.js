@@ -36,8 +36,7 @@ router.post('/add/', async (req, res) => {
     Product.addToCart(
         req.body.varient,
         req.body.qty,
-        req.sessionID,
-        res
+        req.sessionID
     );
     res.redirect('/cart');
 });

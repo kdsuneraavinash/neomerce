@@ -90,7 +90,7 @@ const getVariants = async (req, res, productId) => {
 };
 
 
-const addToCart = async (variant_id, qty, sessionID, res) => {
+const addToCart = async (variant_id, qty, sessionID) => {
     //get session ID
     //get customerID acording to the sessionID from session table
     //put to cartItem table 
