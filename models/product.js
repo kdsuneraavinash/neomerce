@@ -1,7 +1,4 @@
 const connection = require('../config/db');
-const helper = require('../utils/helper');
-
-
 
 const getProduct = async (req, res, productId) => {
     let query = `select product_id, title, description, weight_kilos, brand 
@@ -90,28 +87,24 @@ const getVariants = async (req, res, productId) => {
 };
 
 
-const addToCart = async (variant_id, qty, sessionID) => {
+const addToCart = async (variantId, qty, sessionID) => {
+    const getCustomeridQuery = 'select customer_id from session where session_id = $1';
+    const outCustomerid = await connection.query(getCustomeridQuery, [sessionID]);
+    const customerID = outCustomerid.rows[0].customer_id;
 
-    let get_customerid_query = `select customer_id from session where session_id = $1`;
-    const get_customerid_query_values = [sessionID];
-    const out_customerid = await connection.query(get_customerid_query, get_customerid_query_values);
-    const customerID = out_customerid.rows[0].customer_id;
+    const getCartItemsQuery = 'select * from cartitem where customer_id = $1 and variant_id = $2';
+    const outCartItems = await connection.query(getCartItemsQuery, [customerID, variantId]);
+    const itemCount = outCartItems.rowCount;
 
-    let get_cart_items_query = `select * from cartitem where customer_id = $1 and variant_id = $2`;
-    const out_cart_items = await connection.query(get_cart_items_query, [customerID, variant_id]);
-    const itemCount = out_cart_items.rowCount;
-
-    if (!itemCount == 0) {
-        console.log("Item is already added to the cart!");
+    if (itemCount !== 0) {
+        console.log('Item is already added to the cart!');
+    } else {
+        const addToCartQuery = 'insert into cartitem values($1,$2,$3,$4)';
+        const addToCartQueryValues = [customerID, variantId, 'added', qty];
+        await connection.query(addToCartQuery, addToCartQueryValues);
     }
-    else {
-        const add_to_cart_query = `insert into cartitem values($1,$2,$3,$4)`;
-        const add_to_cart_query_values = [customerID, variant_id, 'added', qty];
-        const out_addToCart = await connection.query(add_to_cart_query, add_to_cart_query_values);
-    }
-
 };
 
 module.exports = {
-    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants, addToCart
+    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants, addToCart,
 };

@@ -1,63 +1,61 @@
+/* eslint-disable no-await-in-loop */
 const connection = require('../config/db');
 
 const getCartItems = async (sessionID) => {
-    let get_customerid_query = `select customer_id from session where session_id = $1`;
-    const get_customerid_query_values = [sessionID];
-    const out_customerid = await connection.query(get_customerid_query, get_customerid_query_values);
-    const customerID = out_customerid.rows[0].customer_id;
+    const getCustomerIdQuery = 'select customer_id from session where session_id = $1';
+    const outCustomerId = await connection.query(getCustomerIdQuery, [sessionID]);
+    const customerID = outCustomerId.rows[0].customer_id;
 
-    let get_cart_items_query = `select * from cartitem where customer_id = $1`;
-    const out_cart_items = await connection.query(get_cart_items_query, [customerID]);
-    const cartItems = out_cart_items.rows;
-    const itemCount = out_cart_items.rowCount;
+    const getCartItemsQuery = 'select * from cartitem where customer_id = $1';
+    const outCartItems = await connection.query(getCartItemsQuery, [customerID]);
+    const cartItems = outCartItems.rows;
+    const itemCount = outCartItems.rowCount;
 
-    var items = [];
-    var subtotal = 0;
-    for (i = 0; i < itemCount; i++) {
-        const variant_id = cartItems[i].variant_id;
-        let variant_query = `select product_id,title,selling_price from variant where variant_id = $1`;
-        const out_variant = await connection.query(variant_query, [variant_id]);
-        const product_id = out_variant.rows[0].product_id;
-        const varient_title = out_variant.rows[0].title;
-        const selling_price = out_variant.rows[0].selling_price;
+    const items = [];
+    let subtotal = 0;
+    for (let i = 0; i < itemCount; i += 1) {
+        const variantId = cartItems[i].variant_id;
+        const variantQuery = 'select product_id,title,selling_price from variant where variant_id = $1';
+        const outVariant = await connection.query(variantQuery, [variantId]);
+        const variant = outVariant.rows[0];
+        const productId = variant.product_id;
+        const sellingPrice = variant.selling_price;
 
-        let product_title_query = `select title from product where product_id = $1`;
-        const out_title = await connection.query(product_title_query, [product_id]);
-        const product_title = out_title.rows[0].title;
+        const productTitleQuery = 'select title from product where product_id = $1';
+        const outTitle = await connection.query(productTitleQuery, [productId]);
+        const productTitle = outTitle.rows[0].title;
 
-        let get_image_url_query = `select image_url from productimage where product_id = $1`;
-        const out_image_url = await connection.query(get_image_url_query, [product_id]);
-        const image_url = out_image_url.rows[0].image_url;
+        const getImageUrlQuery = 'select image_url from productimage where product_id = $1';
+        const outImageUrl = await connection.query(getImageUrlQuery, [productId]);
+        const imageUrl = outImageUrl.rows[0].image_url;
 
-        var total_price = selling_price * cartItems[i].quantity;
+        const totalPrice = sellingPrice * cartItems[i].quantity;
 
-        var item = {
-            id: variant_id,
-            product: product_title,
-            variant: varient_title,
-            image: image_url,
-            unitprice: selling_price,
+        const item = {
+            id: variantId,
+            product: productTitle,
+            variant: variant.title,
+            image: imageUrl,
+            unitprice: sellingPrice,
             quantity: cartItems[i].quantity,
-            totalprice: total_price
+            totalprice: totalPrice,
 
         };
         items.push(item);
-        var subtotal = (subtotal + total_price);
-    };
+        subtotal += totalPrice;
+    }
     return [items, subtotal.toFixed(2)];
 };
 
-const removeItemFromCart = async (session_id, variant_id) => {
-    let get_customerid_query = `select customer_id from session where session_id = $1`;
-    const get_customerid_query_values = [session_id];
-    const out_customerid = await connection.query(get_customerid_query, get_customerid_query_values);
-    const customerID = out_customerid.rows[0].customer_id;
+const removeItemFromCart = async (sessionId, variantId) => {
+    const getCustomerIdQuery = 'select customer_id from session where session_id = $1';
+    const outCustomerId = await connection.query(getCustomerIdQuery, [sessionId]);
+    const customerID = outCustomerId.rows[0].customer_id;
 
-    let get_cart_items_query = `delete from cartitem where customer_id = $1 and variant_id = $2`;
-    const out_cart_items = await connection.query(get_cart_items_query, [customerID, variant_id]);
-
+    const getCartItemsQuery = 'delete from cartitem where customer_id = $1 and variant_id = $2';
+    await connection.query(getCartItemsQuery, [customerID, variantId]);
 };
 
 module.exports = {
-    getCartItems, removeItemFromCart
+    getCartItems, removeItemFromCart,
 };
