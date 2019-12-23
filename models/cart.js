@@ -35,16 +35,16 @@ const getCartItems = async (sessionID) => {
         let variant_query = `select product_id,title,selling_price from variant where variant_id = $1`;
         const out_variant = await connection.query(variant_query, [variant_id]);
         const product_id = out_variant.rows[0].product_id;
-        // // const title = out_variant.rows[0].title;
+        const varient_title = out_variant.rows[0].title;
         const selling_price = out_variant.rows[0].selling_price;
 
         let product_title_query = `select title from product where product_id = $1`;
         const out_title = await connection.query(product_title_query, [product_id]);
-        const title = out_title.rows[0].title;
+        const product_title = out_title.rows[0].title;
 
-        let variant_attribute_query = `select attribute_name,attribute_value from variantattribute where variant_id = $1`;
-        const out_variant_attribute = await connection.query(variant_attribute_query, [variant_id]);
-        const variant_attributes = out_variant_attribute.rows;
+        // let variant_attribute_query = `select attribute_name,attribute_value from variantattribute where variant_id = $1`;
+        // const out_variant_attribute = await connection.query(variant_attribute_query, [variant_id]);
+        // const variant_attributes = out_variant_attribute.rows;
 
         // console.log("variant_attributes : ");
         // console.log(variant_attributes);
@@ -57,8 +57,8 @@ const getCartItems = async (sessionID) => {
 
         var item = {
             id: variant_id,
-            product: title,
-            variant: JSON.stringify(variant_attributes),
+            product: product_title,
+            variant: varient_title,
             image: image_url,
             unitprice: selling_price,
             quantity: cartItems[i].quantity,
@@ -66,7 +66,7 @@ const getCartItems = async (sessionID) => {
 
         };
         items.push(item);
-        subtotal = subtotal + total_price;
+        subtotal = subtotal + parseFloat(total_price);
     };
     // console.log(items);
     return [items, subtotal];
