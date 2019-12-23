@@ -3,6 +3,7 @@ const router = require('express').Router();
 
 router.get('/', (req, res) => {
     res.render('order', {
+        loggedIn: req.session.user != null,
         show_thanks: false,
         subtotal: '13800.00',
         delivery: '800.00',
