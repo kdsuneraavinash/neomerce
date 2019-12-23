@@ -103,11 +103,20 @@ const addToCart = async (variant_id, qty, sessionID) => {
     const customerID = out_customerid.rows[0].customer_id;
     // console.log("customerID : " + customerID);
 
-    const add_to_cart_query = `insert into cartitem values($1,$2,$3,$4)`;
-    const add_to_cart_query_values = [customerID,variant_id,'added',qty];
-    const out_addToCart = await connection.query(add_to_cart_query, add_to_cart_query_values);
+    let get_cart_items_query = `select * from cartitem where customer_id = $1 and variant_id = $2`;
+    const out_cart_items = await connection.query(get_cart_items_query, [customerID, variant_id]);
+    const itemCount = out_cart_items.rowCount;
 
-    return null;
+    if (!itemCount == 0) {
+        console.log("Item is already added to the cart!");
+        // alert("Item is already added to the cart!");
+    }
+    else {
+        const add_to_cart_query = `insert into cartitem values($1,$2,$3,$4)`;
+        const add_to_cart_query_values = [customerID, variant_id, 'added', qty];
+        const out_addToCart = await connection.query(add_to_cart_query, add_to_cart_query_values);
+    }
+    return true;
 
 };
 
