@@ -25,22 +25,12 @@ router.get('/', async (req, res) => {
     try {
         const loggedIn = req.session.user != null;
         const cartItemsSubtotal = await Cart.getCartItems(req.sessionID);
-        console.log(req.query);
-        if (!req.query == null) {
-            res.render('cart', {
-                loggedIn,
-                items: cartItemsSubtotal[0],
-                subtotal: cartItemsSubtotal[1],
-                error: req.query.error,
-            });
-        } else {
-            res.render('cart', {
-                loggedIn,
-                items: cartItemsSubtotal[0],
-                subtotal: cartItemsSubtotal[1],
-                error: null,
-            });
-        }
+        res.render('cart', {
+            loggedIn,
+            items: cartItemsSubtotal[0],
+            subtotal: cartItemsSubtotal[1],
+            error: req.query.error,
+        });
     } catch (error) {
         helper.errorResponse(res, error);
     }
