@@ -97,12 +97,12 @@ const addToCart = async (variantId, qty, sessionID) => {
     const itemCount = outCartItems.rowCount;
 
     if (itemCount !== 0) {
-        console.log('Item is already added to the cart!');
-    } else {
-        const addToCartQuery = 'insert into cartitem values($1,$2,$3,$4)';
-        const addToCartQueryValues = [customerID, variantId, 'added', qty];
-        await connection.query(addToCartQuery, addToCartQueryValues);
+        return 'Item is already added to the cart!';
     }
+    const addToCartQuery = 'insert into cartitem values($1,$2,$3,$4)';
+    const addToCartQueryValues = [customerID, variantId, 'added', qty];
+    await connection.query(addToCartQuery, addToCartQueryValues);
+    return null;
 };
 
 module.exports = {
