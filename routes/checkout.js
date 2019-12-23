@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 router.get('/', (req, res) => {
     res.render('checkout', {
+        loggedIn: req.session.user != null,
         subtotal: '13800.00',
         estdelivery: '800.00',
         withdelivery: '14600.00',

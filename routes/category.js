@@ -30,6 +30,7 @@ router.get('/', async (req, res) => {
             const productDetails = await product.getProductsFromQuery(req, res, req.query.query);
 
             res.render('category', {
+                loggedIn,
                 products: productDetails.result,
                 categories,
                 categorytitle: null,
