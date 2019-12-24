@@ -73,9 +73,11 @@
                                         class="lnr lnr-chevron-down"></i></button>
                             </div>
 
-                            <input type="text" name="variant" v-bind:value="variants[current].variant_id" hidden/>
+                            <input type="text" name="variant" v-bind:value="variants[current].variant_id" hidden />
                             <div class="card_area d-flex align-items-center">
-                                <button type="submit" class="primary-btn" href="#">Add to Cart</button>
+                                <button v-if="selectedQuantity > 0" type="submit" style="border: none;" value="submit"
+                                    class="primary-btn">Add to
+                                    Cart</button>
                             </div>
                         </form>
                     </div>
