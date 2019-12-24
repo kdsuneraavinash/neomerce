@@ -1,17 +1,19 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const City = require('../models/city');
 const helper = require('../utils/helper');
 
 
 /* GET endpoint for user registration. Render the user registration page upon request */
-router.get('/register', (req, res) => {
-    res.render('register');
+router.get('/register', async (req, res) => {
+    const cities = await City.getCities();
+    res.render('register', { cities, error: req.query.error });
 });
 
 /* POST endpoint for user registration. */
 router.post('/register', async (req, res) => {
-    // TODO validation here
+    // TODO: validation here
     const {
         body: {
             username, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,
@@ -25,10 +27,10 @@ router.post('/register', async (req, res) => {
             req.session.user = true;
             res.redirect('/');
         } else {
-            res.render('register');
+            res.redirect('register');
         }
     } catch (error) {
-        helper.errorResponse(res, error);
+        res.redirect(`register?error=${error}`);
     }
 });
 
@@ -42,7 +44,7 @@ router.get('/logout', (req, res) => {
 
 
 router.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', { error: req.query.error });
 });
 
 
@@ -51,19 +53,14 @@ router.post('/login', async (req, res) => {
     try {
         const passwordValidated = await User.validatePassword(username, password);
         if (!passwordValidated) {
-            // TODO: Notify that password is invalid
-            res.redirect('/user/login');
+            res.redirect('/user/login?error=Username or password invalid');
         } else {
-            try {
-                const assigned = await User.assignCustomerId(req.sessionID, username);
-                if (assigned) {
-                    req.session.user = true;
-                    res.redirect('/');
-                } else {
-                    res.redirect('/user/login');
-                }
-            } catch (error) {
-                helper.errorResponse(res, error);
+            const assigned = await User.assignCustomerId(req.sessionID, username);
+            if (assigned) {
+                req.session.user = true;
+                res.redirect('/');
+            } else {
+                res.redirect('/user/login?error=Something went wrong');
             }
         }
     } catch (error) {

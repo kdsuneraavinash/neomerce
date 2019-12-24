@@ -4,11 +4,132 @@
 
 <body>
     <%- include('common/navbar',{loggedIn:false}) %>
-    <%- include('common/scripts') %>
     <%- include('common/banner', {'title': 'Register'}) %>
     <%- include('partial/register') %>
     <%- include('common/footer') %>
-    
+    <%- include('common/scripts') %>
+    <script src="/js/window-date-picker.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        const picker = new WindowDatePicker({
+            el: '#yellow-picker',
+            toggleEl: '#birthday',
+            inputEl: '#birthday'
+        });
+
+        $(function () {
+            var availableTags = JSON.parse(`<%- JSON.stringify(cities) %>`);
+            $("#city").autocomplete({
+                source: availableTags
+            });
+        });
+
+        let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let phoneNumberRegex = /^\d{10}$/;
+
+        /// Validate forms in the page
+        $(document).ready(function () {
+            let forms = $('.needs-validation');
+
+            let username = $("#username");
+            let email = $("#email");
+            let password = $("#password");
+            let passwordRetype = $("#retype-password");
+            let firstName = $("#firstName");
+            let lastName = $("#lastName");
+            let addressLine1 = $("#addressLine1");
+            let addressLine2 = $("#addressLine2");
+            let phoneNumber = $("#telephoneNumber");
+            let city = $("#city");
+            let postal = $("#postalCode");
+            let birthday = $("#birthday");
+
+            email.on("input", function () {
+                validateNotEmptyAndRegex(email, emailRegex);
+            });
+            username.on("input", function () {
+                validateNotEmpty(username);
+            });
+            password.on("input", function () {
+                validateNotEmpty(password);
+            });
+            passwordRetype.on("input", function () {
+                validateNotEmpty(passwordRetype);
+                checkField(passwordRetype, passwordRetype.val() === password.val())
+            });
+            firstName.on("input", function () {
+                validateNotEmpty(firstName);
+            });
+            lastName.on("input", function () {
+                validateNotEmpty(lastName);
+            });
+            addressLine1.on("input", function () {
+                validateNotEmpty(addressLine1);
+            });
+            addressLine2.on("input", function () {
+                validateNotEmpty(addressLine2);
+            });
+            phoneNumber.on("input", function () {
+                validateNotEmptyAndRegex(phoneNumber, phoneNumberRegex);
+            });
+            city.on("input", function () {
+                validateNotEmpty(city);
+            });
+            postal.on("input", function () {
+                validateNotEmpty(postal);
+            });
+            birthday.on("input", function () {
+                validateNotEmpty(birthday);
+            });
+
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function () {
+                    console.log("ho");
+                    if (
+                        validateNotEmptyAndRegex(email, emailRegex) &&
+                        validateNotEmpty(username) &&
+                        validateNotEmpty(password) &&
+                        validateNotEmpty(passwordRetype) &&
+                        validateNotEmpty(firstName) &&
+                        validateNotEmpty(lastName) &&
+                        validateNotEmpty(addressLine1) &&
+                        validateNotEmpty(addressLine2) &&
+                        validateNotEmptyAndRegex(phoneNumber, phoneNumberRegex) &&
+                        validateNotEmpty(city) &&
+                        validateNotEmpty(postal) &&
+                        validateNotEmpty(birthday) &&
+                        checkField(passwordRetype, passwordRetype.val() === password.val())
+                    ) {
+                        form.submit();
+                    }
+                }, false);
+            });
+        });
+
+        function checkField(field, conditions) {
+            field.removeClass("is-valid");
+            field.removeClass("is-invalid");
+            if (conditions) {
+                field.addClass("is-valid");
+                return true;
+            } else {
+                field.addClass("is-invalid");
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            }
+        }
+
+        function validateNotEmpty(field) {
+            return checkField(field, field.val() !== "");
+        }
+
+        function validateNotEmptyAndRegex(field, regex) {
+            return checkField(field, field.val() !== "" &&
+                regex.test(field.val()));
+        }
+    </script>
 </body>
 
 </html>
