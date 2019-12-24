@@ -27,7 +27,10 @@
                                             src="<%= item.image %>" alt="">
                                     </div>
                                     <div class="media-body">
-                                        <h5><%= item.product %></h5>
+                                        <h5>
+                                            <a href="/item/show/<%= item.productid %>"
+                                                class="text-dark"><%= item.product %></a>
+                                        </h5>
                                         <p><%= item.variant %></p>
                                         <form action="/cart/remove/<%= item.id %>" method="post">
                                             <button type="submit" class="genric-btn small danger-border">Remove</button>

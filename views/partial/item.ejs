@@ -62,7 +62,7 @@
                             <div class="product_count">
                                 <label for="qty">Quantity:</label>
                                 <%# Quantity %>
-                                <input type="text" name="qty" id="sst" maxlength="12" v-bind:value="selectedQuantity"
+                                <input type="text" name="qty" id="sst" maxlength="12" v-model.number="selectedQuantity"
                                     title="Quantity:" class="input-text qty">
                                 <button
                                     v-on:click="selectedQuantity = Math.min(selectedQuantity+1, variants[current].amount) "

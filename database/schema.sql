@@ -582,9 +582,14 @@ BEGIN
         RAISE EXCEPTION 'Your item quantity exceeds stock quantity'; 
     end if;
 
+    if (var_same_item_qty > 0) then
+        -- previous items exists, have to merge
+        UPDATE CartItem SET cart_item_status = 'merged' WHERE customer_id = var_customer_id AND variant_id = $2 AND cart_item_status = 'added';
+    end if;
+
     if ($3 > 0) then
         -- quantity is valid
-        insert into CartItem values(default, var_customer_id, $2, 'added', $3 + var_same_item_qty);
+        INSERT INTO CartItem VALUES(default, var_customer_id, $2, 'added', $3 + var_same_item_qty);
     else
         RAISE EXCEPTION 'Quantity must be bigger than zero';
     end if;

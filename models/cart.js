@@ -8,6 +8,7 @@ const getCartItems = async (sessionID) => {
                         image_url as image,
                         Variant.title as variant, 
                         Product.title as product, 
+                        Product.product_id as productid,
                         selling_price as unitprice
                     from 
                         Customer natural join 
