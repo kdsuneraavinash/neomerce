@@ -1,18 +1,17 @@
 const router = require('express').Router();
 const helper = require('../utils/helper');
 const Cart = require('./../models/cart');
-const Product = require('./../models/product');
 
 router.post('/add/', async (req, res) => {
-    const result = await Product.addToCart(
+    const result = await Cart.addItemToCart(
         req.body.variant,
         req.body.qty,
         req.sessionID,
     );
-    if (result == null) {
+    if (result === null) {
         res.redirect('/cart');
     } else {
-        res.redirect(`/cart?error= + ${result}`);
+        res.redirect(`/cart?error=${result}`);
     }
 });
 
@@ -24,11 +23,11 @@ router.post('/remove/:id', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const loggedIn = req.session.user != null;
-        const cartItemsSubtotal = await Cart.getCartItems(req.sessionID);
+        const { cartItems, subtotal } = await Cart.getCartItems(req.sessionID);
         res.render('cart', {
             loggedIn,
-            items: cartItemsSubtotal[0],
-            subtotal: cartItemsSubtotal[1],
+            items: cartItems,
+            subtotal,
             error: req.query.error,
         });
     } catch (error) {
