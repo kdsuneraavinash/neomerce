@@ -1,6 +1,5 @@
 const connection = require('../config/db');
 
-
 const getProduct = async (req, res, productId) => {
     let query = `select product_id, title, description, weight_kilos, brand 
                             from Product
@@ -87,6 +86,25 @@ const getVariants = async (req, res, productId) => {
     return { result, attributes: outAtrribs.rows };
 };
 
+
+const addToCart = async (variantId, qty, sessionID) => {
+    const getCustomeridQuery = 'select customer_id from session where session_id = $1';
+    const outCustomerid = await connection.query(getCustomeridQuery, [sessionID]);
+    const customerID = outCustomerid.rows[0].customer_id;
+
+    const getCartItemsQuery = 'select * from cartitem where customer_id = $1 and variant_id = $2';
+    const outCartItems = await connection.query(getCartItemsQuery, [customerID, variantId]);
+    const itemCount = outCartItems.rowCount;
+
+    if (itemCount !== 0) {
+        return 'Item is already added to the cart!';
+    }
+    const addToCartQuery = 'insert into cartitem values($1,$2,$3,$4)';
+    const addToCartQueryValues = [customerID, variantId, 'added', qty];
+    await connection.query(addToCartQuery, addToCartQueryValues);
+    return null;
+};
+
 module.exports = {
-    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants,
+    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants, addToCart,
 };

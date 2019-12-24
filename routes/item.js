@@ -1,8 +1,8 @@
-/* eslint-disable quote-props */
 const router = require('express').Router();
 const Product = require('./../models/product');
 const ProductImage = require('./../models/productimage');
 const helper = require('../utils/helper');
+
 
 router.get('/show/:id', async (req, res) => {
     try {
