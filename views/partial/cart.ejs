@@ -1,7 +1,13 @@
 <section class="cart_area" id="shopping_cart_page">
     <div class="container">
+        <% if (error != null){ %>
+        <div class="alert alert-danger" role="alert">
+            <%=error%>
+        </div>
+        <% }%>
         <div class="cart_inner">
             <div class="table-responsive">
+
                 <table class="table">
                     <thead>
                         <tr>
@@ -17,12 +23,16 @@
                             <td>
                                 <div class="media">
                                     <div class="d-flex">
-                                        <img height="100" width="100" src="<%= item.image %>" alt="">
+                                        <img height="100" width="100" style="object-fit: contain;"
+                                            src="<%= item.image %>" alt="">
                                     </div>
                                     <div class="media-body">
-                                        <h5><%= item.product %></h5>
+                                        <h5>
+                                            <a href="/item/show/<%= item.productid %>"
+                                                class="text-dark"><%= item.product %></a>
+                                        </h5>
                                         <p><%= item.variant %></p>
-                                        <form action="/cart/remove/5de2acbf2a9751c69c33133d" method="post">
+                                        <form action="/cart/remove/<%= item.id %>" method="post">
                                             <button type="submit" class="genric-btn small danger-border">Remove</button>
                                         </form>
                                     </div>
@@ -53,11 +63,13 @@
                     </tbody>
                 </table>
                 <div class="checkout_btn_inner float-left d-none d-md-flex   align-items-center">
-                    <a class="gray_btn" href="/category">Continue Shopping</a>
+                    <a class="gray_btn" href="/">Continue Shopping</a>
                 </div>
+                <% if (items != null && items.length != 0){ %>
                 <div class="checkout_btn_inner d-flex align-items-center float-right">
-                    <a class="primary-btn" href="/checkout">Proceed to Checkout</a>
+                    <a class="primary-btn" href="/">Proceed to Checkout</a>
                 </div>
+                <% } %>
             </div>
         </div>
     </div>

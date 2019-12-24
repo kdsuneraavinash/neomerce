@@ -292,12 +292,13 @@ CREATE TABLE CartItemStatus (
 
 -- Items in cart
 CREATE TABLE CartItem (
+    cart_item_id uuid4 default generate_uuid4(),
     customer_id uuid4,
     variant_id uuid4,
     cart_item_status varchar(15) not null,
     quantity int not null check(is_positive(quantity)),
     added_time timestamp not null default now(),
-    primary key (customer_id, variant_id),
+    primary key (cart_item_id),
     foreign key (customer_id) references Customer(customer_id),
     foreign key (cart_item_status) references CartItemStatus(cart_item_status),
     foreign key (variant_id) references Variant(variant_id)
@@ -565,6 +566,48 @@ BEGIN
 END;
 $$;
 
+-- Procedure to add item to cart (session_id, variant_id, quantity)
+CREATE OR REPLACE PROCEDURE addItemToCart(SESSION_UUID, UUID4, INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id = $1);
+var_same_item_qty int := (select sum(quantity) from CartItem where customer_id = var_customer_id and variant_id = $2 and cart_item_status = 'added');
+var_max_quantity int := (select quantity from variant where variant_id = $2);
+BEGIN
+    if (var_same_item_qty is null) then
+        var_same_item_qty := 0;
+    end if;
+    if (var_max_quantity < ($3 + var_same_item_qty)) then
+        RAISE EXCEPTION 'Your item quantity exceeds stock quantity'; 
+    end if;
+
+    if (var_same_item_qty > 0) then
+        -- previous items exists, have to merge
+        UPDATE CartItem SET cart_item_status = 'merged' WHERE customer_id = var_customer_id AND variant_id = $2 AND cart_item_status = 'added';
+    end if;
+
+    if ($3 > 0) then
+        -- quantity is valid
+        INSERT INTO CartItem VALUES(default, var_customer_id, $2, 'added', $3 + var_same_item_qty);
+    else
+        RAISE EXCEPTION 'Quantity must be bigger than zero';
+    end if;
+	COMMIT;
+END;
+$$;
+
+-- Procedure to remove item from cart (session_id, cart_item_id)
+CREATE OR REPLACE PROCEDURE removeCartItem(SESSION_UUID, UUID4)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id = $1);
+BEGIN
+    UPDATE CartItem SET cart_item_status = 'removed' WHERE cart_item_id = $2 and customer_id = var_customer_id and cart_item_status = 'added';
+    COMMIT;
+END;
+$$;
 
 /*
   _           _                    
@@ -578,6 +621,7 @@ $$;
 CREATE INDEX ON ProductImage(product_id);
 CREATE INDEX ON Variant(product_id);
 CREATE INDEX ON Product(title);
+CREATE INDEX ON CartItem(variant_id, customer_id);
 
 /*
         _                   

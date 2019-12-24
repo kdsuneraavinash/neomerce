@@ -58,21 +58,27 @@
                                 </div>
                             </div>
                         </div>
+                        <form method="post" action="/cart/add/">
+                            <div class="product_count">
+                                <label for="qty">Quantity:</label>
+                                <%# Quantity %>
+                                <input type="text" name="qty" id="sst" maxlength="12" v-model.number="selectedQuantity"
+                                    title="Quantity:" class="input-text qty">
+                                <button
+                                    v-on:click="selectedQuantity = Math.min(selectedQuantity+1, variants[current].amount) "
+                                    class="increase items-count" type="button"><i
+                                        class="lnr lnr-chevron-up"></i></button>
+                                <button v-on:click="selectedQuantity = Math.max(selectedQuantity-1, 0)"
+                                    class="reduced items-count" type="button"><i
+                                        class="lnr lnr-chevron-down"></i></button>
+                            </div>
 
-                        <div class="product_count">
-                            <label for="qty">Quantity:</label>
-                            <%# Quantity %>
-                            <input type="text" name="qty" id="sst" maxlength="12" v-bind:value="selectedQuantity"
-                                title="Quantity:" class="input-text qty">
-                            <button
-                                v-on:click="selectedQuantity = Math.min(selectedQuantity+1, variants[current].amount) "
-                                class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                            <button v-on:click="selectedQuantity = Math.max(selectedQuantity-1, 0)"
-                                class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-                        </div>
-                        <div class="card_area d-flex align-items-center">
-                            <a class="primary-btn" href="#">Add to Cart</a>
-                        </div>
+                            <input type="text" name="variant" v-bind:value="variants[current].variant_id" hidden />
+                            <div class="card_area d-flex align-items-center">
+                                <button v-if="selectedQuantity > 0" type="submit" style="border: none;" value="submit"
+                                    class="primary-btn">Add to Cart</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
