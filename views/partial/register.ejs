@@ -9,48 +9,58 @@
                 customer, please proceed to the Billing & Shipping section.</p>
             <form class="row contact_form" action="/user/register" method="post" novalidate="novalidate" style="max-width:none">
                 <div class="col-md-12 form-group p_star" id="username-div">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" onblur="checkAvailability();this.placeholder='Username'" onfocus="this.placeholder=''">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" onblur="checkAvailability();
+                    this.placeholder='Username'" onfocus="this.placeholder=''">
                 </div>
                 <div class="col-md-6 form-group p_star">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder=''" onblur="this.placeholder='Password'">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='Password'">
                     
                 </div>
 
                 <div class="col-md-6 form-group p_star">
-                    <input type="password" class="form-control" id="retype-password" name="retype-password" placeholder="Re-type password" onfocus="this.placeholder=''" onblur="this.placeholder='Re-type password'">
+                    <input type="password" class="form-control" id="retype-password" name="retype-password" placeholder="Re-type password" 
+                    onfocus="this.placeholder=''" onblur="this.placeholder='Re-type password'">
                     
                 </div>
 
                 <div class="col-md-6 form-group p_star">
-                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" onfocus="this.placeholder=''" onblur="this.placeholder='First Name'">
+                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='First Name'">
                     
                 </div>
                 <div class="col-md-6 form-group p_star">
-                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" onfocus="this.placeholder=''" onblur="this.placeholder='Last Name'">
+                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='Last Name'">
                     
                 </div>
 
                 <div class="col-md-12 form-group p_star">
-                    <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="Address Line 01" onfocus="this.placeholder=''" onblur="this.placeholder='Address Line 01'">
+                    <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="Address Line 01" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='Address Line 01'">
                    
                 </div>
 
                 <div class="col-md-12 form-group p_star">
-                    <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Address Line 02" onfocus="this.placeholder=''" onblur="this.placeholder='Address Line 02'">
+                    <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Address Line 02" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='Address Line 02'">
                    
                 </div>
 
                 <div class="col-md-12 form-group p_star">
-                    <input type="text" class="form-control" id="telephoneNumber" name="telephoneNumber" placeholder="Telephone Number" onfocus="this.placeholder=''" onblur="this.placeholder='Telephone Number'">                   
+                    <input type="text" class="form-control" id="telephoneNumber" name="telephoneNumber" placeholder="Telephone Number" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='Telephone Number'">                   
                 </div>
 
                 <div class="col-md-6 form-group p_star">
-                    <input type="text" class="form-control" id="city" name="city" placeholder="City" onfocus="this.placeholder=''" onblur="this.placeholder='City'">
+                    <input type="text" class="form-control" id="city" name="city" placeholder="City" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='City'">
                     
                 </div>
 
                 <div class="col-md-6 form-group p_star">
-                    <input type="text" class="form-control" id="postalCode" name="postalCode" placeholder="Postal Code" onfocus="this.placeholder=''" onblur="this.placeholder='Postal code'">
+                    <input type="text" class="form-control" id="postalCode" name="postalCode" placeholder="Postal Code" onfocus="this.placeholder=''" 
+                    onblur="this.placeholder='Postal code'">
                    
                 </div>
 
@@ -82,13 +92,7 @@ const picker = new WindowDatePicker({
     toggleEl: '#birthday',
 
     inputEl: '#birthday'
-    });
-
-
-
-
-
-
+});
 
 
 /*Check availability of the username*/
