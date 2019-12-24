@@ -1,3 +1,4 @@
+
 <section class="checkout_area section_gap">
     <div class="container">
         <div class="returning_customer">
@@ -39,6 +40,10 @@
                    
                 </div>
 
+                <div class="col-md-12 form-group p_star">
+                    <input type="text" class="form-control" id="telephoneNumber" name="telephoneNumber" placeholder="Telephone Number" onfocus="this.placeholder=''" onblur="this.placeholder='Telephone Number'">                   
+                </div>
+
                 <div class="col-md-6 form-group p_star">
                     <input type="text" class="form-control" id="city" name="city" placeholder="City" onfocus="this.placeholder=''" onblur="this.placeholder='City'">
                     
@@ -48,17 +53,48 @@
                     <input type="text" class="form-control" id="postalCode" name="postalCode" placeholder="Postal Code" onfocus="this.placeholder=''" onblur="this.placeholder='Postal code'">
                    
                 </div>
+
+
+                <div class="col-md-6 form-group p_star">   
+                        <input id="birthday" class="form-control" placeholder="Birthday"> 
+                        <div id="yellow-picker" class="wdp-yellow"></div>
+                </div>
+
                 <div class="col-md-12 form-group">
                     <button type="submit" value="submit" class="primary-btn">Register</button>
                 </div>
             </form>
         </div>
     </div>
+
+  
+
+
+
 </section>
 
 <script>
+
+
+const picker = new WindowDatePicker({
+    el: '#yellow-picker',
+
+    toggleEl: '#birthday',
+
+    inputEl: '#birthday'
+    });
+
+
+
+
+
+
+
+
 /*Check availability of the username*/
+
 const checkAvailability = () => {
+
     const value = document.getElementById('username').value;
     const xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {

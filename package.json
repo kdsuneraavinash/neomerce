@@ -24,7 +24,8 @@
         "express-session": "^1.15.6",
         "ouch": "^2.0.0",
         "pg": "^7.14.0",
-        "uuid": "^3.3.3"
+        "uuid": "^3.3.3",
+        "window-date-picker": "^1.0.1"
     },
     "devDependencies": {
         "eslint": "^6.7.1",
