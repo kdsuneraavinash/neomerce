@@ -117,14 +117,6 @@
 
                         <% } %>     
 
-
-
-
-
-
-
-
-
                         </div>
                         <div v-else class="col-md-12 p-0 m-0">
                             <div class="col-md-12 form-group p_star">
@@ -140,18 +132,22 @@
                         <h2>Your Order</h2>
                         <ul class="list">
                             <li><a href="#">Product <span>Total (LKR)</span></a></li>
-                            <% for (const item of items) {%>
-                            <li><a href="#"><%= item.variant.substring(0, 12) -%>... <span class="middle">x
-                                        <%= item.quantity %></span> <span class="last"><%= item.totalprice %></span></a>
+                            <% 
+                            let subtotal = 0;
+                            for (const item of proceedCheckOutObj['items']) {
+                                subtotal = subtotal + (parseFloat(item.selling_price)*item.quantity)
+                                %>
+                            <li><a href="#"><%= item.product_title.substring(0, 12) -%>... <span class="middle">x
+                                        <%= item.quantity %></span> <span class="last"><%= ((parseFloat(item.selling_price)).toFixed(2))*item.quantity  %></span></a>
                             </li>
                             <% } %>
                         </ul>
                         <ul class="list list_2">
                             <li><a href="#">Subtotal <span><%= subtotal %></span></a></li>
                             <li v-if="delivery_method === 'deliver'"><a href="#">Shipping <span>
-                                        <%= estdelivery %> </span></a></li>
+                                        <%= proceedCheckOutObj['delivery_info'].delivery_charge %> </span></a></li>
                             <li><a href="#">Total <span>
-                                        {{delivery_method==='deliver' ? '<%= withdelivery %>' : '<%= subtotal %>'}}
+                                        {{delivery_method==='deliver' ? '<%= parseFloat(proceedCheckOutObj['delivery_info'].delivery_charge) + parseFloat(subtotal) %>' : '<%= subtotal %>'}}
                                     </span></a></li>
                         </ul>
                         <div class="payment_item">
