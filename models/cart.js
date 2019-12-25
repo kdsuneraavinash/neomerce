@@ -77,6 +77,37 @@ const checkStock = async (sessionID) => {
 }
 
 
+const proceedCheckOut = async(sessionID,loggedIn) => {
+    console.log(loggedIn)
+    let productDetailsObject = {};
+    let result
+    if(loggedIn){
+        const userInfoQueryString = `SELECT email,first_name,last_name,addr_line1,addr_line2,city,postcode,phone_number
+                                     delivery_days,delivery_charge from UserDeliveryView,session where UserDeliveryView.customer_id
+                                     =session.customer_id and session.session_id = $1`
+        const userInfoValues = [sessionID]
+        result = await connection.query(userInfoQueryString,userInfoValues)
+        productDetailsObject['delivery_info'] = result.rows[0]
+
+    }
+
+    const itemsInfoQueryString = `SELECT variant_id,product_id,quantity,variant_title,selling_price,product_title from
+                                ProductVariantView,session where ProductVariantView.customer_id = session.customer_id and
+                                session.session_id = $1`
+    const itemInfoValues = [sessionID]
+
+    result = await connection.query(itemsInfoQueryString,itemInfoValues)
+
+    productDetailsObject['items'] = result.rows
+
+    console.log(productDetailsObject)
+
+    return productDetailsObject
+
+
+}
+
+
 
 
 
@@ -87,5 +118,5 @@ const checkStock = async (sessionID) => {
 
 
 module.exports = {
-    getCartItems, removeItemFromCart, addItemToCart, transferCartItem,
+    getCartItems, removeItemFromCart, addItemToCart, transferCartItem,checkStock,proceedCheckOut
 };

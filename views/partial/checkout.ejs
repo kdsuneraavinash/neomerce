@@ -17,22 +17,39 @@
                 <div class="col-lg-8">
                     <h3>Your Details</h3>
                     <form class="row contact_form" action="#" method="post" novalidate="novalidate">
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="first" name="name">
-                            <span class="placeholder" data-placeholder="First name"></span>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="last" name="name">
-                            <span class="placeholder" data-placeholder="Last name"></span>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="number" name="number">
-                            <span class="placeholder" data-placeholder="Phone number"></span>
-                        </div>
-                        <div class="col-md-6 form-group p_star">
-                            <input type="text" class="form-control" id="email" name="compemailany">
-                            <span class="placeholder" data-placeholder="Email Address"></span>
-                        </div>
+
+                        <% if (loggedIn) { %>
+
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name" value="<%= proceedCheckOutObj['delivery_info'].first_name %>">
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="last" name="name" placeholder="Last Name" value="<%= proceedCheckOutObj['delivery_info'].last_name %>">
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address" value="<%= proceedCheckOutObj['delivery_info'].email %>">
+                            </div>
+
+                        <%} else { %>
+
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name">
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="last" name="name" placeholder="Last Name">
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address">
+                            </div>
+
+                        <% } %>
+
 
                         <div class="col-md-12 form-group">
                             <textarea class="form-control" name="message" id="message" rows="1"
@@ -64,22 +81,50 @@
                                 </p>
                             </div>
 
+
+                        <% if (loggedIn) { %>
+
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add1" name="add1">
-                                <span class="placeholder" data-placeholder="Delivery Address line 01"></span>
+                                <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 1" value="<%= proceedCheckOutObj['delivery_info'].addr_line1 %>">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add2" name="add2">
-                                <span class="placeholder" data-placeholder="Delivery Address line 02"></span>
+                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address Line 2" value="<%= proceedCheckOutObj['delivery_info'].addr_line2 %>">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="city" name="city">
-                                <span class="placeholder" data-placeholder="Delivery Town/City"></span>
+                                <input type="text" class="form-control" id="city" name="city" placeholder="City" value="<%= proceedCheckOutObj['delivery_info'].city %>">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="zip" name="zip">
-                                <span class="placeholder" data-placeholder="Delivery Postcode/ZIP"></span>
+                                <input type="text" class="form-control" id="zip" name="zip" placeholder="PostCode" value="<%= proceedCheckOutObj['delivery_info'].postcode %>">
                             </div>
+
+
+                        <%} else { %>
+
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 1">
+                                
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address Line 2">
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="zip" name="zip" placeholder="PostCode">
+                            </div>
+
+
+                        <% } %>     
+
+
+
+
+
+
+
+
+
                         </div>
                         <div v-else class="col-md-12 p-0 m-0">
                             <div class="col-md-12 form-group p_star">
