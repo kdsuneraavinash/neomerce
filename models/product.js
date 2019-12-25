@@ -87,7 +87,7 @@ const getRelatedProducts = async (req, res, productId, limit) => {
 const getRecentProducts = async (req, res, limit) => {
     const query = `select *
                     from ProductBasicView natural join Product
-                    order by added_date
+                    order by added_date desc
                     limit $1;`;
     const out = await connection.query(query, [limit]);
     return out.rows;
