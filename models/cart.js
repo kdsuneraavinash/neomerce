@@ -22,8 +22,8 @@ const getCartItems = async (sessionID) => {
     const out = await connection.query(query, [sessionID]);
     let subtotal = 0;
     out.rows.forEach((v) => {
-        // eslint-disable-next-line no-param-reassign
         if (v.cart_item_status === 'added') {
+            // eslint-disable-next-line no-param-reassign
             v.totalprice = v.unitprice * v.quantity;
             subtotal += v.totalprice;
         }
