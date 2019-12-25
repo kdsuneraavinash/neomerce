@@ -56,6 +56,31 @@ const removeItemFromCart = async (sessionId, variantId) => {
     await connection.query(getCartItemsQuery, [customerID, variantId]);
 };
 
+
+
+
+const checkStock = async (sessionID) => {
+    const queryString = 'CALL checkAvailability($1)'
+    const values = [sessionID]
+    try{
+        await connection.query(queryString,values)
+    }catch(err){
+        return err
+    }
+    return null
+    
+}
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
-    getCartItems, removeItemFromCart,
+    getCartItems, removeItemFromCart,checkStock
 };

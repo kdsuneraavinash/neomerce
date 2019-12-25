@@ -1,6 +1,44 @@
 const router = require('express').Router();
+const Cart = require('../models/cart')
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+
+    let result =await Cart.checkStock(req.sessionID)
+
+    if(result == null){
+        
+
+    }else{
+        res.redirect(`/cart?error=${result}`)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     res.render('checkout', {
         loggedIn: req.session.user != null,
         subtotal: '13800.00',
