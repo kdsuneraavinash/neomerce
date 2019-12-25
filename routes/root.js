@@ -1,11 +1,11 @@
 const router = require('express').Router();
-const auth = require('../utils/auth');
 const Product = require('./../models/product');
 
 
-router.get('/', auth.sessionChecker, async (req, res) => {
+router.get('/', async (req, res) => {
     const products = await Product.getRecentProducts(req, res, 18);
-    res.render('index', { loggedIn: false, products });
+    const loggedIn = req.session.user != null;
+    res.render('index', { loggedIn, products });
 });
 
 module.exports = router;

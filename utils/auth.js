@@ -1,15 +1,14 @@
 const pool = require('../config/db');
-const helper = require('../utils/helper')
+const helper = require('../utils/helper');
 
-const saveSession = async (req,res) => {
+const saveSession = async (req, res) => {
     const queryString = 'CALL assignSession($1)';
     const values = [req.sessionID];
-    try{
+    try {
         await pool.query(queryString, values);
-    }catch(err){
-        helper.errorResponse(res,err)
+    } catch (err) {
+        helper.errorResponse(res, err);
     }
-    
 };
 
 
