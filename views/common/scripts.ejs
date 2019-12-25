@@ -15,3 +15,14 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
 <script src="/js/gmaps.min.js"></script>
 <script src="/js/main.js"></script>
+
+<script>
+    // Loader Animation
+    $(window).on('load', function () {
+        let loader = $('#loader');
+        loader.fadeOut(1000, function () {
+            loader.addClass('loaded');
+        });
+
+    });
+</script>
