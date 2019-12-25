@@ -4,6 +4,9 @@ DROP PROCEDURE IF EXISTS addProduct;
 DROP PROCEDURE IF EXISTS assignSession;
 DROP PROCEDURE IF EXISTS createUser;
 DROP PROCEDURE IF EXISTS assignCustomerId;
+DROP PROCEDURE IF EXISTS transferCartItem;
+DROP PROCEDURE IF EXISTS addItemToCart;
+DROP PROCEDURE IF EXISTS removeCartItem;
 DROP TABLE IF EXISTS GuestInfomation cascade;
 DROP TABLE IF EXISTS Delivery cascade;
 DROP TABLE IF EXISTS DeliveryMethod cascade;
@@ -140,6 +143,7 @@ CREATE TABLE AccountType (
 CREATE TABLE Customer (
     customer_id uuid4 default generate_uuid4(),
     account_type varchar(15) not null,
+    deleted boolean default false,
     primary key (customer_id),
     foreign key (account_type) references AccountType(account_type) on update cascade
 );
@@ -293,8 +297,8 @@ CREATE TABLE CartItemStatus (
 -- Items in cart
 CREATE TABLE CartItem (
     cart_item_id uuid4 default generate_uuid4(),
-    customer_id uuid4,
-    variant_id uuid4,
+    customer_id uuid4 not null,
+    variant_id uuid4 not null,
     cart_item_status varchar(15) not null,
     quantity int not null check(is_positive(quantity)),
     added_time timestamp not null default now(),
@@ -558,11 +562,15 @@ CREATE OR REPLACE PROCEDURE assignCustomerId(SESSION_UUID, VARCHAR(255))
 LANGUAGE plpgsql    
 AS $$
 DECLARE
-customer_id_ uuid4 := (select customer_id from userinformation where email=$2);
+new_id uuid4 := (select customer_id from userinformation where email=$2);
 old_id uuid4 := (select customer_id from session where session_id = $1);
+old_account_type varchar(15) := (select account_type from customer where customer_id = old_id);
 BEGIN
-	UPDATE session SET customer_id = customer_id_ where session_id = $1;
-	DELETE FROM customer where customer_id = old_id;
+	UPDATE Session SET customer_id = new_id where session_id = $1;
+	UPDATE Customer SET deleted = true where customer_id = old_id;
+    if (old_account_type = 'guest') then
+        UPDATE CartItem SET customer_id = new_id, cart_item_status = 'transferred' where customer_id = old_id and cart_item_status = 'added';
+    end if;
 END;
 $$;
 
@@ -593,7 +601,6 @@ BEGIN
     else
         RAISE EXCEPTION 'Quantity must be bigger than zero';
     end if;
-	COMMIT;
 END;
 $$;
 
@@ -604,8 +611,30 @@ AS $$
 DECLARE
 var_customer_id uuid4 := (select customer_id from session where session_id = $1);
 BEGIN
-    UPDATE CartItem SET cart_item_status = 'removed' WHERE cart_item_id = $2 and customer_id = var_customer_id and cart_item_status = 'added';
-    COMMIT;
+    UPDATE CartItem SET cart_item_status = 'removed' WHERE cart_item_id = $2 and customer_id = var_customer_id and 
+        (cart_item_status = 'added' or cart_item_status = 'transferred') ;
+END;
+$$;
+
+-- Procedure to remove item from transferred state and add to added state (session_id, cart_item_id)
+CREATE OR REPLACE PROCEDURE transferCartItem(SESSION_UUID, UUID4)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id = $1);
+var_variant_id uuid4;
+var_qty int;
+var_current_state varchar(15);
+BEGIN
+    SELECT variant_id, quantity, cart_item_status into var_variant_id, var_qty, var_current_state
+        from CartItem WHERE cart_item_id = $2 and customer_id = var_customer_id;
+
+    if (var_current_state != 'transferred') then
+        RAISE EXCEPTION 'Invalid transfer state';
+    end if;
+
+    CALL removeCartItem($1, $2);
+    CALL addItemToCart($1, var_variant_id, var_qty);
 END;
 $$;
 

@@ -5,6 +5,7 @@ const getCartItems = async (sessionID) => {
     const query = `select cart_item_id as id,
                         variant_id as variant_id, 
                         CartItem.quantity as quantity, 
+                        cart_item_status,
                         image_url as image,
                         Variant.title as variant, 
                         Product.title as product, 
@@ -17,7 +18,7 @@ const getCartItems = async (sessionID) => {
                         ProductMainImageView join Product using(product_id) 
                     where 
                         session_id = $1 and
-                        cart_item_status='added'`;
+                        (cart_item_status='added' or cart_item_status='transferred')`;
     const out = await connection.query(query, [sessionID]);
     let subtotal = 0;
     out.rows.forEach((v) => {
@@ -41,12 +42,23 @@ const addItemToCart = async (variantId, qty, sessionID) => {
     return null;
 };
 
-const removeItemFromCart = async (sessionId, variantId) => {
+const removeItemFromCart = async (sessionId, cartItemId) => {
     const query = 'CALL removeCartItem($1, $2)';
-    const values = [sessionId, variantId];
+    const values = [sessionId, cartItemId];
     await connection.query(query, values);
 };
 
+const transferCartItem = async (sessionId, cartItemId) => {
+    const query = 'CALL transferCartItem($1, $2)';
+    const values = [sessionId, cartItemId];
+    try {
+        await connection.query(query, values);
+    } catch (err) {
+        return err;
+    }
+    return null;
+};
+
 module.exports = {
-    getCartItems, removeItemFromCart, addItemToCart,
+    getCartItems, removeItemFromCart, addItemToCart, transferCartItem,
 };

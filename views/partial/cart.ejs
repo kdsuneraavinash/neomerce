@@ -12,13 +12,13 @@
                     <thead>
                         <tr>
                             <th scope="col">Product</th>
-                            <th scope="col">Price (LKR)</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total (LKR)</th>
+                            <th scope="col" class="text-right">Price (LKR)</th>
+                            <th scope="col" class="text-center">Quantity</th>
+                            <th scope="col" class="text-right">Total (LKR)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (const item of items) { %>
+                        <% for (const item of items.filter((v) => v.cart_item_status === 'added')) { %>
                         <tr>
                             <td>
                                 <div class="media">
@@ -39,13 +39,13 @@
                                 </div>
                             </td>
                             <td>
-                                <h5><%= item.unitprice %></h5>
+                                <h5 class="text-right"><%= item.unitprice %></h5 class="text-right">
                             </td>
                             <td>
-                                <h5><%= item.quantity %></h5>
+                                <h5 class="text-center"><%= item.quantity %></h5 class="text-right">
                             </td>
                             <td>
-                                <h5><%= item.totalprice %></h5>
+                                <h5 class="text-right"><%= (item.totalprice - 0).toFixed(2) %></h5>
                             </td>
                         </tr>
                         <% } %>
@@ -57,7 +57,7 @@
                                 <h5>Subtotal (LKR)</h5>
                             </td>
                             <td>
-                                <h5><%= subtotal %></h5>
+                                <h5 class="text-right"><%= subtotal.toFixed(2) %></h5 class="text-right">
                             </td>
                         </tr>
                     </tbody>
@@ -71,6 +71,59 @@
                 </div>
                 <% } %>
             </div>
+
+
+            <% if (items.filter((v) => v.cart_item_status === 'transferred').length !== 0) { %>
+
+            <div class="filter-bar text-center p-1 mt-5">
+                <h4 class="p-1 text-white">Saved Items</h4>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <% for (const item of items.filter((v) => v.cart_item_status === 'transferred')) { %>
+                        <tr>
+                            <td>
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img height="100" width="100" style="object-fit: contain;"
+                                            src="<%= item.image %>" alt="">
+                                    </div>
+                                    <div class="media-body">
+                                        <h5>
+                                            <a href="/item/show/<%= item.productid %>"
+                                                class="text-dark"><%= item.product %></a>
+                                        </h5>
+                                        <p><%= item.variant %></p>
+                                        <div>
+                                            <h5 class="text-success">LKR <%= item.unitprice %> x <%= item.quantity %>
+                                            </h5>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <form action="/cart/transfer/<%= item.id %>" method="POST"
+                                    class="card_area d-flex align-items-center">
+                                    <button v-if="selectedQuantity > 0" type="submit" value="submit"
+                                        class="btn btn-secondary">Add</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/cart/remove/<%= item.id %>" class="card_area d-flex align-items-center"
+                                    method="POST">
+                                    <button v-if="selectedQuantity > 0" type="submit" value="submit"
+                                        class="btn btn-danger">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
         </div>
     </div>
 </section>

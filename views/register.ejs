@@ -32,7 +32,6 @@
         $(document).ready(function () {
             let forms = $('.needs-validation');
 
-            let username = $("#username");
             let email = $("#email");
             let password = $("#password");
             let passwordRetype = $("#retype-password");
@@ -47,9 +46,6 @@
 
             email.on("input", function () {
                 validateNotEmptyAndRegex(email, emailRegex);
-            });
-            username.on("input", function () {
-                validateNotEmpty(username);
             });
             password.on("input", function () {
                 validateNotEmpty(password);
@@ -88,7 +84,6 @@
                     console.log("ho");
                     if (
                         validateNotEmptyAndRegex(email, emailRegex) &&
-                        validateNotEmpty(username) &&
                         validateNotEmpty(password) &&
                         validateNotEmpty(passwordRetype) &&
                         validateNotEmpty(firstName) &&

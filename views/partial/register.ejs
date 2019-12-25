@@ -11,12 +11,9 @@
             <hr />
             <% }%>
 
-            <div class="col-md-6 form-group" id="username-div">
-                <input type="text" class="form-control p-3" id="username" name="username" placeholder="Username"
-                    onblur="checkAvailability();this.placeholder='Username'">
-            </div>
-            <div class="col-md-6 form-group">
-                <input type="email" class="form-control p-3" id="email" name="email" placeholder="Email">
+            <div class="col-md-12 form-group" id="email-div">
+                <input type="email" class="form-control p-3" id="email" name="email" placeholder="Email"
+                    onblur="checkAvailability()">
             </div>
 
             <div class="col-md-6 form-group">
@@ -78,14 +75,14 @@
 </section>
 
 <script>
-    /*Check availability of the username*/
+    /*Check availability of the email*/
     const checkAvailability = () => {
-        const value = document.getElementById('username').value;
+        const value = document.getElementById('email').value;
         const xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 if (document.getElementById('label-id')) {
-                    if (xhttp.responseText === 'Username Valid') {
+                    if (xhttp.responseText === 'Valid') {
                         document.getElementById('label-id').remove()
                     } else {
                         document.getElementById('label-id').innerHTML = ''
@@ -93,15 +90,15 @@
                     }
                 } else {
                     const newlabel = document.createElement('Label')
-                    newlabel.setAttribute('for', 'username')
+                    newlabel.setAttribute('for', 'email')
                     newlabel.setAttribute('id', 'label-id')
 
-                    if (xhttp.responseText === 'Username Valid') {
+                    if (xhttp.responseText === 'Valid') {
 
                     } else {
                         newlabel.innerHTML = ''
                         newlabel.innerHTML = xhttp.responseText
-                        document.getElementById('username-div').appendChild(newlabel)
+                        document.getElementById('email-div').appendChild(newlabel)
                         document.getElementById('label-id').style.color = 'red'
                     }
                 }

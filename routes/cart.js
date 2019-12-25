@@ -20,6 +20,17 @@ router.post('/remove/:id', async (req, res) => {
     res.redirect('/cart');
 });
 
+router.post('/transfer/:id', async (req, res) => {
+    const result = await Cart.transferCartItem(
+        req.sessionID, req.params.id,
+    );
+    if (result === null) {
+        res.redirect('/cart');
+    } else {
+        res.redirect(`/cart?error=${result}`);
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
         const loggedIn = req.session.user != null;

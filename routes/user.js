@@ -16,12 +16,12 @@ router.post('/register', async (req, res) => {
     // TODO: validation here
     const {
         body: {
-            username, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,
+            email, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,
         },
     } = req;
     const encryptedPassword = bcrypt.hashSync(password, 10);
     try {
-        const success = await User.createUser(req.sessionID, username, firstName, lastName,
+        const success = await User.createUser(req.sessionID, email, firstName, lastName,
             addressLine1, addressLine2, city, postalCode, encryptedPassword);
         if (success) {
             req.session.user = true;
@@ -49,13 +49,13 @@ router.get('/login', (req, res) => {
 
 
 router.post('/login', async (req, res) => {
-    const { body: { username, password } } = req;
+    const { body: { email, password } } = req;
     try {
-        const passwordValidated = await User.validatePassword(username, password);
+        const passwordValidated = await User.validatePassword(email, password);
         if (!passwordValidated) {
-            res.redirect('/user/login?error=Username or password invalid');
+            res.redirect('/user/login?error=Email or password invalid');
         } else {
-            const assigned = await User.assignCustomerId(req.sessionID, username);
+            const assigned = await User.assignCustomerId(req.sessionID, email);
             if (assigned) {
                 req.session.user = true;
                 res.redirect('/');
@@ -69,16 +69,16 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/check/:username', async (req, res) => {
+router.get('/check/:email', async (req, res) => {
     try {
-        const result = await User.checkUsername(req.params.username);
+        const result = await User.checkEmail(req.params.email);
         if (result) {
-            res.send('Username Exist');
+            res.send('Email Already registered');
         } else {
-            res.send('Username Valid');
+            res.send('Valid');
         }
     } catch (error) {
-        res.send('Error Occurred');
+        res.send('Something went wrong');
     }
 });
 
