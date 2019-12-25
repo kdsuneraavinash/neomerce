@@ -121,6 +121,7 @@ CREATE TABLE CityType (
     city_type varchar(15),
     description varchar(127),
     delivery_days int not null check(is_positive(delivery_days)),
+    delivery_charge money_unit not null,
     primary key (city_type)
 );
 
@@ -650,7 +651,7 @@ AS $$
 DECLARE
 customer_id_ uuid4 := (select customer_id from session where session_id=$1);
 BEGIN
-	SELECT variant_id,quantity from cartitem , LATERAL checkVariant(variant_id,quantity) where customer_id = customer_id_ and cart_item_status='added'; 
+	PERFORM variant_id,quantity from cartitem , LATERAL checkVariant(variant_id,quantity) where customer_id = customer_id_ and cart_item_status='added'; 
 END;
 $$;
 
@@ -673,10 +674,22 @@ $$ LANGUAGE PLpgSQL;
 
 
 CREATE OR REPLACE VIEW ProductVariantView AS
-SELECT c.variant_id,v.product_id,c.quantity,v.title variant_title,v.selling_price,p.title product_title,p.brand FROM
+SELECT c.customer_id,c.variant_id,v.product_id,c.quantity,v.title variant_title,v.selling_price,p.title product_title,p.brand FROM
 cartitem as c 
-LEFT JOIN variant as v ON c.variant_id = v.product_id
-LEFT JOIN product as p ON v.product_id = p.product_id;
+LEFT JOIN variant as v ON c.variant_id = v.variant_id
+LEFT JOIN product as p ON v.product_id = p.product_id where c.cart_item_status = 'added';
+
+
+
+CREATE OR REPLACE VIEW UserDeliveryView AS
+SELECT u.customer_id,u.email,u.first_name,u.last_name,u.addr_line1,u.addr_line2,u.city,u.postcode,t.phone_number,ct.delivery_days,ct.delivery_charge FROM
+userinformation as u 
+LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
+LEFT JOIN city as c ON u.city = c.city
+LEFT JOIN citytype as ct ON ct.city_type=c.city_type;
+
+
+
 
 
 
