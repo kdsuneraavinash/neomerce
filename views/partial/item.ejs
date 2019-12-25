@@ -15,9 +15,9 @@
                 <div class="col-lg-5 offset-lg-1">
                     <div class="s_product_text">
                         <h3><%= name.length > 45 ? name.substring(0, 45) + '...' : name %></h3> <%# Name %>
-                        <h2 style="-webkit-text-fill-color: #ff6c00; background: transparent;"
+                        <h2 style="-webkit-text-fill-color: #243D76; background: transparent;"
                             v-bind:text="variants[current].price">LKR {{variants[current].price}}
-                            <span style="-webkit-text-fill-color: #e28843; background: transparent;"
+                            <span style="-webkit-text-fill-color: #243D76; background: transparent;"
                                 class="text-muted px-3" v-bind:text="variants[current].price">
                                 <small><del>LKR {{variants[current].old_price}}</del></small>
                             </span>
@@ -142,7 +142,7 @@
                 <div class="col-lg-6 text-center">
                     <div class="section-title">
                         <h1>Releated Products</h1>
-                        <p>You might also like to check out these products as wells.</p>
+                        <p>You might also like to check out these products as well.</p>
                     </div>
                 </div>
             </div>

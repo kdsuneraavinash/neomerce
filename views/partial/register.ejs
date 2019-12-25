@@ -1,76 +1,82 @@
-<section class="login_box_area section_gap">
-    <div class="container">
-        <h2 class="text-center mb-5">Register</h2>
-        <form class="row needs-validation" action="/user/register" method="post" novalidate>
-            <% if (error != null){ %>
-            <div class="col-md-12 form-group">
-                <div class="alert alert-danger" role="alert">
-                    <%=error%>
+<section class="login_box_area section_gap container">
+    <div class="card shadow p-3">
+        <div class="card-body">
+            <h2 class="text-center mb-5">Register</h2>
+            <form class="row needs-validation" action="/user/register" method="post" novalidate>
+                <% if (error != null){ %>
+                <div class="col-md-12 form-group">
+                    <div class="alert alert-danger" role="alert">
+                        <%=error%>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <% }%>
+                <hr />
+                <% }%>
 
-            <div class="col-md-12 form-group" id="email-div">
-                <input type="email" class="form-control p-3" id="email" name="email" placeholder="Email"
-                    onblur="checkAvailability()">
-            </div>
-
-            <div class="col-md-6 form-group">
-                <input type="password" class="form-control p-3" id="password" name="password" placeholder="Password">
-            </div>
-
-            <div class="col-md-6 form-group">
-                <input type="password" class="form-control p-3" id="retype-password" name="retype-password"
-                    placeholder="Re-type password">
-            </div>
-
-            <div class="col-md-6 form-group">
-                <input type="text" class="form-control p-3" id="firstName" name="firstName" placeholder="First Name">
-            </div>
-            <div class="col-md-6 form-group">
-                <input type="text" class="form-control p-3" id="lastName" name="lastName" placeholder="Last Name">
-            </div>
-
-            <div class="col-md-12 form-group">
-                <input type="text" class="form-control p-3" id="addressLine1" name="addressLine1"
-                    placeholder="Address Line 01">
-            </div>
-
-            <div class="col-md-12 form-group">
-                <input type="text" class="form-control p-3" id="addressLine2" name="addressLine2"
-                    placeholder="Address Line 02">
-            </div>
-
-            <div class="col-md-6 form-group">
-                <input type="text" class="form-control p-3" id="telephoneNumber" name="telephoneNumber"
-                    placeholder="Telephone Number">
-            </div>
-
-            <div class="col-md-6 form-group ui-widget">
-                <input type="text" class="form-control p-3" id="city" name="city" placeholder="City">
-            </div>
-
-            <div class="col-md-6 form-group">
-                <input type="text" class="form-control p-3" id="postalCode" name="postalCode" placeholder="Postal Code">
-            </div>
-
-            <div class="col-md-6 form-group">
-                <input id="birthday" class="form-control p-3" placeholder="Birthday">
-                <div id="yellow-picker" class="wdp-yellow"></div>
-            </div>
-
-            <hr class="my-5" />
-
-            <div class="col-md-12 form-group text-right">
-                <div class="checkout_btn_inner float-left d-none d-md-flex   align-items-center">
-                    <a class="gray_btn" href="/">Log In</a>
+                <div class="col-md-12 form-group" id="email-div">
+                    <input type="email" class="form-control p-3" id="email" name="email" placeholder="Email"
+                        onblur="checkAvailability()">
                 </div>
-                <div class="checkout_btn_inner d-flex align-items-center float-right">
-                    <button class="primary-btn" name="submit" type="submit" style="border: none;">Register</button>
+
+                <div class="col-md-6 form-group">
+                    <input type="password" class="form-control p-3" id="password" name="password"
+                        placeholder="Password">
                 </div>
-            </div>
-        </form>
+
+                <div class="col-md-6 form-group">
+                    <input type="password" class="form-control p-3" id="retype-password" name="retype-password"
+                        placeholder="Re-type password">
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <input type="text" class="form-control p-3" id="firstName" name="firstName"
+                        placeholder="First Name">
+                </div>
+                <div class="col-md-6 form-group">
+                    <input type="text" class="form-control p-3" id="lastName" name="lastName" placeholder="Last Name">
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <input type="text" class="form-control p-3" id="addressLine1" name="addressLine1"
+                        placeholder="Address Line 01">
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <input type="text" class="form-control p-3" id="addressLine2" name="addressLine2"
+                        placeholder="Address Line 02">
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <input type="text" class="form-control p-3" id="telephoneNumber" name="telephoneNumber"
+                        placeholder="Telephone Number">
+                </div>
+
+                <div class="col-md-6 form-group ui-widget">
+                    <input type="text" class="form-control p-3" id="city" name="city" placeholder="City">
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <input type="text" class="form-control p-3" id="postalCode" name="postalCode"
+                        placeholder="Postal Code">
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <input id="birthday" class="form-control p-3" placeholder="Birthday">
+                    <div id="yellow-picker" class="wdp-blue"></div>
+                </div>
+
+                <hr class="my-5" />
+
+                <div class="col-md-12 form-group text-right">
+                    <div class="checkout_btn_inner float-left d-none d-md-flex   align-items-center">
+                        <a class="gray_btn" href="/">I Already have an Account</a>
+                    </div>
+                    <div class="checkout_btn_inner d-flex align-items-center float-right">
+                        <button class="primary-btn" name="submit" type="submit" style="border: none;">Register
+                            Account</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
 
