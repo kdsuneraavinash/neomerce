@@ -136,4 +136,34 @@
         </div>
     </section>
 
+    <section class="related-product-area section_gap_bottom">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <div class="section-title">
+                        <h1>Releated Products</h1>
+                        <p>You might also like to check out these products as wells.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <% for (item of related) { %>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                    <div class="single-related-product d-flex">
+                        <a href="#"><img style="width: 70px; height: 70px; object-fit: contain;"
+                                src="<%= item.image_url %>" alt=""></a>
+                        <div class="desc">
+                            <a href="/item/show/<%= item.product_id %>"
+                                class="title"><%= item.title.substring(0, 25) + "..." %></a>
+                            <div class="price">
+                                <h6>LKR <%= item.min_selling_price %></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
 </div>

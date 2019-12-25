@@ -49,6 +49,25 @@ const getProductsFromCategory = async (req, res, categoryId) => {
     return { result, topprice: result.length === 0 ? 10000 : result[result.length - 1].price };
 };
 
+
+const getRelatedProducts = async (req, res, productId, limit) => {
+    const query = `select distinct ProductBasicView.product_id, 
+                        ProductBasicView.title, 
+                        ProductBasicView.min_selling_price, 
+                        ProductBasicView.image_url
+                    from ProductBasicView, ProductCategory as child, ProductCategory as parent
+                    where parent.product_id = $1 and 
+                            parent.category_id = child.category_id and
+                            parent.category_id not in (select distinct parent_id from category where parent_id is not null) and
+                            child.product_id = ProductBasicView.product_id and
+                            ProductBasicView.product_id != $1
+                    order by ProductBasicView.min_selling_price
+                    limit $2;`;
+    const values = [productId, limit];
+    const out = await connection.query(query, values);
+    return out.rows;
+};
+
 const getProductsFromQuery = async (req, res, searchQuery) => {
     const query = `select product_id, title, min_selling_price, image_url 
                             from ProductBasicView natural left outer join ProductTag
@@ -94,5 +113,5 @@ const getVariants = async (req, res, productId) => {
 };
 
 module.exports = {
-    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants,
+    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants, getRelatedProducts,
 };
