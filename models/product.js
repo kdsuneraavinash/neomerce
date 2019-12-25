@@ -68,6 +68,15 @@ const getRelatedProducts = async (req, res, productId, limit) => {
     return out.rows;
 };
 
+const getRecentProducts = async (req, res, limit) => {
+    const query = `select *
+                    from ProductBasicView natural join Product
+                    order by added_date
+                    limit $1;`;
+    const out = await connection.query(query, [limit]);
+    return out.rows;
+};
+
 const getProductsFromQuery = async (req, res, searchQuery) => {
     const query = `select product_id, title, min_selling_price, image_url 
                             from ProductBasicView natural left outer join ProductTag
@@ -113,5 +122,10 @@ const getVariants = async (req, res, productId) => {
 };
 
 module.exports = {
-    getProduct, getProductsFromCategory, getProductsFromQuery, getVariants, getRelatedProducts,
+    getProduct,
+    getProductsFromCategory,
+    getProductsFromQuery,
+    getVariants,
+    getRelatedProducts,
+    getRecentProducts,
 };

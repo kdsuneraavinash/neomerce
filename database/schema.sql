@@ -218,6 +218,7 @@ CREATE TABLE Product (
     description text not null,
     weight_kilos numeric(7, 2) check(is_positive(weight_kilos)),
     brand varchar(255),
+    added_date timestamp not null default NOW(),
     primary key (product_id)
 );
 
@@ -671,6 +672,6 @@ CREATE VIEW ProductMainImageView AS
     FROM ProductImage;
 
 CREATE VIEW ProductBasicView AS
-    SELECT product_id, title, min_selling_price, image_url 
+    SELECT product_id, title, min_selling_price, image_url, added_date
     FROM Product NATURAL JOIN ProductMinPricesView NATURAL JOIN ProductMainImageView;
 
