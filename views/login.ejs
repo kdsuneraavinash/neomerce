@@ -4,7 +4,8 @@
 
 <body>
     <%- include('common/navbar',{'loggedIn': false}) %>
-    <%- include('partial/login') %>
+    <%- include('common/banner', {'title': 'User Login'}) %>
+    <%- include('partial/login', {'error': error}) %>
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
 </body>

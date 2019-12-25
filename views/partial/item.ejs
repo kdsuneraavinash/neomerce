@@ -62,7 +62,7 @@
                             <div class="product_count">
                                 <label for="qty">Quantity:</label>
                                 <%# Quantity %>
-                                <input type="text" name="qty" id="sst" maxlength="12" v-bind:value="selectedQuantity"
+                                <input type="text" name="qty" id="sst" maxlength="12" v-model.number="selectedQuantity"
                                     title="Quantity:" class="input-text qty">
                                 <button
                                     v-on:click="selectedQuantity = Math.min(selectedQuantity+1, variants[current].amount) "
@@ -73,9 +73,10 @@
                                         class="lnr lnr-chevron-down"></i></button>
                             </div>
 
-                            <input type="text" name="variant" v-bind:value="variants[current].variant_id" hidden/>
+                            <input type="text" name="variant" v-bind:value="variants[current].variant_id" hidden />
                             <div class="card_area d-flex align-items-center">
-                                <button type="submit" class="primary-btn" href="#">Add to Cart</button>
+                                <button v-if="selectedQuantity > 0" type="submit" style="border: none;" value="submit"
+                                    class="primary-btn">Add to Cart</button>
                             </div>
                         </form>
                     </div>
@@ -131,6 +132,36 @@
 
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="related-product-area section_gap_bottom">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <div class="section-title">
+                        <h1>Releated Products</h1>
+                        <p>You might also like to check out these products as wells.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <% for (item of related) { %>
+                <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                    <div class="single-related-product d-flex">
+                        <a href="#"><img style="width: 70px; height: 70px; object-fit: contain;"
+                                src="<%= item.image_url %>" alt=""></a>
+                        <div class="desc">
+                            <a href="/item/show/<%= item.product_id %>"
+                                class="title"><%= item.title.substring(0, 25) + "..." %></a>
+                            <div class="price">
+                                <h6>LKR <%= item.min_selling_price %></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
             </div>
         </div>
     </section>

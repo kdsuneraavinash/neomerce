@@ -8,6 +8,8 @@ insert into accounttype values ('admin', 'Administrator');
 insert into cartitemstatus values ('added', 'Added to cart');
 insert into cartitemstatus values ('removed', 'Removed from cart');
 insert into cartitemstatus values ('ordered', 'Added to a order');
+insert into cartitemstatus values ('merged', 'Cart items merged into a bigger cart item set');
+insert into cartitemstatus values ('transferred', 'Cart items transferred from a guest account');
 
 insert into orderstatus values ('ordered', 'Ordered');
 insert into orderstatus values ('completed', 'Order completed');

@@ -4,7 +4,7 @@
 
 <body>
     <%- include('common/navbar',{'loggedIn': loggedIn}) %>
-    <%- include ('partial/home') %>
+    <%- include ('partial/home', {'products': products}) %>
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
 </body>

@@ -13,6 +13,8 @@ router.get('/show/:id', async (req, res) => {
 
         const variantsData = await Product.getVariants(req, res, req.params.id);
 
+        const releatedProducts = await Product.getRelatedProducts(req, res, req.params.id, 9);
+
         res.render('item', {
             loggedIn,
             name: product.title,
@@ -23,6 +25,7 @@ router.get('/show/:id', async (req, res) => {
             attributes: product.attributes,
             variants: variantsData.result,
             variant_attributes: variantsData.attributes,
+            related: releatedProducts,
         });
     } catch (error) {
         helper.errorResponse(res, error);
