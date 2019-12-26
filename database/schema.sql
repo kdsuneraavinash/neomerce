@@ -46,6 +46,27 @@ DROP DOMAIN IF EXISTS URL cascade;
 DROP VIEW IF EXISTS ProductMinPricesView cascade;
 DROP VIEW IF EXISTS ProductMainImageView cascade;
 
+
+/*
+      _                       _           
+     | |                     (_)          
+   __| | ___  _ __ ___   __ _ _ _ __  ___ 
+  / _` |/ _ \| '_ ` _ \ / _` | | '_ \/ __|
+ | (_| | (_) | | | | | | (_| | | | | \__ \
+  \__,_|\___/|_| |_| |_|\__,_|_|_| |_|___/
+*/
+
+CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
+CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
+CREATE DOMAIN VALID_PHONE AS CHAR(15);
+CREATE DOMAIN UUID4 AS CHAR(36) CHECK(
+    VALUE ~ '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
+);
+CREATE DOMAIN SESSION_UUID AS CHAR(32);
+CREATE DOMAIN URL AS VARCHAR(1023);
+
+
+
 /* 
    __                  _   _                 
   / _|                | | (_)                
@@ -89,6 +110,7 @@ END
 $$ LANGUAGE PLpgSQL;
 
 
+
 -- Function to check for remaining stock of a certain variant.
 -- Used for the checkAvailability procedure.
 CREATE OR REPLACE FUNCTION checkVariant(UUID4,INT) RETURNS boolean AS
@@ -104,24 +126,6 @@ BEGIN
 END;
 $$ LANGUAGE PLpgSQL;
 
-
-/*
-      _                       _           
-     | |                     (_)          
-   __| | ___  _ __ ___   __ _ _ _ __  ___ 
-  / _` |/ _ \| '_ ` _ \ / _` | | '_ \/ __|
- | (_| | (_) | | | | | | (_| | | | | \__ \
-  \__,_|\___/|_| |_| |_|\__,_|_|_| |_|___/
-*/
-
-CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
-CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
-CREATE DOMAIN VALID_PHONE AS CHAR(15);
-CREATE DOMAIN UUID4 AS CHAR(36) CHECK(
-    VALUE ~ '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
-);
-CREATE DOMAIN SESSION_UUID AS CHAR(32);
-CREATE DOMAIN URL AS VARCHAR(1023);
 
 
 /* 
