@@ -21,16 +21,16 @@
                         <% if (loggedIn) { %>
 
                             <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name" value="<%= proceedCheckOutObj['delivery_info'].first_name %>">
+                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name" value="<%= delivery_info.first_name %>">
                             </div>
                             <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="last" name="name" placeholder="Last Name" value="<%= proceedCheckOutObj['delivery_info'].last_name %>">
+                                <input type="text" class="form-control" id="last" name="name" placeholder="Last Name" value="<%= delivery_info.last_name %>">
                             </div>
                             <div class="col-md-6 form-group p_star">
                                 <input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
                             </div>
                             <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address" value="<%= proceedCheckOutObj['delivery_info'].email %>">
+                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address" value="<%= delivery_info.email %>">
                             </div>
 
                         <%} else { %>
@@ -85,16 +85,16 @@
                         <% if (loggedIn) { %>
 
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 1" value="<%= proceedCheckOutObj['delivery_info'].addr_line1 %>">
+                                <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 1" value="<%= delivery_info.addr_line1 %>">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address Line 2" value="<%= proceedCheckOutObj['delivery_info'].addr_line2 %>">
+                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address Line 2" value="<%= delivery_info.addr_line2 %>">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="city" name="city" placeholder="City" value="<%= proceedCheckOutObj['delivery_info'].city %>">
+                                <input type="text" class="form-control" id="city" name="city" placeholder="City" value="<%= delivery_info.city %>">
                             </div>
                             <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="zip" name="zip" placeholder="PostCode" value="<%= proceedCheckOutObj['delivery_info'].postcode %>">
+                                <input type="text" class="form-control" id="zip" name="zip" placeholder="PostCode" value="<%= delivery_info.postcode %>">
                             </div>
 
 
@@ -134,20 +134,21 @@
                             <li><a href="#">Product <span>Total (LKR)</span></a></li>
                             <% 
                             let subtotal = 0;
-                            for (const item of proceedCheckOutObj['items']) {
-                                subtotal = subtotal + (parseFloat(item.selling_price)*item.quantity)
+                            for (const item of items) {
+                                console.log((parseFloat(item.selling_price)*item.quantity).toFixed(2))
+                                subtotal = parseFloat(subtotal) + parseFloat((parseFloat(item.selling_price)*item.quantity).toFixed(2))
                                 %>
                             <li><a href="#"><%= item.product_title.substring(0, 12) -%>... <span class="middle">x
-                                        <%= item.quantity %></span> <span class="last"><%= ((parseFloat(item.selling_price)).toFixed(2))*item.quantity  %></span></a>
+                                        <%= item.quantity %></span> <span class="last"><%= (parseFloat(item.selling_price)*item.quantity).toFixed(2)  %></span></a>
                             </li>
                             <% } %>
                         </ul>
                         <ul class="list list_2">
                             <li><a href="#">Subtotal <span><%= subtotal %></span></a></li>
                             <li v-if="delivery_method === 'deliver'"><a href="#">Shipping <span>
-                                        <%= proceedCheckOutObj['delivery_info'].delivery_charge %> </span></a></li>
+                                        <%= delivery_info.delivery_charge %> </span></a></li>
                             <li><a href="#">Total <span>
-                                        {{delivery_method==='deliver' ? '<%= parseFloat(proceedCheckOutObj['delivery_info'].delivery_charge) + parseFloat(subtotal) %>' : '<%= subtotal %>'}}
+                                        {{delivery_method==='deliver' ? '<%= parseFloat(delivery_info.delivery_charge) + parseFloat(subtotal) %>' : '<%= subtotal %>'}}
                                     </span></a></li>
                         </ul>
                         <div class="payment_item">

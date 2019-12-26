@@ -88,7 +88,7 @@ const proceedCheckOut = async(sessionID,loggedIn) => {
         const userInfoValues = [sessionID]
         result = await connection.query(userInfoQueryString,userInfoValues)
         productDetailsObject['delivery_info'] = result.rows[0]
-
+        
     }
 
     const itemsInfoQueryString = `SELECT variant_id,product_id,quantity,variant_title,selling_price,product_title from
@@ -99,6 +99,7 @@ const proceedCheckOut = async(sessionID,loggedIn) => {
     result = await connection.query(itemsInfoQueryString,itemInfoValues)
 
     productDetailsObject['items'] = result.rows
+
 
     console.log(productDetailsObject)
 

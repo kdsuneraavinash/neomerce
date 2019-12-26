@@ -7,10 +7,9 @@
     <%- include('common/banner', {'title': 'Checkout'}) %>
 
     <%- include ('partial/checkout', {
-        items: items,
-        subtotal: subtotal,
-        estdelivery: estdelivery,
-        withdelivery: withdelivery
+        items: proceedCheckOutObj['items'],
+        delivery_info:loggedIn ? proceedCheckOutObj['delivery_info'] : {'delivery_charge':0},
+        loggedIn:loggedIn
     }) %>
 
     <%- include('common/footer') %>
