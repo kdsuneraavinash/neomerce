@@ -19,6 +19,8 @@ insert into deliverymethod values ('home_delivery', 'Deliver to the home');
 
 insert into deliverystatus values ('ongoing', 'Delivery Ongoing');
 insert into deliverystatus values ('delivered', 'Delivery Completed');
+insert into deliverystatus values ('pending pick up','Pending user pick up');
+insert into deliverystatus values ('picked up','User picked up');
 
 insert into paymentmethod values ('card', 'Card payment');
 insert into paymentmethod values ('cash', 'Cash on delivery');

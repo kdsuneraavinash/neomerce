@@ -129,6 +129,28 @@ $$ LANGUAGE PLpgSQL;
 
 
 
+-- Function to reduce stock of a variant. Called inside placeOrder procedure.
+CREATE OR REPLACE FUNCTION reduceStock(UUID4,INT) RETURNS boolean AS
+$$
+BEGIN
+	UPDATE variant SET quantity = $2 where variant_id = $1;
+	return true;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
+-- Function to add order items into the orderitem table. Called inside placeOrder procedure.
+CREATE OR REPLACE FUNCTION addOrderItem(UUID4,UUID4,INT) RETURNS boolean AS
+$$
+DECLARE
+orderitem_id uuid4 := generate_uuid4();
+BEGIN
+	INSERT INTO orderitem values (orderitem_id,$1,$2,$3);
+	return true;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
 /* 
   _        _     _           
  | |      | |   | |          
@@ -407,10 +429,10 @@ CREATE TABLE Delivery (
     order_id uuid4,
     delivery_method varchar(15) not null,
     delivery_status varchar(15) not null,
-    addr_line1 varchar(255) not null,
-    addr_line2 varchar(255) not null,
-    city varchar(127) not null,
-    postcode varchar(31) not null,
+    addr_line1 varchar(255),
+    addr_line2 varchar(255),
+    city varchar(127),
+    postcode varchar(31),
     delivered_date timestamp,
     primary key (order_id),
     foreign key (order_id) references OrderData(order_id),
@@ -703,6 +725,44 @@ END;
 $$;
 
 
+-- Procedure to place an order. 
+CREATE OR REPLACE PROCEDURE placeOrder(SESSION_UUID,VARCHAR(255),VARCHAR(255),VARCHAR(127),CHAR(15),
+									   VARCHAR(15),VARCHAR(255),VARCHAR(255),VARCHAR(127),VARCHAR(31),VARCHAR(15))
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+customer_id_ uuid4 := (select customer_id from session where session_id=$1);
+order_id_ uuid4 := generate_uuid4();
+customer_type varchar(15) := (select account_type from customer where customer_id=customer_id_);
+delivery_status varchar(15);
+payment_status varchar(15);
+BEGIN
+
+	if $6 = 'shop_pickup' then
+	delivery_status := 'pending pick up';
+	else
+	delivery_status := 'ongoing';
+	end if;
+	if $11 = 'card' then
+	payment_status := 'payed';
+	else
+	payment_status := 'not_payed';
+	end if;
+
+
+	INSERT into orderdata values (order_id_,customer_id_,'ordered',NOW());
+	PERFORM variant_id,quantity from ProductVariantView, LATERAL reduceStock(variant_id,quantity) where customer_id = customer_id_;
+	PERFORM variant_id,quantity from ProductVariantView, LATERAL addOrderItem(variant_id,order_id_,quantity) where customer_id = customer_id_;
+	UPDATE cartitem SET cart_item_status = 'ordered' where customer_id = customer_id_ and cart_item_status = 'added';
+	INSERT INTO delivery values (order_id_,$6,delivery_status,$7,$8,$9,$10,NOW());
+	INSERT INTO payment values (order_id_,$11,payment_status,NOW(),'2500');
+	If customer_type = 'guest' then
+	INSERT INTO guestinfomation values (order_id_,$2,$3,$4,$5);
+	End if;								   
+END;
+$$;
+
+
 /*
   _           _                    
  (_)         | |                   
@@ -753,5 +813,14 @@ SELECT u.customer_id,u.email,u.first_name,u.last_name,u.addr_line1,u.addr_line2,
 userinformation as u 
 LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
 LEFT JOIN city as c ON u.city = c.city
-LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
+LEFT JOIN citytype as ct ON ct.city_type=c.city_type;
+
+
+
+
+
+
+
+
+
 

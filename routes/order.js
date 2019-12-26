@@ -1,7 +1,36 @@
 /* eslint-disable quote-props */
 const router = require('express').Router();
+const Order = require('../models/order');
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+
+
+    await Order.createOrder(req.sessionID)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     res.render('order', {
         loggedIn: req.session.user != null,
         show_thanks: false,
