@@ -14,9 +14,14 @@
                 </div>
                 <% }%>
 
-                <div class="col-md-12 form-group" novalidate>
-                    <input type="email" class="form-control p-3" name="email" placeholder="Email (username@site.com)"
-                        v-model="email">
+                <div class="col-md-12 form-group">
+                    <input @input="emailCheck" @blur="emailCheck" type="email" class="form-control p-3" name="email"
+                        placeholder="Email (username@site.com)" v-model="email"
+                        v-bind:class="{'is-invalid': emailExists}">
+                    <div v-if="emailExists" class="col-md-12 text-danger">
+                        Email {{email}} is already registered. If you already have an account sign in from <a
+                            href="/user/login">here</a>.
+                    </div>
                 </div>
 
                 <div class="col-md-6 form-group">
@@ -53,8 +58,16 @@
                         placeholder="Telephone Number (XXXXXXXXXX)">
                 </div>
 
-                <div class="col-md-6 form-group ui-widget">
-                    <input type="text" class="form-control p-3" name="city" v-model="city" placeholder="City">
+                <div class="col-md-6 form-group">
+                    <div id="autocomplete" class="autocomplete">
+                        <input @input="cityCheck" @blur="cityCheck" type="text" class="form-control p-3" name="city"
+                            v-model="city" placeholder="City (Select from dropdown)"
+                            v-bind:class="{'is-invalid': !cityExists}">
+                        <ul class="bg-white"></ul>
+                    </div>
+                    <div v-if="!cityExists" class="col-md-12 text-danger">
+                        City is invalid. Please select a city from suggestions.
+                    </div>
                 </div>
 
                 <div class="col-md-6 form-group">
@@ -73,10 +86,6 @@
                         <div class="ml-4">
                             <li v-for="error in errors"> {{ error }}</li>
                         </div>
-
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
                 </div>
 

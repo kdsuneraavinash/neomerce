@@ -12,6 +12,7 @@
 
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
+    <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
 
     <%# Vue app %>
     <script>
@@ -35,8 +36,32 @@
                 terms_accepted: false,
                 n_products: '<%= proceedCheckOutObj.items.length %>' - 0,
                 errors: [],
+                emailExists: false,
+                cityExists: true,
             },
             methods: {
+
+                emailCheck: function (e) {
+                    fetch('/api/email/' + this.email)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            this.emailExists = data.result;
+                        });
+                },
+                cityCheck: function (e) {
+                    fetch('/api/city/' + this.city)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            this.cityExists = data.result;
+                            if (this.cityExists) {
+                                this.delivery_days = data.data[0].delivery_days;
+                                this.delivery_charge = data.data[0].delivery_charge - 0;
+                            } else {
+                                this.delivery_days = 'unknown';
+                                this.delivery_charge = 0;
+                            }
+                        });
+                },
                 checkForm: function (e) {
                     let addressValid = (
                         this.delivery_method === 'pickup' || (
@@ -47,12 +72,13 @@
 
                     if (this.first_name && this.last_name && this.phone_number && this.email &&
                         phoneNumberRegex.test(this.phone_number) && emailRegex.test(this.email) &&
-                        addressValid && this.terms_accepted && n_products && validMethod
+                        addressValid && this.terms_accepted && this.n_products && validMethod && this.cityExists
                     ) {
                         return true;
                     }
 
                     this.errors = [];
+                    e.preventDefault();
 
                     if (!this.first_name) this.errors.push('First Name required.');
                     if (!this.last_name) this.errors.push('Last Name required.');
@@ -64,10 +90,30 @@
                     if (!validMethod) this.errors.push('Can\'t have store pickup with pay on delivery.');
                     if (!this.terms_accepted) this.errors.push('Accept terms and conditions.');
                     if (!this.n_products) this.errors.push('Must have atleast one product in the cart.');
-
-                    e.preventDefault();
+                    if (!this.cityExists) this.errors.push('Invalid city selected.');
                 }
             }
+        });
+
+
+        new Autocomplete('#autocomplete', {
+            search: (input) => {
+                const url = `/api/cities?search=${encodeURI(input)}`;
+                return new Promise((resolve) => {
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            resolve(data);
+                        });
+                });
+            },
+            getResultValue: (result) => result.city,
+            onSubmit: (result) => {
+                app.city = result.city;
+                app.delivery_days = result.delivery_days;
+                app.delivery_charge = result.delivery_charge - 0;
+                app.cityCheck();
+            },
         });
 
         $(function () {

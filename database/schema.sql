@@ -577,7 +577,11 @@ AS $$
 DECLARE
 customer_id uuid4 := (select customer_id from session where session_id=$1);
 var_existing_email varchar(255) := (SELECT email from userinformation where email = $2);
+var_city int := (SELECT count(*) from city where city = $7);
 BEGIN
+    if (var_city = 0) then
+        RAISE EXCEPTION 'Unknown city %. Please select a valid city.', $7;
+    end if;
     if (var_existing_email is null) then
         INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
         INSERT INTO accountcredential values (customer_id, $10); 
@@ -722,6 +726,7 @@ CREATE INDEX ON ProductImage(product_id);
 CREATE INDEX ON Variant(product_id);
 CREATE INDEX ON Product(title);
 CREATE INDEX ON CartItem(variant_id, customer_id);
+CREATE INDEX ON City((lower(city)));
 
 /*
         _                   

@@ -8,6 +8,32 @@
     <%- include('partial/login', {'error': error, 'redirect': redirect}) %>
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
+
+    <script>
+        let app = new Vue({
+            el: "#login_form",
+            data: {
+                email: '',
+                password: '',
+                errors: [],
+            },
+            methods: {
+                checkForm: function (e) {
+                    if (this.password && this.email && emailRegex.test(this.email)) {
+                        return true;
+                    }
+
+                    this.errors = [];
+
+                    if (!this.password) this.errors.push('Password required.');
+                    if (!this.email) this.errors.push('Email Address required.');
+                    if (!emailRegex.test(this.email)) this.errors.push('Email Address format invalid.');
+
+                    e.preventDefault();
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

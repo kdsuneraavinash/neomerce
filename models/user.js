@@ -33,14 +33,14 @@ const assignCustomerId = async (sessionID, email) => {
 };
 
 
-const checkEmail = async (email) => {
+const emailExists = async (email) => {
     const queryString = 'SELECT email from userinformation where email = $1';
     const values = [email];
     const out = await pool.query(queryString, values);
-    return out.rows[0];
+    return out.rows.length !== 0;
 };
 
 
 module.exports = {
-    createUser, validatePassword, assignCustomerId, checkEmail,
+    createUser, validatePassword, assignCustomerId, emailExists,
 };
