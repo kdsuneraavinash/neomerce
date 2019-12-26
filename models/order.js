@@ -1,22 +1,7 @@
 const connection = require('../config/db');
 
 
-
 const createOrder = async(sessionID,body,orderID,totalprice) => {
-
-    /* ADAPTER to change payment_method and delivery_method. */
-    console.log(body.payment_method=== 'pay on delivery')
-    // if(body.delivery_method === 'deliver'){
-    //     body.delivery_method = 'home_delivery'
-    // }else{
-    //     body.delivery_method = 'shop_pickup'
-    // }
-    // if(body.payment_method != 'card'){
-    //     console.log('HERE')
-    //     body.payment_method = 'cash'
-    // }
-   
-
 
     const createOrderQueryString = 'CALL placeOrder($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)'
     const createOrderValues = [sessionID,body.first_name,body.last_name,body.email,body.phone_number,body.delivery_method,body.addr_line1,body.addr_line2,body.city,body.postcode,body.payment_method,orderID,totalprice]
@@ -52,7 +37,6 @@ const getOrderDetails = async(req) => {
         productDetailsObject.delivery_charge = result.rows[0].delivery_charge
 
     }
-
     return productDetailsObject;
 }
 
