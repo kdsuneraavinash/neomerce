@@ -88,6 +88,23 @@ BEGIN
 END
 $$ LANGUAGE PLpgSQL;
 
+
+-- Function to check for remaining stock of a certain variant.
+-- Used for the checkAvailability procedure.
+CREATE OR REPLACE FUNCTION checkVariant(UUID4,INT) RETURNS boolean AS
+$$
+DECLARE
+inventory_count int := (select quantity from variant where variant_id=$1);
+product_name varchar(255) := (select product.title from product,variant where variant.product_id=product.product_id and variant.variant_id = $1);
+BEGIN
+	if inventory_count < $2 then RAISE Exception '% out of stock. Only % items available in the stocks',product_name,inventory_count;
+	else
+	return true;
+	end if;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
 /*
       _                       _           
      | |                     (_)          
@@ -330,10 +347,11 @@ CREATE TABLE OrderData (
 
 -- items in order
 CREATE TABLE OrderItem (
+    orderitem_id uuid4 default generate_uuid4(),
     variant_id uuid4,
     order_id uuid4,
     quantity int not null check(is_positive(quantity)),
-    primary key (variant_id, order_id),
+    primary key (orderitem_id),
     foreign key (variant_id) references Variant(variant_id),
     foreign key (order_id) references OrderData(order_id)
 );
@@ -641,10 +659,8 @@ END;
 $$;
 
 
-#############################################################################################
-#############################################################################################
 
-
+-- Procedure to check availability of items in a cart.
 CREATE OR REPLACE PROCEDURE checkAvailability(SESSION_UUID)
 LANGUAGE plpgsql    
 AS $$
@@ -654,90 +670,6 @@ BEGIN
 	PERFORM variant_id,quantity from cartitem , LATERAL checkVariant(variant_id,quantity) where customer_id = customer_id_ and cart_item_status='added'; 
 END;
 $$;
-
-
-
-CREATE OR REPLACE FUNCTION checkVariant(UUID4,INT) RETURNS boolean AS
-$$
-DECLARE
-inventory_count int := (select quantity from variant where variant_id=$1);
-product_name varchar(255) := (select product.title from product,variant where variant.product_id=product.product_id and variant.variant_id = $1);
-BEGIN
-	if inventory_count < $2 then RAISE Exception '% out of stock. Only % items available in the stocks',product_name,inventory_count;
-	else
-	return true;
-	end if;
-END;
-$$ LANGUAGE PLpgSQL;
-
-
-
-
-CREATE OR REPLACE VIEW ProductVariantView AS
-SELECT c.customer_id,c.variant_id,v.product_id,c.quantity,v.title variant_title,v.selling_price,p.title product_title,p.brand FROM
-cartitem as c 
-LEFT JOIN variant as v ON c.variant_id = v.variant_id
-LEFT JOIN product as p ON v.product_id = p.product_id where c.cart_item_status = 'added';
-
-
-
-CREATE OR REPLACE VIEW UserDeliveryView AS
-SELECT u.customer_id,u.email,u.first_name,u.last_name,u.addr_line1,u.addr_line2,u.city,u.postcode,t.phone_number,ct.delivery_days,ct.delivery_charge FROM
-userinformation as u 
-LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
-LEFT JOIN city as c ON u.city = c.city
-LEFT JOIN citytype as ct ON ct.city_type=c.city_type;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-########################################################################################################
-########################################################################################################
 
 
 /*
@@ -775,4 +707,20 @@ CREATE VIEW ProductMainImageView AS
 CREATE VIEW ProductBasicView AS
     SELECT product_id, title, min_selling_price, image_url, added_date
     FROM Product NATURAL JOIN ProductMinPricesView NATURAL JOIN ProductMainImageView;
+
+
+CREATE OR REPLACE VIEW ProductVariantView AS
+SELECT c.customer_id,c.variant_id,v.product_id,c.quantity,v.title variant_title,v.selling_price,p.title product_title,p.brand FROM
+cartitem as c 
+LEFT JOIN variant as v ON c.variant_id = v.variant_id
+LEFT JOIN product as p ON v.product_id = p.product_id where c.cart_item_status = 'added';
+
+
+
+CREATE OR REPLACE VIEW UserDeliveryView AS
+SELECT u.customer_id,u.email,u.first_name,u.last_name,u.addr_line1,u.addr_line2,u.city,u.postcode,t.phone_number,ct.delivery_days,ct.delivery_charge FROM
+userinformation as u 
+LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
+LEFT JOIN city as c ON u.city = c.city
+LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
 
