@@ -20,4 +20,37 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/window-date-picker.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+        html {
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        body::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        body::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 2px #ccc;
+            -webkit-box-shadow: inset 0 0 2px #ccc;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #454277;
+            outline: 1px solid #000
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            box-shadow: 0 0 0 1000px white inset !important;
+            -webkit-box-shadow: 0 0 0 1000px white inset !important;
+        }
+
+
+        body.modal-open {
+            overflow: visible;
+        }
+    </style>
 </head>

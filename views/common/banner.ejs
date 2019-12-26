@@ -1,29 +1,10 @@
 <section class="banner-area organic-breadcrumb">
     <div class="container">
-        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+        <div class="breadcrumb-banner text-center">
             <div class="col-first">
                 <h1><%= title %></h1>
-                <nav id="banner_location" class="d-flex align-items-center">
-                    <a href="/">Home<span class="lnr lnr-arrow-right path-arrow"></span></a>
-                </nav>
+                <p><%= description %></p>
             </div>
         </div>
     </div>
 </section>
-
-<!-- Script to add location breadcrumbs below title -->
-<script>
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    const path_name = window.location.pathname.replace(/^\/+|\/+$/g, '');
-    const path_parts = path_name.split('/');
-    path_parts.forEach(path_part => {
-        const placeholderDiv = document.createElement('div');
-        placeholderDiv.innerHTML = '<a href="#">' + capitalizeFirstLetter(path_part) + '<span class="lnr lnr-arrow-right path-arrow"></span></a>';
-        document.getElementById("banner_location").appendChild(placeholderDiv.firstChild);
-    });
-    const path_arrows = document.getElementsByClassName("path-arrow");
-    path_arrows.item(path_arrows.length - 1).remove();
-</script>

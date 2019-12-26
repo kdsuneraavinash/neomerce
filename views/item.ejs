@@ -4,7 +4,7 @@
 
 <body>
     <%- include('common/navbar',{'loggedIn':loggedIn}) %>
-    <%- include('common/banner', {'title': 'Product Details'}) %>
+    <%- include('common/banner', {title: 'Product Details', description: 'Product details of ' + name}) %>
 
     <%- include ('partial/item', {
         name: name,

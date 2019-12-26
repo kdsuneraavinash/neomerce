@@ -49,6 +49,22 @@ const getProductsFromCategory = async (req, res, categoryId) => {
     return { result, topprice: result.length === 0 ? 10000 : result[result.length - 1].price };
 };
 
+const getProductsFromAllCategories = async () => {
+    const query = `select * from ProductBasicView
+                    order by min_selling_price 
+                    limit 99`;
+    const out = await connection.query(query, []);
+    const result = out.rows.map((el) => {
+        const o = { ...el };
+        o.id = o.product_id;
+        o.show = true;
+        o.price = o.min_selling_price - 0;
+        o.image = o.image_url;
+        return o;
+    });
+    return { result, topprice: result.length === 0 ? 10000 : result[result.length - 1].price };
+};
+
 
 const getRelatedProducts = async (req, res, productId, limit) => {
     const query = `select distinct ProductBasicView.product_id, 
@@ -71,7 +87,7 @@ const getRelatedProducts = async (req, res, productId, limit) => {
 const getRecentProducts = async (req, res, limit) => {
     const query = `select *
                     from ProductBasicView natural join Product
-                    order by added_date
+                    order by added_date desc
                     limit $1;`;
     const out = await connection.query(query, [limit]);
     return out.rows;
@@ -128,4 +144,5 @@ module.exports = {
     getVariants,
     getRelatedProducts,
     getRecentProducts,
+    getProductsFromAllCategories,
 };

@@ -4,7 +4,9 @@
 
 <body id="category">
     <%- include('common/navbar',{'loggedIn':loggedIn}) %>
-    <%- include('common/banner', {'title':  categorytitle === null ? 'Search By Category ' : categorytitle}) %>
+    <%- include('common/banner', {
+                            title:  (categorytitle === null ? 'Search By Category' : categorytitle), 
+                            description:  (categorytitle === null ? title : 'Browse shop items in ' + categorytitle + ' category ')}) %>
 
     <%# Each category should have count, optionally children %>
     <%- include ('partial/category', {

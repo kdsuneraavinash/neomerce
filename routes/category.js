@@ -7,9 +7,18 @@ router.get('/', async (req, res) => {
     try {
         const loggedIn = req.session.user != null;
         if (req.query.query === undefined && req.query.category === undefined) {
-            if (req.query.category === undefined) {
-                helper.errorResponse(res, 'Category or query unspecified');
-            }
+            const categories = await category.getChildren(req, res, req.query.category);
+            const productDetails = await product.getProductsFromAllCategories();
+
+            res.render('category', {
+                loggedIn,
+                products: productDetails.result,
+                categories,
+                categorytitle: null,
+                parentid: null,
+                topprice: productDetails.topprice,
+                title: 'Browse Products',
+            });
         } else if (req.query.query === undefined) {
             const categories = await category.getChildren(req, res, req.query.category);
             const categoryDetails = await category.getDetails(req, res, req.query.category);
