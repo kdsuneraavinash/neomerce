@@ -733,12 +733,11 @@ $$;
 
 -- Procedure to place an order. 
 CREATE OR REPLACE PROCEDURE placeOrder(SESSION_UUID,VARCHAR(255),VARCHAR(255),VARCHAR(127),CHAR(15),
-									   VARCHAR(15),VARCHAR(255),VARCHAR(255),VARCHAR(127),VARCHAR(31),VARCHAR(15))
+									   VARCHAR(15),VARCHAR(255),VARCHAR(255),VARCHAR(127),VARCHAR(31),VARCHAR(15),UUID4,MONEY_UNIT)
 LANGUAGE plpgsql    
 AS $$
 DECLARE
 customer_id_ uuid4 := (select customer_id from session where session_id=$1);
-order_id_ uuid4 := generate_uuid4();
 customer_type varchar(15) := (select account_type from customer where customer_id=customer_id_);
 delivery_status varchar(15);
 payment_status varchar(15);
@@ -756,14 +755,14 @@ BEGIN
 	end if;
 
 
-	INSERT into orderdata values (order_id_,customer_id_,'ordered',NOW());
+	INSERT into orderdata values ($12,customer_id_,'ordered',NOW());
 	PERFORM variant_id,quantity from ProductVariantView, LATERAL reduceStock(variant_id,quantity) where customer_id = customer_id_;
-	PERFORM variant_id,quantity from ProductVariantView, LATERAL addOrderItem(variant_id,order_id_,quantity) where customer_id = customer_id_;
+	PERFORM variant_id,quantity from ProductVariantView, LATERAL addOrderItem(variant_id,$12,quantity) where customer_id = customer_id_;
 	UPDATE cartitem SET cart_item_status = 'ordered' where customer_id = customer_id_ and cart_item_status = 'added';
-	INSERT INTO delivery values (order_id_,$6,delivery_status,$7,$8,$9,$10,NOW());
-	INSERT INTO payment values (order_id_,$11,payment_status,NOW(),'2500');
+	INSERT INTO delivery values ($12,$6,delivery_status,$7,$8,$9,$10,NOW());
+	INSERT INTO payment values ($12,$11,payment_status,NOW(),$13);
 	If customer_type = 'guest' then
-	INSERT INTO guestinfomation values (order_id_,$2,$3,$4,$5);
+	INSERT INTO guestinfomation values ($12,$2,$3,$4,$5);
 	End if;								   
 END;
 $$;

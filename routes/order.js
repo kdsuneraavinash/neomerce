@@ -1,9 +1,83 @@
 /* eslint-disable quote-props */
 const router = require('express').Router();
 const Order = require('../models/order');
+const Cart = require('../models/cart');
+const UUID = require('uuid/v4');
 
-router.post('/', (req, res) => {
-    res.json(req.body);
+router.post('/', async (req, res) => {
+
+    if(req.body.delivery_method === 'deliver'){
+        req.body.delivery_method = 'home_delivery'
+    }else{
+        req.body.delivery_method = 'shop_pickup'
+    }
+    if(req.body.payment_method != 'card'){
+        req.body.payment_method = 'cash'
+    }
+
+    const result = await Cart.checkStock(req.sessionID);
+
+    if (result == null) {
+
+        try{
+
+            let dataObj =await Order.getOrderDetails(req)
+            let totalCost;
+            if(req.body.delivery_method === 'home_delivery'){
+                totalCost = (parseFloat(dataObj.subtotal) + parseFloat(dataObj.delivery_charge)).toFixed(2)
+            }else{
+                totalCost = dataObj.subtotal
+            }
+            console.log('From route subtotal '+dataObj.subtotal)
+            console.log('From route del_charge'+dataObj.delivery_charge)
+            console.log('From route total'+totalCost)
+            const orderId = UUID()
+            await Order.createOrder(req.sessionID,req.body,orderId,totalCost)
+            res.render('order', {
+                loggedIn: req.session.user != null,
+                show_thanks: false,
+                subtotal: dataObj.subtotal,
+                delivery: req.body.delivery_method === 'home_delivery' ? dataObj.delivery_charge : 0,
+                total: totalCost,
+                order: {
+                    'id': orderId,
+                    'date': new Date(),
+                    'payment_method': req.body.payment_method,
+                    'delivery_method': req.body.delivery_method,
+                },
+                user: {
+                    'firstname': req.body.first_name,
+                    'lastname': req.body.last_name,
+                    'phonenumber': req.body.phone_number,
+                    'email': req.body.email,
+                },
+                deliveryaddress: {
+                    'address1': req.body.addr_line1,
+                    'address2': req.body.addr_line2,
+                    'city': req.body.city,
+                    'postal': req.body.postcode,
+                },
+                items: dataObj.items
+            });
+
+
+        }catch(err){
+            console.log(err)
+        }
+
+      
+    } else {
+        res.redirect(`/cart?error=${result}`);
+    }
+    
+    
+
+
+
+
+
+
+
 });
 
 router.get('/', (req, res) => {
