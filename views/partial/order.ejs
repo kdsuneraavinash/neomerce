@@ -53,13 +53,13 @@
                         <% for (const item of items) {%>
                         <tr>
                             <td>
-                                <p><%= item.variant%></p>
+                                <p><%= item.product_title%></p>
                             </td>
                             <td>
                                 <h5>x <%= item.quantity%></h5>
                             </td>
                             <td>
-                                <p><%= item.totalprice%></p>
+                                <p><%= (parseFloat(item.selling_price) * parseFloat(item.quantity)).toFixed(2) %></p>
                             </td>
                         </tr>
                         <% } %>
