@@ -49,7 +49,7 @@
                             <input @input="emailCheck" @blur="emailCheck" type="email" class="form-control p-3"
                                 name="email" placeholder="Email (username@site.com)" v-model="email"
                                 :readonly="loggedIn">
-                            <div v-if="emailExists" class="col-md-12">
+                            <div v-if="emailExists && !loggedIn" class="col-md-12">
                                 <small>Registered account. <a href="/user/login?redirect=/checkout">Sign in</a></small>
                             </div>
                         </div>
@@ -66,12 +66,13 @@
                             <div class="nice-select wide" tabindex="0"><span class="current">Deliver to an
                                     address</span>
                                 <ul class="list">
-                                    <li class="option" v-on:click="delivery_method = 'deliver'; cityCheck()"
+                                    <li class="option"
+                                        v-on:click="delivery_method = 'deliver'; cityCheck(); createAutoComplete()"
                                         value="deliver">
                                         Deliver to an address
                                     </li>
                                     <li class="option"
-                                        v-on:click="delivery_method = 'pickup'; payment_method = 'card'; cityExists = true"
+                                        v-on:click="delivery_method = 'pickup'; payment_method = 'card'; cityExists = true;"
                                         value="pickup">
                                         Store pickup
                                     </li>
@@ -99,7 +100,7 @@
 
                             <div class="col-md-12 form-group">
                                 <div id="autocomplete" class="autocomplete">
-                                    <input input="cityCheck" @blur="cityCheck" type="text" class="form-control p-3"
+                                    <input @input="cityCheck" @blur="cityCheck" type="text" class="form-control p-3"
                                         name="city" v-model="city" placeholder="City (Select from dropdown)">
                                     <ul class="bg-white"></ul>
                                 </div>

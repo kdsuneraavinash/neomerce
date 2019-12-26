@@ -1,4 +1,5 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP PROCEDURE IF EXISTS addVisitedRecord;
 DROP PROCEDURE IF EXISTS addTagToCategory;
 DROP PROCEDURE IF EXISTS addProduct;
 DROP PROCEDURE IF EXISTS assignSession;
@@ -19,6 +20,7 @@ DROP TABLE IF EXISTS OrderItem cascade;
 DROP TABLE IF EXISTS OrderData cascade;
 DROP TABLE IF EXISTS CartItem cascade;
 DROP TABLE IF EXISTS VariantAttribute cascade;
+DROP TABLE IF EXISTS VisitedProduct cascade;
 DROP TABLE IF EXISTS Variant cascade;
 DROP TABLE IF EXISTS ProductAttribute cascade;
 DROP TABLE IF EXISTS ProductCategory cascade;
@@ -301,6 +303,16 @@ CREATE TABLE Variant (
     primary key (variant_id),
     foreign key (product_id) references Product(product_id),
     unique(sku_id)
+);
+
+-- Products Visited by a Customer
+CREATE TABLE VisitedProduct (
+    entry_id uuid4 default generate_uuid4(),
+    product_id uuid4,
+    customer_id uuid4,
+    visited_date timestamp not null default NOW(),
+    foreign key (product_id) references Product(product_id),
+    foreign key (customer_id) references Customer(customer_id)
 );
 
 -- Attributes common to a variant
@@ -699,7 +711,7 @@ $$;
 
 
 
--- Procedure to check availability of items in a cart.
+-- Procedure to check availability of items in a cart (session_id)
 CREATE OR REPLACE PROCEDURE checkAvailability(SESSION_UUID)
 LANGUAGE plpgsql    
 AS $$
@@ -713,6 +725,17 @@ END;
 $$;
 
 
+-- Procedure to add a record to denote that user viewed item (session_id, product_id)
+CREATE OR REPLACE PROCEDURE addVisitedRecord(SESSION_UUID, UUID4)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id=$1);
+BEGIN
+	INSERT INTO VisitedProduct values (default, $2, var_customer_id); 
+END;
+$$;
+
 /*
   _           _                    
  (_)         | |                   
@@ -724,7 +747,7 @@ $$;
 
 CREATE INDEX ON ProductImage(product_id);
 CREATE INDEX ON Variant(product_id);
-CREATE INDEX ON Product(title);
+CREATE INDEX ON Product((lower(title)));
 CREATE INDEX ON CartItem(variant_id, customer_id);
 CREATE INDEX ON City((lower(city)));
 

@@ -40,7 +40,30 @@
                 cityExists: true,
             },
             methods: {
+                createAutoComplete: function () {
+                    setTimeout(function () {
+                        new Autocomplete('#autocomplete', {
+                            search: (input) => {
+                                const url = `/api/cities?search=${encodeURI(input)}`;
+                                return new Promise((resolve) => {
+                                    fetch(url)
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            resolve(data);
+                                        });
+                                });
+                            },
+                            getResultValue: (result) => result.city,
+                            onSubmit: (result) => {
+                                app.city = result.city;
+                                app.delivery_days = result.delivery_days;
+                                app.delivery_charge = result.delivery_charge - 0;
+                                app.cityCheck();
+                            },
+                        });
+                    }, 500);
 
+                },
                 emailCheck: function (e) {
                     fetch('/api/email/' + this.email)
                         .then((response) => response.json())
@@ -49,18 +72,21 @@
                         });
                 },
                 cityCheck: function (e) {
-                    fetch('/api/city/' + this.city)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            this.cityExists = data.result;
-                            if (this.cityExists) {
-                                this.delivery_days = data.data[0].delivery_days;
-                                this.delivery_charge = data.data[0].delivery_charge - 0;
-                            } else {
-                                this.delivery_days = 'unknown';
-                                this.delivery_charge = 0;
-                            }
-                        });
+                    if (this.delivery_method === 'deliver') {
+                        if (this.city === '') return;
+                        fetch('/api/city/' + this.city)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                this.cityExists = data.result;
+                                if (this.cityExists) {
+                                    this.delivery_days = data.data[0].delivery_days;
+                                    this.delivery_charge = data.data[0].delivery_charge - 0;
+                                } else {
+                                    this.delivery_days = 'unknown';
+                                    this.delivery_charge = 0;
+                                }
+                            });
+                    }
                 },
                 checkForm: function (e) {
                     let addressValid = (
@@ -95,26 +121,7 @@
             }
         });
 
-
-        new Autocomplete('#autocomplete', {
-            search: (input) => {
-                const url = `/api/cities?search=${encodeURI(input)}`;
-                return new Promise((resolve) => {
-                    fetch(url)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            resolve(data);
-                        });
-                });
-            },
-            getResultValue: (result) => result.city,
-            onSubmit: (result) => {
-                app.city = result.city;
-                app.delivery_days = result.delivery_days;
-                app.delivery_charge = result.delivery_charge - 0;
-                app.cityCheck();
-            },
-        });
+        app.createAutoComplete();
 
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()

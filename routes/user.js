@@ -67,4 +67,14 @@ router.post('/login', async (req, res) => {
 });
 
 
+router.get('/profile', async (req, res) => {
+    if (req.session.user == null) {
+        res.redirect('/');
+        return;
+    }
+    const recentProducts = await User.recentProducts(req.sessionID);
+    const userInfo = await User.userInfo(req.sessionID);
+    res.render('profile', { loggedIn: req.session.user != null, recentProducts, userInfo });
+});
+
 module.exports = router;
