@@ -7,9 +7,7 @@
     <%- include('common/banner', {title: 'Checkout', description: 'Confirm details and buy products.'}) %>
 
     <%- include ('partial/checkout', {
-        items: proceedCheckOutObj['items'],
-        delivery_info:loggedIn ? proceedCheckOutObj['delivery_info'] : {'delivery_charge':0},
-        loggedIn:loggedIn
+        items: proceedCheckOutObj.items,
     }) %>
 
     <%- include('common/footer') %>
@@ -20,8 +18,60 @@
         let app = new Vue({
             el: "#checkout_form",
             data: {
-                delivery_method: 'deliver'
+                delivery_method: 'deliver',
+                addr_line1: '<%= proceedCheckOutObj.delivery_info.addr_line1 %>',
+                addr_line2: '<%= proceedCheckOutObj.delivery_info.addr_line2 %>',
+                city: '<%= proceedCheckOutObj.delivery_info.city %>',
+                postcode: '<%= proceedCheckOutObj.delivery_info.postcode %>',
+                subtotal: '<%= proceedCheckOutObj.subtotal %>' - 0,
+                delivery_charge: '<%= proceedCheckOutObj.delivery_info.delivery_charge %>' - 0,
+                first_name: '<%= proceedCheckOutObj.delivery_info.first_name %>',
+                last_name: '<%= proceedCheckOutObj.delivery_info.last_name %>',
+                phone_number: '<%= proceedCheckOutObj.delivery_info.phone_number %>',
+                email: '<%= proceedCheckOutObj.delivery_info.email %>',
+                loggedIn: '<%= loggedIn %>' == 'true',
+                delivery_days: '<%= proceedCheckOutObj.delivery_info.delivery_days %>',
+                payment_method: 'card',
+                terms_accepted: false,
+                n_products: '<%= proceedCheckOutObj.items.length %>' - 0,
+                errors: [],
+            },
+            methods: {
+                checkForm: function (e) {
+                    let addressValid = (
+                        this.delivery_method === 'pickup' || (
+                            this.addr_line1 && this.addr_line2 && this.city && this.postcode
+                        )
+                    );
+                    let validMethod = this.delivery_method === 'deliver' || this.payment_method === 'card';
+
+                    if (this.first_name && this.last_name && this.phone_number && this.email &&
+                        phoneNumberRegex.test(this.phone_number) && emailRegex.test(this.email) &&
+                        addressValid && this.terms_accepted && n_products && validMethod
+                    ) {
+                        return true;
+                    }
+
+                    this.errors = [];
+
+                    if (!this.first_name) this.errors.push('First Name required.');
+                    if (!this.last_name) this.errors.push('Last Name required.');
+                    if (!this.phone_number) this.errors.push('Phone Number required.');
+                    if (!phoneNumberRegex.test(this.phone_number)) this.errors.push('Phone Number format invalid.');
+                    if (!this.email) this.errors.push('Email Address required.');
+                    if (!emailRegex.test(this.email)) this.errors.push('Email Address format invalid.');
+                    if (!addressValid) this.errors.push('Address fields incomplete.');
+                    if (!validMethod) this.errors.push('Can\'t have store pickup with pay on delivery.');
+                    if (!this.terms_accepted) this.errors.push('Accept terms and conditions.');
+                    if (!this.n_products) this.errors.push('Must have atleast one product in the cart.');
+
+                    e.preventDefault();
+                }
             }
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
         })
     </script>
 </body>

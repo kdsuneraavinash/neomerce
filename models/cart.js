@@ -85,8 +85,7 @@ const checkStock = async (sessionID) => {
 
 
 const proceedCheckOut = async (sessionID, loggedIn) => {
-    console.log(loggedIn);
-    const productDetailsObject = {};
+    const productDetailsObject = { delivery_info: { delivery_charge: 0, delivery_days: 'unknown' } };
     let result;
     if (loggedIn) {
         const userInfoQueryString = `SELECT email, first_name, last_name, 
@@ -99,6 +98,10 @@ const proceedCheckOut = async (sessionID, loggedIn) => {
         const userInfoValues = [sessionID];
         result = await connection.query(userInfoQueryString, userInfoValues);
         [productDetailsObject.delivery_info] = result.rows;
+        // TODO:(lahiru) Fix telephone number load issue
+        productDetailsObject.delivery_info.phone_number = '1112229990';
+        // TODO:(lahiru) Fix delivery days estimation
+        productDetailsObject.delivery_info.delivery_days = '5 days';
     }
 
     const itemsInfoQueryString = `SELECT variant_id, product_id, quantity, 
@@ -109,6 +112,12 @@ const proceedCheckOut = async (sessionID, loggedIn) => {
     const itemInfoValues = [sessionID];
     result = await connection.query(itemsInfoQueryString, itemInfoValues);
     productDetailsObject.items = result.rows;
+    productDetailsObject.subtotal = 0;
+    productDetailsObject.items.forEach((v) => {
+        // eslint-disable-next-line no-param-reassign
+        v.totalprice = (v.selling_price - 0) * (v.quantity - 0);
+        productDetailsObject.subtotal += v.totalprice;
+    });
     return productDetailsObject;
 };
 

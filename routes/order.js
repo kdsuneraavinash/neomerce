@@ -2,35 +2,11 @@
 const router = require('express').Router();
 const Order = require('../models/order');
 
-router.get('/', async (req, res) => {
+router.post('/', (req, res) => {
+    res.json(req.body);
+});
 
-
-    await Order.createOrder(req.sessionID)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+router.get('/', (req, res) => {
     res.render('order', {
         loggedIn: req.session.user != null,
         show_thanks: false,

@@ -618,11 +618,14 @@ DECLARE
 new_id uuid4 := (select customer_id from userinformation where email=$2);
 old_id uuid4 := (select customer_id from session where session_id = $1);
 old_account_type varchar(15) := (select account_type from customer where customer_id = old_id);
+cart_items int := (select count(*) from cartitem where cart_item_status = 'added' and customer_id = old_id);
 BEGIN
 	UPDATE Session SET customer_id = new_id where session_id = $1;
 	UPDATE Customer SET deleted = true where customer_id = old_id;
-    if (old_account_type = 'guest') then
-        UPDATE CartItem SET customer_id = new_id, cart_item_status = 'transferred' where customer_id = old_id and cart_item_status = 'added';
+    if (old_account_type = 'guest' and cart_items > 0) then
+        -- set old items to transferred and add new items to cart
+        UPDATE CartItem SET cart_item_status = 'transferred' where customer_id = new_id and cart_item_status = 'added';
+        UPDATE CartItem SET customer_id = new_id where customer_id = old_id and cart_item_status = 'added';
     end if;
 END;
 $$;
@@ -812,11 +815,12 @@ CREATE OR REPLACE VIEW ProductVariantView AS
 
 
 CREATE OR REPLACE VIEW UserDeliveryView AS
-    SELECT u.customer_id,u.email,u.first_name,u.last_name,u.addr_line1,u.addr_line2,u.city,u.postcode,t.phone_number,ct.delivery_days,ct.delivery_charge FROM
-    userinformation as u 
-    LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
-    LEFT JOIN city as c ON u.city = c.city
-    LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
+    SELECT u.customer_id, u.email, u.first_name, u.last_name, u.addr_line1,
+        u.addr_line2, u.city, u.postcode, t.phone_number, ct.delivery_days, ct.delivery_charge 
+    FROM userinformation as u 
+        LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
+        LEFT JOIN city as c ON u.city = c.city
+        LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
 
 
 

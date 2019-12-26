@@ -1,62 +1,53 @@
 <section class="checkout_area section_gap" id="checkout_form">
     <div class="container">
+
+        <% if (!loggedIn){%>
         <div class="returning_customer">
-            <div class="check_title">
-                <h2>Returning Customer? <a href="/login">&nbsp;Click here to login</a></h2>
-            </div>
-            <p>If you have shopped with us before, please login using the above link. If you are a new
-                customer, please proceed to the Billing & Shipping section.<br />
-                You may create a new account using this link.&nbsp; <a href="/register">&nbsp;Click here to register</a>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Returning Customer? <a href="/user/login?redirect=/checkout">&nbsp;Click here to
+                        login</a></strong><br />
+                If you have shopped with us before, please login using the above link. If you
+                are a new customer, please proceed to the Billing & Shipping section.<br />
+                You may create a new account using this link.&nbsp; <a href="/user/register">&nbsp;Click here to
+                    register</a>
                 <br />
                 However please note that login is not required to make a purchase.
-            </p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
+        <br />
+        <%}%>
+        <%# Not logged in message End%>
 
         <div class="billing_details">
             <div class="row">
                 <div class="col-lg-8">
                     <h3>Your Details</h3>
-                    <form class="row contact_form" action="#" method="post" novalidate="novalidate">
-
-                        <% if (loggedIn) { %>
-
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name" value="<%= delivery_info.first_name %>">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="last" name="name" placeholder="Last Name" value="<%= delivery_info.last_name %>">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address" value="<%= delivery_info.email %>">
-                            </div>
-
-                        <%} else { %>
-
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="last" name="name" placeholder="Last Name">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
-                            </div>
-                            <div class="col-md-6 form-group p_star">
-                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address">
-                            </div>
-
-                        <% } %>
-
-
-                        <div class="col-md-12 form-group">
-                            <textarea class="form-control" name="message" id="message" rows="1"
-                                placeholder="Order Notes"></textarea>
+                    <div class="row contact_form pb-3">
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" v-model:value="first_name" :readonly="loggedIn"
+                                placeholder="First Name">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" v-model:value="last_name" :readonly="loggedIn"
+                                placeholder="Last Name">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" v-model:value="phone_number" :readonly="loggedIn"
+                                placeholder="Telephone Number">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="email" class="form-control" v-model:value="email" :readonly="loggedIn"
+                                placeholder="Email Address">
                         </div>
 
-                        <div class="col-md-12 form-group p_star">
+                    </div>
+                    <h3>Delivery Details</h3>
+                    <div class="row contact_form">
+
+                        <div class="col-md-12 form-group">
                             <select style="display: none;">
                                 <option value="deliver">Deliver to an address </option>
                                 <option value="pickup">Store pickup </option>
@@ -67,7 +58,8 @@
                                     <li class="option" v-on:click="delivery_method = 'deliver'" value="deliver">
                                         Deliver to an address
                                     </li>
-                                    <li class="option" v-on:click="delivery_method = 'pickup'" value="pickup">
+                                    <li class="option" v-on:click="delivery_method = 'pickup'; payment_method = 'card'"
+                                        value="pickup">
                                         Store pickup
                                     </li>
                                 </ul>
@@ -75,100 +67,116 @@
                         </div>
 
                         <div v-if="delivery_method === 'deliver'" class="col-md-12 p-0 m-0">
-                            <div class="col-md-12 form-group p_star">
+                            <div class="col-md-12 form-group">
                                 <p class="text-muted">
                                     The order will be delivered to the below address.
                                 </p>
                             </div>
 
-
-                        <% if (loggedIn) { %>
-
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 1" value="<%= delivery_info.addr_line1 %>">
+                            <div class="col-md-12 form-group mb-2">
+                                <input type="text" class="form-control" placeholder="Address Line 1"
+                                    v-model:value="addr_line1">
                             </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address Line 2" value="<%= delivery_info.addr_line2 %>">
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="city" name="city" placeholder="City" value="<%= delivery_info.city %>">
-                            </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="zip" name="zip" placeholder="PostCode" value="<%= delivery_info.postcode %>">
-                            </div>
+                            <div class="col-md-12 form-group mb-2">
 
-
-                        <%} else { %>
-
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add1" name="add1" placeholder="Address Line 1">
-                                
+                                <input type="text" class="form-control" placeholder="Address Line 2"
+                                    v-model:value="addr_line2">
                             </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address Line 2">
+                            <div class="col-md-12 form-group mb-2">
+                                <input type="text" class="form-control" placeholder="City" v-model:value="city">
                             </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" placeholder="PostCode" v-model:value="postcode">
                             </div>
-                            <div class="col-md-12 form-group p_star">
-                                <input type="text" class="form-control" id="zip" name="zip" placeholder="PostCode">
+                            <div class="col-md-12 form-group">
+                                <div class="alert alert-secondary" role="alert">
+                                    Estimated delivery days: {{delivery_days}}
+                                </div>
                             </div>
-
-
-                        <% } %>     
-
                         </div>
                         <div v-else class="col-md-12 p-0 m-0">
-                            <div class="col-md-12 form-group p_star">
+                            <div class="col-md-12 form-group">
                                 <p class="text-muted">
                                     You are required to come to the shop and collect the order yourself.
                                 </p>
                             </div>
                         </div>
-                    </form>
+
+                        <div v-if="errors.length" class="col-md-12 p-0 m-0">
+                            <div class="col-md-12 form-group">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Please correct the following problem(s):</strong> <br />
+                                    <div class="ml-4">
+                                        <li v-for="error in errors"> {{ error }}</li>
+                                    </div>
+
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="order_box">
                         <h2>Your Order</h2>
                         <ul class="list">
-                            <li><a href="#">Product <span>Total (LKR)</span></a></li>
-                            <% 
-                            let subtotal = 0;
-                            for (const item of items) {
-                                console.log((parseFloat(item.selling_price)*item.quantity).toFixed(2))
-                                subtotal = parseFloat(subtotal) + parseFloat((parseFloat(item.selling_price)*item.quantity).toFixed(2))
-                                %>
-                            <li><a href="#"><%= item.product_title.substring(0, 12) -%>... <span class="middle">x
-                                        <%= item.quantity %></span> <span class="last"><%= (parseFloat(item.selling_price)*item.quantity).toFixed(2)  %></span></a>
+                            <li><a>Product <span>Total (LKR)</span></a></li>
+                            <!-- Items -->
+                            <%  for (const item of items) {%>
+                            <li>
+                                <a href="/item/show/<%= item.product_id -%>" data-toggle="tooltip" data-placement="left"
+                                    title="<%= item.product_title -%>">
+                                    <%= item.product_title.substring(0, 12) -%>...
+                                    <span class="middle">x <%= item.quantity %></span>
+                                    <span class="last"><%= item.totalprice.toFixed(2)  %></span>
+                                </a>
                             </li>
                             <% } %>
                         </ul>
                         <ul class="list list_2">
-                            <li><a href="#">Subtotal <span><%= subtotal %></span></a></li>
-                            <li v-if="delivery_method === 'deliver'"><a href="#">Shipping <span>
-                                        <%= delivery_info.delivery_charge %> </span></a></li>
-                            <li><a href="#">Total <span>
-                                        {{delivery_method==='deliver' ? '<%= parseFloat(delivery_info.delivery_charge) + parseFloat(subtotal) %>' : '<%= subtotal %>'}}
-                                    </span></a></li>
+                            <!-- Subtotal -->
+                            <li><a>Subtotal
+                                    <span>{{ subtotal.toFixed(2) }}</span>
+                                </a>
+                            </li>
+
+                            <!-- Shipping Cost -->
+                            <li v-if="delivery_method === 'deliver'">
+                                <a>Shipping
+                                    <span> {{delivery_charge.toFixed(2)}} </span>
+                                </a>
+                            </li>
+
+                            <!-- Subtotal -->
+                            <li>
+                                <a>Total
+                                    <span>
+                                        {{(delivery_method==='deliver' ? delivery_charge + subtotal : subtotal).toFixed(2)}}
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
-                        <div class="payment_item">
+
+                        <div class="payment_item" v-if="delivery_method==='deliver'">
                             <div class="radion_btn">
-                                <input type="radio" id="f-option5" name="selector" value="pay_on_delivery">
-                                <label for="f-option5">Pay on delivery</label>
+                                <input type="radio" id="f-pay_on_delivery" name="payment_method" value="pay_on_delivery"
+                                    v-model="payment_method">
+                                <label for="f-pay_on_delivery">Pay on delivery</label>
                                 <div class="check"></div>
                             </div>
-                            <p v-if="delivery_method === 'deliver'">
-                                You have to pay the total cost to the delivery person after you recieved the item.
-                            </p>
-                            <p v-else>
-                                You can come to the store and pay the item cost to receive the items.
+                            <p>
+                                You have to pay the total cost to the delivery person after you received the item.
                             </p>
                         </div>
-                        <div class="payment_item active">
+                        <div class="payment_item">
                             <div class="radion_btn">
-                                <input type="radio" id="f-option6" name="selector" value="card">
-                                <label for="f-option6">Card Payment </label>
-                                <img src="img/product/card.jpg" alt="">
+                                <input type="radio" id="f-card" name="payment_method" value="card"
+                                    v-model="payment_method">
+                                <label for="f-card">Card Payment </label>
+                                <img src="/img/product/card.jpg" alt="">
                                 <div class="check"></div>
                             </div>
                             <p>Pay via PayPal or Credit Card; you can pay with your credit card if you don’t have a
@@ -176,11 +184,24 @@
                                 account.</p>
                         </div>
                         <div class="creat_account">
-                            <input type="checkbox" id="f-option4" name="selector">
-                            <label for="f-option4">I’ve read and accept the </label>
+                            <input type="checkbox" id="f-terms" v-model="terms_accepted">
+                            <label for="f-terms">I’ve read and accept the </label>
                             <a href="#">terms & conditions*</a>
                         </div>
-                        <a class="primary-btn" href="/order">Proceed to Paypal</a>
+                        <form action="/order" method="post" @submit="checkForm">
+                            <input name="delivery_method" v-bind:value="delivery_method" hidden>
+                            <input name="addr_line1" v-bind:value="addr_line1" hidden>
+                            <input name="addr_line2" v-bind:value="addr_line2" hidden>
+                            <input name="city" v-bind:value="city" hidden>
+                            <input name="postcode" v-bind:value="postcode" hidden>
+                            <input name="first_name" v-bind:value="first_name" hidden>
+                            <input name="last_name" v-bind:value="last_name" hidden>
+                            <input name="phone_number" v-bind:value="phone_number" hidden>
+                            <input name="email" v-bind:value="email" hidden>
+                            <input name="payment_method" v-bind:value="payment_method" hidden>
+                            <input name="terms_accepted" v-bind:value="terms_accepted" hidden>
+                            <button class="btn btn-block primary-btn" href="/order">Confirm Transaction</button>
+                        </form>
                     </div>
                 </div>
             </div>
