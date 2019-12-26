@@ -15,6 +15,23 @@ router.post('/add/', async (req, res) => {
     }
 });
 
+router.post('/edit/:id', async (req, res) => {
+    req.body.quantity -= 0;
+    if (Number.isNaN(req.body.quantity)) {
+        res.redirect('/cart?error=Invalid quantity given');
+    } else if (req.body.quantity < 0) {
+        res.redirect('/cart?error=Negative quantity given');
+    } else {
+        const result = await Cart.editCartItemQuantity(req.sessionID, req.params.id,
+            req.body.quantity);
+        if (result === null) {
+            res.redirect('/cart');
+        } else {
+            res.redirect(`/cart?error=${result}`);
+        }
+    }
+});
+
 router.post('/remove/:id', async (req, res) => {
     await Cart.removeItemFromCart(req.sessionID, req.params.id);
     res.redirect('/cart');

@@ -34,6 +34,12 @@
                                         <p><%= item.variant %></p>
                                         <form action="/cart/remove/<%= item.id %>" method="post">
                                             <button type="submit" class="genric-btn small danger-border">Remove</button>
+
+                                            <button type="button" class="genric-btn small info-border"
+                                                v-on:click="itemtitle='<%= item.product %>';selectedQuantity=<%= item.quantity %>;cartitemid='<%= item.id %>';"
+                                                data-toggle="modal" data-target="#changeQuantityModal">
+                                                Edit
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
@@ -107,15 +113,13 @@
                             <td>
                                 <form action="/cart/transfer/<%= item.id %>" method="POST"
                                     class="card_area d-flex align-items-center">
-                                    <button v-if="selectedQuantity > 0" type="submit" value="submit"
-                                        class="btn btn-secondary">Add</button>
+                                    <button type="submit" value="submit" class="btn btn-secondary">Add</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="/cart/remove/<%= item.id %>" class="card_area d-flex align-items-center"
                                     method="POST">
-                                    <button v-if="selectedQuantity > 0" type="submit" value="submit"
-                                        class="btn btn-danger">Remove</button>
+                                    <button type="submit" value="submit" class="btn btn-danger">Remove</button>
                                 </form>
                             </td>
                         </tr>
@@ -124,6 +128,58 @@
                 </table>
             </div>
             <% } %>
+        </div>
+    </div>
+    <div class="modal" id="changeQuantityModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Product Quantity</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Product
+                                    </td>
+                                    <td>
+                                        {{itemtitle}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Quantity
+                                    </td>
+                                    <td>
+                                        <div class="product_count">
+                                            <input type="text" name="qty" id="sst" maxlength="12"
+                                                v-model.number="selectedQuantity" title="Quantity"
+                                                class="input-text qty">
+                                            <button v-on:click="selectedQuantity = selectedQuantity + 1"
+                                                class="increase items-count" type="button"><i
+                                                    class="lnr lnr-chevron-up"></i></button>
+                                            <button v-on:click="selectedQuantity = Math.max(selectedQuantity-1, 0)"
+                                                class="reduced items-count" type="button"><i
+                                                    class="lnr lnr-chevron-down"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <form class="modal-footer" method="post" v-bind:action="'/cart/edit/' + cartitemid">
+                    <input type="number" name="quantity" v-bind:value="selectedQuantity" hidden />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>

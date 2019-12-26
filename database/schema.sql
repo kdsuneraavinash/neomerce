@@ -4,6 +4,7 @@ DROP PROCEDURE IF EXISTS addProduct;
 DROP PROCEDURE IF EXISTS assignSession;
 DROP PROCEDURE IF EXISTS createUser;
 DROP PROCEDURE IF EXISTS assignCustomerId;
+DROP PROCEDURE IF EXISTS changeCartItemQuantity;
 DROP PROCEDURE IF EXISTS transferCartItem;
 DROP PROCEDURE IF EXISTS addItemToCart;
 DROP PROCEDURE IF EXISTS removeCartItem;
@@ -614,6 +615,27 @@ var_customer_id uuid4 := (select customer_id from session where session_id = $1)
 BEGIN
     UPDATE CartItem SET cart_item_status = 'removed' WHERE cart_item_id = $2 and customer_id = var_customer_id and 
         (cart_item_status = 'added' or cart_item_status = 'transferred') ;
+END;
+$$;
+
+-- Procedure to remove item from cart (session_id, cart_item_id, new_quantity)
+CREATE OR REPLACE PROCEDURE changeCartItemQuantity(SESSION_UUID, UUID4, INT)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id = $1);
+var_max_quantity int := (select variant.quantity from variant join cartitem using(variant_id) where cart_item_id = $2);
+BEGIN
+    if ($3 = 0) then
+        CALL removeCartItem($1, $2);
+    else 
+		if (var_max_quantity < $3) then
+        	RAISE EXCEPTION 'Your item quantity exceeds stock quantity which is %', var_max_quantity; 
+    	else
+			UPDATE CartItem SET quantity = $3 WHERE cart_item_id = $2 and customer_id = var_customer_id and 
+				(cart_item_status = 'added' or cart_item_status = 'transferred') ;
+		end if;
+    end if;
 END;
 $$;
 

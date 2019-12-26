@@ -50,6 +50,17 @@ const removeItemFromCart = async (sessionId, cartItemId) => {
     await connection.query(query, values);
 };
 
+const editCartItemQuantity = async (sessionId, cartItemId, newQuantity) => {
+    const query = 'CALL changeCartItemQuantity($1, $2, $3)';
+    const values = [sessionId, cartItemId, newQuantity];
+    try {
+        await connection.query(query, values);
+    } catch (err) {
+        return err;
+    }
+    return null;
+};
+
 const transferCartItem = async (sessionId, cartItemId) => {
     const query = 'CALL transferCartItem($1, $2)';
     const values = [sessionId, cartItemId];
@@ -62,5 +73,9 @@ const transferCartItem = async (sessionId, cartItemId) => {
 };
 
 module.exports = {
-    getCartItems, removeItemFromCart, addItemToCart, transferCartItem,
+    getCartItems,
+    removeItemFromCart,
+    addItemToCart,
+    transferCartItem,
+    editCartItemQuantity,
 };
