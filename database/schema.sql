@@ -552,10 +552,15 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 customer_id uuid4 := (select customer_id from session where session_id=$1);
+var_existing_email varchar(255) := (SELECT email from userinformation where email = $2);
 BEGIN
-    INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
-    INSERT INTO accountcredential values (customer_id, $10); 
-	UPDATE customer SET account_type = 'user';
+    if (var_existing_email is null) then
+        INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
+        INSERT INTO accountcredential values (customer_id, $10); 
+        UPDATE customer SET account_type = 'user';
+    else
+        RAISE EXCEPTION 'Email % is already registered', $2;
+    end if;
 END;
 $$;
 
