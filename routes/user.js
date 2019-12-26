@@ -39,12 +39,12 @@ router.get('/logout', (req, res) => {
         res.clearCookie('user_sid');
         req.session.destroy();
     }
-    res.redirect('/');
+    res.redirect((req.query.redirect ? req.query.redirect : '/'));
 });
 
 
 router.get('/login', (req, res) => {
-    res.render('login', { error: req.query.error });
+    res.render('login', { error: req.query.error, redirect: req.query.redirect });
 });
 
 
@@ -53,14 +53,14 @@ router.post('/login', async (req, res) => {
     try {
         const passwordValidated = await User.validatePassword(email, password);
         if (!passwordValidated) {
-            res.redirect('/user/login?error=Email or password invalid');
+            res.redirect(`/user/login?error=Email or password invalid&redirect=${req.body.redirect}`);
         } else {
             const assigned = await User.assignCustomerId(req.sessionID, email);
             if (assigned) {
                 req.session.user = true;
-                res.redirect('/');
+                res.redirect(req.body.redirect);
             } else {
-                res.redirect('/user/login?error=Something went wrong');
+                res.redirect(`/user/login?error=Something went wrong&redirect=${req.body.redirect}`);
             }
         }
     } catch (error) {

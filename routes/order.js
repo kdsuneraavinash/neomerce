@@ -1,6 +1,10 @@
 /* eslint-disable quote-props */
 const router = require('express').Router();
 
+router.post('/', (req, res) => {
+    res.json(req.body);
+});
+
 router.get('/', (req, res) => {
     res.render('order', {
         loggedIn: req.session.user != null,
