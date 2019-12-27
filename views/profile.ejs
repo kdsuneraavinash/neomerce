@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('common/head') %>
+
+<body>
+    <%- include('common/navbar') %>
+    <%- include('common/banner', {title: 'Profile', description: 'Your neomerce profile details'}) %>
+    <%- include ('partial/profile', {recentProducts, userInfo}) %>
+    <%- include('common/footer') %>
+    <%- include('common/scripts') %>
+</body>
+
+</html>

@@ -9,121 +9,100 @@
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
     <script src="/js/window-date-picker.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
 
     <script>
+        let app = new Vue({
+            el: "#register_form",
+            data: {
+                email: '',
+                password: '',
+                retype_password: '',
+                firstName: '',
+                lastName: '',
+                addressLine1: '',
+                addressLine2: '',
+                telephoneNumber: '',
+                city: '',
+                postalCode: '',
+                errors: [],
+                emailExists: false,
+                cityExists: true,
+            },
+            methods: {
+                emailCheck: function (e) {
+                    fetch('/api/email/' + this.email)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            this.emailExists = data.result;
+                        });
+                },
+                cityCheck: function (e) {
+                    fetch('/api/city/' + this.city)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log(data);
+                            this.cityExists = data.result;
+                        });
+                },
+                checkForm: function (e) {
+                    if (this.password && (this.retype_password === this.password) && this.firstName &&
+                        this.lastName && this.addressLine1 && this.addressLine2 && this.telephoneNumber &&
+                        this.city && this.postalCode &&
+                        this.telephoneNumber && phoneNumberRegex.test(this.telephoneNumber) &&
+                        this.email && emailRegex.test(this.email) && !emailExists && cityExists
+
+                    ) {
+                        return true;
+                    }
+
+                    this.errors = [];
+
+                    if (!this.password) this.errors.push('Password required.');
+                    if (this.retype_password !== this.password) this.errors.push('Retype Password does not match password.');
+                    if (!this.firstName) this.errors.push('First Name required.');
+                    if (!this.lastName) this.errors.push('Last Name required.');
+                    if (!this.addressLine1) this.errors.push('Address Line 1 required.');
+                    if (!this.addressLine2) this.errors.push('Address Line 2 required.');
+                    if (!this.city) this.errors.push('City required.');
+                    if (!this.postalCode) this.errors.push('Postal Code required.');
+
+                    if (!this.telephoneNumber) this.errors.push('Phone Number required.');
+                    if (!phoneNumberRegex.test(this.telephoneNumber)) this.errors.push('Phone Number format invalid.');
+                    if (!this.email) this.errors.push('Email Address required.');
+                    if (!emailRegex.test(this.email)) this.errors.push('Email Address format invalid.');
+
+                    if (this.emailExists) this.errors.push('Email address is already registered.');
+                    if (!this.cityExists) this.errors.push('Invalid city selected.');
+
+                    e.preventDefault();
+                }
+            }
+        });
+
+        new Autocomplete('#autocomplete', {
+            search: (input) => {
+                const url = `/api/cities?search=${encodeURI(input)}`;
+                return new Promise((resolve) => {
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            resolve(data);
+                        });
+                });
+            },
+            getResultValue: (result) => result.city,
+            onSubmit: (result) => {
+                app.city = result.city;
+            },
+        });
+
+
         const picker = new WindowDatePicker({
             el: '#yellow-picker',
             toggleEl: '#birthday',
-            inputEl: '#birthday'
+            inputEl: '#birthday',
         });
-
-        $(function () {
-            var availableTags = JSON.parse(`<%- JSON.stringify(cities) %>`);
-            $("#city").autocomplete({
-                source: availableTags
-            });
-        });
-
-        let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        let phoneNumberRegex = /^\d{10}$/;
-
-        /// Validate forms in the page
-        $(document).ready(function () {
-            let forms = $('.needs-validation');
-
-            let email = $("#email");
-            let password = $("#password");
-            let passwordRetype = $("#retype-password");
-            let firstName = $("#firstName");
-            let lastName = $("#lastName");
-            let addressLine1 = $("#addressLine1");
-            let addressLine2 = $("#addressLine2");
-            let phoneNumber = $("#telephoneNumber");
-            let city = $("#city");
-            let postal = $("#postalCode");
-            let birthday = $("#birthday");
-
-            email.on("input", function () {
-                validateNotEmptyAndRegex(email, emailRegex);
-            });
-            password.on("input", function () {
-                validateNotEmpty(password);
-            });
-            passwordRetype.on("input", function () {
-                validateNotEmpty(passwordRetype);
-                checkField(passwordRetype, passwordRetype.val() === password.val())
-            });
-            firstName.on("input", function () {
-                validateNotEmpty(firstName);
-            });
-            lastName.on("input", function () {
-                validateNotEmpty(lastName);
-            });
-            addressLine1.on("input", function () {
-                validateNotEmpty(addressLine1);
-            });
-            addressLine2.on("input", function () {
-                validateNotEmpty(addressLine2);
-            });
-            phoneNumber.on("input", function () {
-                validateNotEmptyAndRegex(phoneNumber, phoneNumberRegex);
-            });
-            city.on("input", function () {
-                validateNotEmpty(city);
-            });
-            postal.on("input", function () {
-                validateNotEmpty(postal);
-            });
-            birthday.on("input", function () {
-                validateNotEmpty(birthday);
-            });
-
-            Array.prototype.filter.call(forms, function (form) {
-                form.addEventListener('submit', function () {
-                    console.log("ho");
-                    if (
-                        validateNotEmptyAndRegex(email, emailRegex) &&
-                        validateNotEmpty(password) &&
-                        validateNotEmpty(passwordRetype) &&
-                        validateNotEmpty(firstName) &&
-                        validateNotEmpty(lastName) &&
-                        validateNotEmpty(addressLine1) &&
-                        validateNotEmpty(addressLine2) &&
-                        validateNotEmptyAndRegex(phoneNumber, phoneNumberRegex) &&
-                        validateNotEmpty(city) &&
-                        validateNotEmpty(postal) &&
-                        validateNotEmpty(birthday) &&
-                        checkField(passwordRetype, passwordRetype.val() === password.val())
-                    ) {
-                        form.submit();
-                    }
-                }, false);
-            });
-        });
-
-        function checkField(field, conditions) {
-            field.removeClass("is-valid");
-            field.removeClass("is-invalid");
-            if (conditions) {
-                field.addClass("is-valid");
-                return true;
-            } else {
-                field.addClass("is-invalid");
-                event.preventDefault();
-                event.stopPropagation();
-                return false;
-            }
-        }
-
-        function validateNotEmpty(field) {
-            return checkField(field, field.val() !== "");
-        }
-
-        function validateNotEmptyAndRegex(field, regex) {
-            return checkField(field, field.val() !== "" &&
-                regex.test(field.val()));
-        }
     </script>
 </body>
 

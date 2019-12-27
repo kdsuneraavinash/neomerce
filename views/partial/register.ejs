@@ -1,10 +1,10 @@
-<section class="login_box_area section_gap container">
+<section class="login_box_area section_gap container" id="register_form">
     <div class="card shadow p-3">
         <div class="card-body">
             <h2 class="text-center mb-5">Register</h2>
-            <form class="row needs-validation" action="/user/register" method="post" novalidate>
+            <form class="row needs-validation" action="/user/register" method="post" @submit="checkForm" novalidate>
                 <% if (error != null){ %>
-                <div class="col-md-12 form-group">
+                <div class="col-md-12 form-group mb-0">
                     <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
                         <strong>Error: </strong> <%=error.replace("error: ","")%>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -12,66 +12,88 @@
                         </button>
                     </div>
                 </div>
-                <hr />
                 <% }%>
 
-                <div class="col-md-12 form-group" id="email-div">
-                    <input type="email" class="form-control p-3" id="email" name="email" placeholder="Email"
-                        onblur="checkAvailability()">
+                <div class="col-md-12 form-group">
+                    <input @input="emailCheck" @blur="emailCheck" type="email" class="form-control p-3" name="email"
+                        placeholder="Email (username@site.com)" v-model="email"
+                        v-bind:class="{'is-invalid': emailExists}">
+                    <div v-if="emailExists" class="col-md-12 text-danger">
+                        Email {{email}} is already registered. If you already have an account sign in from <a
+                            href="/user/login">here</a>.
+                    </div>
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <input type="password" class="form-control p-3" id="password" name="password"
+                    <input type="password" class="form-control p-3" name="password" v-model="password"
                         placeholder="Password">
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <input type="password" class="form-control p-3" id="retype-password" name="retype-password"
+                    <input type="password" class="form-control p-3" name="retype-password" v-model="retype_password"
                         placeholder="Re-type password">
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <input type="text" class="form-control p-3" id="firstName" name="firstName"
+                    <input type="text" class="form-control p-3" name="firstName" v-model="firstName"
                         placeholder="First Name">
                 </div>
                 <div class="col-md-6 form-group">
-                    <input type="text" class="form-control p-3" id="lastName" name="lastName" placeholder="Last Name">
+                    <input type="text" class="form-control p-3" name="lastName" placeholder="Last Name"
+                        v-model="lastName">
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <input type="text" class="form-control p-3" id="addressLine1" name="addressLine1"
+                    <input type="text" class="form-control p-3" name="addressLine1" v-model="addressLine1"
                         placeholder="Address Line 01">
                 </div>
 
                 <div class="col-md-12 form-group">
-                    <input type="text" class="form-control p-3" id="addressLine2" name="addressLine2"
+                    <input type="text" class="form-control p-3" name="addressLine2" v-model="addressLine2"
                         placeholder="Address Line 02">
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <input type="text" class="form-control p-3" id="telephoneNumber" name="telephoneNumber"
-                        placeholder="Telephone Number">
-                </div>
-
-                <div class="col-md-6 form-group ui-widget">
-                    <input type="text" class="form-control p-3" id="city" name="city" placeholder="City">
+                    <input type="text" class="form-control p-3" name="telephoneNumber" v-model="telephoneNumber"
+                        placeholder="Telephone Number (XXXXXXXXXX)">
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <input type="text" class="form-control p-3" id="postalCode" name="postalCode"
+                    <div id="autocomplete" class="autocomplete">
+                        <input @input="cityCheck" @blur="cityCheck" type="text" class="form-control p-3" name="city"
+                            v-model="city" placeholder="City (Select from dropdown)"
+                            v-bind:class="{'is-invalid': !cityExists}">
+                        <ul class="bg-white"></ul>
+                    </div>
+                    <div v-if="!cityExists" class="col-md-12 text-danger">
+                        City is invalid. Please select a city from suggestions.
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <input type="text" class="form-control p-3" name="postalCode" v-model="postalCode"
                         placeholder="Postal Code">
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <input id="birthday" class="form-control p-3" placeholder="Birthday">
+                    <input id="birthday" class="form-control p-3" placeholder="Birthday" name="birthday">
                     <div id="yellow-picker" class="wdp-blue"></div>
+                </div>
+
+                <div v-if="errors.length" class="col-md-12 form-group">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>Please correct the following problem(s):</strong> <br />
+                        <div class="ml-4">
+                            <li v-for="error in errors"> {{ error }}</li>
+                        </div>
+                    </div>
                 </div>
 
                 <hr class="my-5" />
 
                 <div class="col-md-12 form-group text-right">
                     <div class="checkout_btn_inner float-left d-none d-md-flex   align-items-center">
-                        <a class="gray_btn" href="/login">I Already have an Account</a>
+                        <a class="gray_btn" href="/user/login">I Already have an Account</a>
                     </div>
                     <div class="checkout_btn_inner d-flex align-items-center float-right">
                         <button class="primary-btn" name="submit" type="submit" style="border: none;">Register
@@ -83,7 +105,7 @@
     </div>
 </section>
 
-<script>
+<!-- <script>
     /*Check availability of the email*/
     const checkAvailability = () => {
         const value = document.getElementById('email').value;
@@ -123,4 +145,4 @@
             }
         }
     }
-</script>
+</script> -->

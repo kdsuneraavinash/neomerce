@@ -1,0 +1,83 @@
+<section class="blog_area mb-5 section_gap">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row mb-5">
+                    <div class="col-lg-6">
+                        <div class="categories_post">
+                            <img style="height: 200px; object-fit: cover;"
+                                src="https://d4vj4z0ojbtdv.cloudfront.net/blog/wp-content/uploads/2018/08/ecommerce-cart-abandonment-zepo-blog.jpg"
+                                alt="cart">
+                            <div class="categories_details">
+                                <div class="categories_text">
+                                    <a href="/cart">
+                                        <h5>Your Cart</h5>
+                                    </a>
+                                    <div class="border_line"></div>
+                                    <p>View your Cart Items</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="categories_post">
+                            <img style="height: 200px; object-fit: cover;"
+                                src="https://cdn.pixabay.com/photo/2019/07/13/13/42/watch-4334815_960_720.jpg"
+                                alt="cart">
+                            <div class="categories_details">
+                                <div class="categories_text">
+                                    <a href="/category">
+                                        <h5>Categories</h5>
+                                    </a>
+                                    <div class="border_line"></div>
+                                    <p>Browse through the catelogue of products</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <%#Recent Orders Here %>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="blog_right_sidebar">
+                    <aside class="single_sidebar_widget author_widget">
+                        <img class="author_img rounded-circle" <%# Email Avatar %>
+                            src="https://api.adorable.io/avatars/125/<%= userInfo.email %>" alt="">
+                        <%# User Name %>
+                        <h4><%= userInfo.name %> <span
+                                class="badge badge-primary badge-pill"><%= userInfo.account_type %></span></h4><br />
+
+                        <%# Details %>
+                        <strong><%= userInfo.email %></strong><br />
+                        <p><%= userInfo.address %></p>
+                        <div class="br"></div>
+                    </aside>
+                    <%if (recentProducts.length) { %>
+                    <aside class="single_sidebar_widget popular_post_widget">
+                        <h3 class="widget_title">Recent Items</h3>
+                        <%for (item of recentProducts) {%>
+                        <div class="mb-20">
+                            <div class="single-related-product d-flex">
+                                <a href="#"><img style="width: 50px; height: 70px; object-fit: contain;"
+                                        src="<%= item.image_url %>" alt=""></a>
+                                <div class="desc">
+                                    <a href="/item/show/<%= item.product_id %>"
+                                        class="title"><%= item.title.substring(0, 25) + "..." %></a>
+                                    <div class="price">
+                                        <h6>LKR <%= item.min_selling_price %></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    </aside>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -33,14 +33,44 @@ const assignCustomerId = async (sessionID, email) => {
 };
 
 
-const checkEmail = async (email) => {
+const emailExists = async (email) => {
     const queryString = 'SELECT email from userinformation where email = $1';
     const values = [email];
+    const out = await pool.query(queryString, values);
+    return out.rows.length !== 0;
+};
+
+
+const userInfo = async (sessionId) => {
+    const queryString = `select account_type, 
+                            email, 
+                            (first_name || ' ' || last_name) as name, 
+                            (addr_line1 || ', ' || addr_line2 || ', ' || city || '. ' || postcode) as address
+                            from session join userinformation using(customer_id) join customer using(customer_id)
+                            where session_id = $1`;
+    const values = [sessionId];
     const out = await pool.query(queryString, values);
     return out.rows[0];
 };
 
 
+const recentProducts = async (sessionId) => {
+    const queryString = `select * from (
+                            select distinct on (product_id) product_id, min_selling_price, title, image_url, visited_date
+                                from productbasicview natural join visitedproduct natural join session 
+                                where session_id = $1
+                            ) as tbl order by visited_date desc limit 5`;
+    const values = [sessionId];
+    const out = await pool.query(queryString, values);
+    return out.rows;
+};
+
+
 module.exports = {
-    createUser, validatePassword, assignCustomerId, checkEmail,
+    createUser,
+    validatePassword,
+    assignCustomerId,
+    emailExists,
+    recentProducts,
+    userInfo,
 };

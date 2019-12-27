@@ -72,10 +72,59 @@ const transferCartItem = async (sessionId, cartItemId) => {
     return null;
 };
 
+const checkStock = async (sessionID) => {
+    const queryString = 'CALL checkAvailability($1)';
+    const values = [sessionID];
+    try {
+        await connection.query(queryString, values);
+    } catch (err) {
+        return err;
+    }
+    return null;
+};
+
+
+const proceedCheckOut = async (sessionID, loggedIn) => {
+    const productDetailsObject = { delivery_info: { delivery_charge: 0, delivery_days: 'unknown' } };
+    let result;
+    if (loggedIn) {
+        const userInfoQueryString = `SELECT email, first_name, last_name, 
+                                            addr_line1, addr_line2, city, 
+                                            postcode, phone_number,
+                                            delivery_days, delivery_charge 
+                                        from UserDeliveryView, session 
+                                        where UserDeliveryView.customer_id = session.customer_id and 
+                                            session.session_id = $1`;
+        const userInfoValues = [sessionID];
+        result = await connection.query(userInfoQueryString, userInfoValues);
+        [productDetailsObject.delivery_info] = result.rows;
+        // TODO:(lahiru) Fix telephone number load issue
+        productDetailsObject.delivery_info.phone_number = '1112229990';
+    }
+
+    const itemsInfoQueryString = `SELECT variant_id, product_id, quantity, 
+                                        variant_title, selling_price, product_title 
+                                    from ProductVariantView, session 
+                                    where ProductVariantView.customer_id = session.customer_id and
+                                        session.session_id = $1`;
+    const itemInfoValues = [sessionID];
+    result = await connection.query(itemsInfoQueryString, itemInfoValues);
+    productDetailsObject.items = result.rows;
+    productDetailsObject.subtotal = 0;
+    productDetailsObject.items.forEach((v) => {
+        // eslint-disable-next-line no-param-reassign
+        v.totalprice = (v.selling_price - 0) * (v.quantity - 0);
+        productDetailsObject.subtotal += v.totalprice;
+    });
+    return productDetailsObject;
+};
+
 module.exports = {
     getCartItems,
     removeItemFromCart,
     addItemToCart,
     transferCartItem,
+    checkStock,
+    proceedCheckOut,
     editCartItemQuantity,
 };

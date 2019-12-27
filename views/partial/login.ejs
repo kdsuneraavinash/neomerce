@@ -1,4 +1,4 @@
-<section class="login_box_area section_gap">
+<section id="login_form" class="login_box_area section_gap">
     <div class="container">
         <div class="row">
             <div class="col-lg-6">
@@ -15,9 +15,10 @@
             <div class="col-lg-6">
                 <div class="login_form_inner">
                     <h3>Log in to enter</h3>
-                    <form class="row login_form" action="/user/login" method="post" id="contactForm">
+                    <form class="row login_form" action="/user/login" method="post" id="contactForm" @submit="checkForm"
+                        novalidate>
                         <% if (error != null){ %>
-                        <div class="col-md-12 form-group text-left">
+                        <div class="col-md-12 form-group text-left pb-0 mb-0">
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <strong>Error: </strong> <%=error.replace("error: ","")%>
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -25,16 +26,26 @@
                                 </button>
                             </div>
                         </div>
-                        <hr />
                         <% }%>
+
+                        <div v-if="errors.length" class="col-md-12 form-group text-left mt-0">
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Please correct the following problem(s):</strong> <br />
+                                <div class="ml-4">
+                                    <li v-for="error in errors"> {{ error }}</li>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-12 form-group">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Email"
-                                required>
+                                v-model="email">
                         </div>
                         <div class="col-md-12 form-group">
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Password" required>
+                            <input type="password" class="form-control" id="password" name="password" v-model="password"
+                                placeholder="Password">
                         </div>
+
+                        <input value="<%= redirect ? redirect : '/'%>" name="redirect" hidden>
                         <div class="col-md-12 form-group">
                             <button type="submit" value="submit" class="primary-btn">Log In</button>
                         </div>

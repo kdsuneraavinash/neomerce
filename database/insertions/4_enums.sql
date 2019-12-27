@@ -1,5 +1,5 @@
-insert into citytype values ('main', 'Main City', 5);
-insert into citytype values ('secondary', 'Secondary City', 7);
+insert into citytype values ('main', 'Main City', 5, 500);
+insert into citytype values ('secondary', 'Secondary City', 7, 1000);
 
 insert into accounttype values ('guest', 'Guest User');
 insert into accounttype values ('user', 'Normal User');

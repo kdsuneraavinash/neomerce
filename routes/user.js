@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const City = require('../models/city');
 const helper = require('../utils/helper');
 
 
 /* GET endpoint for user registration. Render the user registration page upon request */
 router.get('/register', async (req, res) => {
-    const cities = await City.getCities();
-    res.render('register', { cities, error: req.query.error });
+    res.render('register', { error: req.query.error });
 });
 
 /* POST endpoint for user registration. */
@@ -39,12 +37,12 @@ router.get('/logout', (req, res) => {
         res.clearCookie('user_sid');
         req.session.destroy();
     }
-    res.redirect('/');
+    res.redirect((req.query.redirect ? req.query.redirect : '/'));
 });
 
 
 router.get('/login', (req, res) => {
-    res.render('login', { error: req.query.error });
+    res.render('login', { error: req.query.error, redirect: req.query.redirect });
 });
 
 
@@ -53,14 +51,14 @@ router.post('/login', async (req, res) => {
     try {
         const passwordValidated = await User.validatePassword(email, password);
         if (!passwordValidated) {
-            res.redirect('/user/login?error=Email or password invalid');
+            res.redirect(`/user/login?error=Email or password invalid&redirect=${req.body.redirect}`);
         } else {
             const assigned = await User.assignCustomerId(req.sessionID, email);
             if (assigned) {
                 req.session.user = true;
-                res.redirect('/');
+                res.redirect(req.body.redirect);
             } else {
-                res.redirect('/user/login?error=Something went wrong');
+                res.redirect(`/user/login?error=Something went wrong&redirect=${req.body.redirect}`);
             }
         }
     } catch (error) {
@@ -69,18 +67,14 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/check/:email', async (req, res) => {
-    try {
-        const result = await User.checkEmail(req.params.email);
-        if (result) {
-            res.send('Email Already registered');
-        } else {
-            res.send('Valid');
-        }
-    } catch (error) {
-        res.send('Something went wrong');
+router.get('/profile', async (req, res) => {
+    if (req.session.user == null) {
+        res.redirect('/');
+        return;
     }
+    const recentProducts = await User.recentProducts(req.sessionID);
+    const userInfo = await User.userInfo(req.sessionID);
+    res.render('profile', { loggedIn: req.session.user != null, recentProducts, userInfo });
 });
-
 
 module.exports = router;

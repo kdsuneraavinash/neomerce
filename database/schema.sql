@@ -1,4 +1,5 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP PROCEDURE IF EXISTS addVisitedRecord;
 DROP PROCEDURE IF EXISTS addTagToCategory;
 DROP PROCEDURE IF EXISTS addProduct;
 DROP PROCEDURE IF EXISTS assignSession;
@@ -19,6 +20,7 @@ DROP TABLE IF EXISTS OrderItem cascade;
 DROP TABLE IF EXISTS OrderData cascade;
 DROP TABLE IF EXISTS CartItem cascade;
 DROP TABLE IF EXISTS VariantAttribute cascade;
+DROP TABLE IF EXISTS VisitedProduct cascade;
 DROP TABLE IF EXISTS Variant cascade;
 DROP TABLE IF EXISTS ProductAttribute cascade;
 DROP TABLE IF EXISTS ProductCategory cascade;
@@ -46,6 +48,27 @@ DROP DOMAIN IF EXISTS SESSION_UUID cascade;
 DROP DOMAIN IF EXISTS URL cascade;
 DROP VIEW IF EXISTS ProductMinPricesView cascade;
 DROP VIEW IF EXISTS ProductMainImageView cascade;
+
+
+/*
+      _                       _           
+     | |                     (_)          
+   __| | ___  _ __ ___   __ _ _ _ __  ___ 
+  / _` |/ _ \| '_ ` _ \ / _` | | '_ \/ __|
+ | (_| | (_) | | | | | | (_| | | | | \__ \
+  \__,_|\___/|_| |_| |_|\__,_|_|_| |_|___/
+*/
+
+CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
+CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
+CREATE DOMAIN VALID_PHONE AS CHAR(15);
+CREATE DOMAIN UUID4 AS CHAR(36) CHECK(
+    VALUE ~ '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
+);
+CREATE DOMAIN SESSION_UUID AS CHAR(32);
+CREATE DOMAIN URL AS VARCHAR(1023);
+
+
 
 /* 
    __                  _   _                 
@@ -89,23 +112,24 @@ BEGIN
 END
 $$ LANGUAGE PLpgSQL;
 
-/*
-      _                       _           
-     | |                     (_)          
-   __| | ___  _ __ ___   __ _ _ _ __  ___ 
-  / _` |/ _ \| '_ ` _ \ / _` | | '_ \/ __|
- | (_| | (_) | | | | | | (_| | | | | \__ \
-  \__,_|\___/|_| |_| |_|\__,_|_|_| |_|___/
-*/
 
-CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
-CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
-CREATE DOMAIN VALID_PHONE AS CHAR(15);
-CREATE DOMAIN UUID4 AS CHAR(36) CHECK(
-    VALUE ~ '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
-);
-CREATE DOMAIN SESSION_UUID AS CHAR(32);
-CREATE DOMAIN URL AS VARCHAR(1023);
+
+-- Function to check for remaining stock of a certain variant.
+-- Used for the checkAvailability procedure.
+CREATE OR REPLACE FUNCTION checkVariant(UUID4,INT) RETURNS boolean AS
+$$
+DECLARE
+inventory_count int := (select quantity from variant where variant_id=$1);
+product_name varchar(255) := (select product.title from product,variant where variant.product_id=product.product_id and variant.variant_id = $1);
+BEGIN
+	if inventory_count < $2 then 
+        RAISE Exception '% out of stock. Only % items available in the stocks',product_name,inventory_count;
+	else
+	    return true;
+	end if;
+END;
+$$ LANGUAGE PLpgSQL;
+
 
 
 /* 
@@ -122,6 +146,7 @@ CREATE TABLE CityType (
     city_type varchar(15),
     description varchar(127),
     delivery_days int not null check(is_positive(delivery_days)),
+    delivery_charge money_unit not null,
     primary key (city_type)
 );
 
@@ -280,6 +305,16 @@ CREATE TABLE Variant (
     unique(sku_id)
 );
 
+-- Products Visited by a Customer
+CREATE TABLE VisitedProduct (
+    entry_id uuid4 default generate_uuid4(),
+    product_id uuid4,
+    customer_id uuid4,
+    visited_date timestamp not null default NOW(),
+    foreign key (product_id) references Product(product_id),
+    foreign key (customer_id) references Customer(customer_id)
+);
+
 -- Attributes common to a variant
 CREATE TABLE VariantAttribute (
     variant_id uuid4,
@@ -330,10 +365,11 @@ CREATE TABLE OrderData (
 
 -- items in order
 CREATE TABLE OrderItem (
+    orderitem_id uuid4 default generate_uuid4(),
     variant_id uuid4,
     order_id uuid4,
     quantity int not null check(is_positive(quantity)),
-    primary key (variant_id, order_id),
+    primary key (orderitem_id),
     foreign key (variant_id) references Variant(variant_id),
     foreign key (order_id) references OrderData(order_id)
 );
@@ -553,7 +589,11 @@ AS $$
 DECLARE
 customer_id uuid4 := (select customer_id from session where session_id=$1);
 var_existing_email varchar(255) := (SELECT email from userinformation where email = $2);
+var_city int := (SELECT count(*) from city where city = $7);
 BEGIN
+    if (var_city = 0) then
+        RAISE EXCEPTION 'Unknown city %. Please select a valid city.', $7;
+    end if;
     if (var_existing_email is null) then
         INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
         INSERT INTO accountcredential values (customer_id, $10); 
@@ -572,11 +612,14 @@ DECLARE
 new_id uuid4 := (select customer_id from userinformation where email=$2);
 old_id uuid4 := (select customer_id from session where session_id = $1);
 old_account_type varchar(15) := (select account_type from customer where customer_id = old_id);
+cart_items int := (select count(*) from cartitem where cart_item_status = 'added' and customer_id = old_id);
 BEGIN
 	UPDATE Session SET customer_id = new_id where session_id = $1;
 	UPDATE Customer SET deleted = true where customer_id = old_id;
-    if (old_account_type = 'guest') then
-        UPDATE CartItem SET customer_id = new_id, cart_item_status = 'transferred' where customer_id = old_id and cart_item_status = 'added';
+    if (old_account_type = 'guest' and cart_items > 0) then
+        -- set old items to transferred and add new items to cart
+        UPDATE CartItem SET cart_item_status = 'transferred' where customer_id = new_id and cart_item_status = 'added';
+        UPDATE CartItem SET customer_id = new_id where customer_id = old_id and cart_item_status = 'added';
     end if;
 END;
 $$;
@@ -666,6 +709,33 @@ BEGIN
 END;
 $$;
 
+
+
+-- Procedure to check availability of items in a cart (session_id)
+CREATE OR REPLACE PROCEDURE checkAvailability(SESSION_UUID)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+customer_id_ uuid4 := (select customer_id from session where session_id=$1);
+BEGIN
+	PERFORM variant_id,quantity 
+        from cartitem , LATERAL checkVariant(variant_id,quantity) 
+        where customer_id = customer_id_ and cart_item_status='added'; 
+END;
+$$;
+
+
+-- Procedure to add a record to denote that user viewed item (session_id, product_id)
+CREATE OR REPLACE PROCEDURE addVisitedRecord(SESSION_UUID, UUID4)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id=$1);
+BEGIN
+	INSERT INTO VisitedProduct values (default, $2, var_customer_id); 
+END;
+$$;
+
 /*
   _           _                    
  (_)         | |                   
@@ -677,8 +747,9 @@ $$;
 
 CREATE INDEX ON ProductImage(product_id);
 CREATE INDEX ON Variant(product_id);
-CREATE INDEX ON Product(title);
+CREATE INDEX ON Product((lower(title)));
 CREATE INDEX ON CartItem(variant_id, customer_id);
+CREATE INDEX ON City((lower(city)));
 
 /*
         _                   
@@ -701,4 +772,21 @@ CREATE VIEW ProductMainImageView AS
 CREATE VIEW ProductBasicView AS
     SELECT product_id, title, min_selling_price, image_url, added_date
     FROM Product NATURAL JOIN ProductMinPricesView NATURAL JOIN ProductMainImageView;
+
+
+CREATE OR REPLACE VIEW ProductVariantView AS
+    SELECT c.customer_id,c.variant_id,v.product_id,c.quantity,v.title variant_title,v.selling_price,p.title product_title,p.brand FROM
+    cartitem as c 
+    LEFT JOIN variant as v ON c.variant_id = v.variant_id
+    LEFT JOIN product as p ON v.product_id = p.product_id where c.cart_item_status = 'added';
+
+
+
+CREATE OR REPLACE VIEW UserDeliveryView AS
+    SELECT u.customer_id, u.email, u.first_name, u.last_name, u.addr_line1,
+        u.addr_line2, u.city, u.postcode, t.phone_number, ct.delivery_days, ct.delivery_charge 
+    FROM userinformation as u 
+        LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
+        LEFT JOIN city as c ON u.city = c.city
+        LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
 

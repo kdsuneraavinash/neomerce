@@ -72,16 +72,12 @@
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
                                 aria-haspopup="true" aria-expanded="false">Account</a>
                             <ul class="dropdown-menu">
-                                <li class="nav-item"><a class="nav-link" href="">
+                                <li class="nav-item"><a class="nav-link" href="/user/profile">
                                         Profile
                                     </a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="/user/logout">
+                                <li class="nav-item"><a class="redirect-attrib nav-link" href="/user/logout">
                                         Log out
-                                    </a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="">
-                                        Settings
                                     </a>
                                 </li>
                             </ul>
@@ -107,7 +103,8 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="/user/login">Login</a></li>
+                        <li class="nav-item"><a class="redirect-attrib nav-link" href="/user/login">Login</a>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="/user/register">Register</a></li>
                         <li class="nav-item"><a class="nav-link" href="/cart">My Cart</a></li>
 
@@ -134,3 +131,9 @@
         </div>
     </div>
 </header>
+
+<script>
+    for (let elem of document.getElementsByClassName('redirect-attrib')) {
+        elem.setAttribute('href', elem.getAttribute('href') + '?redirect=' + window.location.pathname + window.location.search);
+    }
+</script>
