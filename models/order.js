@@ -30,7 +30,8 @@ const getOrderDetails = async (req) => {
     });
 
     if (req.body.delivery_method === 'home_delivery') {
-        const deliveryDetailQuery = 'SELECT citytype.delivery_charge from citytype,city where city.city_type=citytype.city_type and city.city=$1';
+        const deliveryDetailQuery = `SELECT citytype.delivery_charge from citytype,city 
+                                        where city.city_type=citytype.city_type and city.city=$1 `;
         const deliverValues = [req.body.city];
         result = await connection.query(deliveryDetailQuery, deliverValues);
         productDetailsObject.delivery_charge = result.rows[0].delivery_charge;

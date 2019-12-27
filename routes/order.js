@@ -26,6 +26,7 @@ router.post('/', async (req, res) => {
             /* In case user refresh the order confirmation page, redirects him to home */
             if (dataObj.subtotal === 0) {
                 res.redirect('/');
+                return;
             }
 
             let totalCost;
