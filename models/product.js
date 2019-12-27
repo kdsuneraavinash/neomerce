@@ -98,7 +98,7 @@ const getRecentProducts = async (req, res, limit) => {
 const getProductsFromQuery = async (req, res, searchQuery) => {
     const query = `select product_id, title, min_selling_price, image_url 
                             from ProductBasicView natural left outer join ProductTag
-                            where tag_id in (select tag_id from tag where tag like $1) or lower(title) like $1
+                            where tag_id in (select tag_id from tag where tag like $1) or lower(title) like lower($1)
                             order by min_selling_price 
                             limit 99`;
     const values = [
