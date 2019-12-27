@@ -1,4 +1,5 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP PROCEDURE IF EXISTS placeOrder;
 DROP PROCEDURE IF EXISTS addTagToCategory;
 DROP PROCEDURE IF EXISTS addProduct;
 DROP PROCEDURE IF EXISTS assignSession;
@@ -113,14 +114,14 @@ END
 $$ LANGUAGE PLpgSQL;
 
 
-
 -- Function to check for remaining stock of a certain variant.
--- Used for the checkAvailability procedure.
-CREATE OR REPLACE FUNCTION checkVariant(UUID4,INT) RETURNS boolean AS
+-- Used for the checkAvailability procedure. (variant_id, quantity)
+CREATE OR REPLACE FUNCTION checkVariant(UUID4, INT) RETURNS boolean AS
 $$
 DECLARE
 inventory_count int := (select quantity from variant where variant_id=$1);
-product_name varchar(255) := (select product.title from product,variant where variant.product_id=product.product_id and variant.variant_id = $1);
+product_name varchar(255) := (select product.title from product, variant 
+    where variant.product_id=product.product_id and variant.variant_id = $1);
 BEGIN
 	if inventory_count < $2 then 
         RAISE Exception '% out of stock. Only % items available in the stocks',product_name,inventory_count;
@@ -131,9 +132,8 @@ END;
 $$ LANGUAGE PLpgSQL;
 
 
-
--- Function to reduce stock of a variant. Called inside placeOrder procedure.
-CREATE OR REPLACE FUNCTION reduceStock(UUID4,INT) RETURNS boolean AS
+-- Function to reduce stock of a variant. Called inside placeOrder procedure.(variant_id, new_quantity)
+CREATE OR REPLACE FUNCTION reduceStock(UUID4, INT) RETURNS boolean AS
 $$
 BEGIN
 	UPDATE variant SET quantity = $2 where variant_id = $1;
@@ -143,12 +143,13 @@ $$ LANGUAGE PLpgSQL;
 
 
 -- Function to add order items into the orderitem table. Called inside placeOrder procedure.
-CREATE OR REPLACE FUNCTION addOrderItem(UUID4,UUID4,INT) RETURNS boolean AS
+--                                  (variant_id, order_id, quantity)
+CREATE OR REPLACE FUNCTION addOrderItem(UUID4, UUID4, INT) RETURNS boolean AS
 $$
 DECLARE
 orderitem_id uuid4 := generate_uuid4();
 BEGIN
-	INSERT INTO orderitem values (orderitem_id,$1,$2,$3);
+	INSERT INTO orderitem values (orderitem_id, $1, $2, $3);
 	return true;
 END;
 $$ LANGUAGE PLpgSQL;
@@ -460,7 +461,6 @@ CREATE TABLE Pickup (
     primary key (order_id),
     foreign key (order_id) references OrderData(order_id),
     foreign key (pickup_status) references PickupStatus(pickup_status) on update cascade
-    
 );
 
 
@@ -753,9 +753,12 @@ END;
 $$;
 
 
--- Procedure to place an order. 
-CREATE OR REPLACE PROCEDURE placeOrder(SESSION_UUID,VARCHAR(255),VARCHAR(255),VARCHAR(127),CHAR(15),
-									   VARCHAR(15),VARCHAR(255),VARCHAR(255),VARCHAR(127),VARCHAR(31),VARCHAR(15),UUID4,MONEY_UNIT)
+-- Procedure to place an order(session_id, first_name, last_name, email, 
+--                                phone_number, delivery_method, addr_line1, addr_line2, city, post_code,
+--                                payment_method, order_id, payment_amount)
+CREATE OR REPLACE PROCEDURE placeOrder(SESSION_UUID, VARCHAR(255), VARCHAR(255), VARCHAR(127), CHAR(15),
+									   VARCHAR(15), VARCHAR(255), VARCHAR(255), VARCHAR(127), VARCHAR(31),
+                                       VARCHAR(15), UUID4, MONEY_UNIT)
 LANGUAGE plpgsql    
 AS $$
 DECLARE
@@ -765,25 +768,25 @@ payment_status varchar(15);
 BEGIN
 
 	if $11 = 'card' then
-	payment_status := 'payed';
+	    payment_status := 'payed';
 	else
-	payment_status := 'not_payed';
+	    payment_status := 'not_payed';
 	end if;
 
 
-	INSERT into orderdata values ($12,customer_id_,'ordered',NOW());
-	PERFORM variant_id,quantity from ProductVariantView, LATERAL reduceStock(variant_id,quantity) where customer_id = customer_id_;
-	PERFORM variant_id,quantity from ProductVariantView, LATERAL addOrderItem(variant_id,$12,quantity) where customer_id = customer_id_;
+	INSERT into orderdata values ($12,customer_id_, 'ordered', NOW());
+	PERFORM variant_id, quantity from ProductVariantView, LATERAL reduceStock(variant_id, quantity) where customer_id = customer_id_;
+	PERFORM variant_id, quantity from ProductVariantView, LATERAL addOrderItem(variant_id, $12, quantity) where customer_id = customer_id_;
 	UPDATE cartitem SET cart_item_status = 'ordered' where customer_id = customer_id_ and cart_item_status = 'added';
 	
 	if $6 = 'shop_pickup' then
-	INSERT INTO pickup values ($12,'pending pick up');
+	    INSERT INTO pickup values ($12,'pending pick up');
 	else
-	INSERT INTO delivery values ($12,$6,'ongoing',$7,$8,$9,$10,NOW());
+	    INSERT INTO delivery values ($12, $6, 'ongoing', $7, $8, $9, $10, NOW());
 	end if;
-	INSERT INTO payment values ($12,$11,payment_status,NOW(),$13);
+	INSERT INTO payment values ($12, $11, payment_status, NOW(), $13);
 	If customer_type = 'guest' then
-	INSERT INTO guestinfomation values ($12,$2,$3,$4,$5);
+	    INSERT INTO guestinfomation values ($12, $2, $3, $4, $5);
 	End if;								   
 END;
 $$;
@@ -833,7 +836,6 @@ CREATE OR REPLACE VIEW ProductVariantView AS
     LEFT JOIN product as p ON v.product_id = p.product_id where c.cart_item_status = 'added';
 
 
-
 CREATE OR REPLACE VIEW UserDeliveryView AS
     SELECT u.customer_id, u.email, u.first_name, u.last_name, u.addr_line1,
         u.addr_line2, u.city, u.postcode, t.phone_number, ct.delivery_days, ct.delivery_charge 
@@ -841,13 +843,3 @@ CREATE OR REPLACE VIEW UserDeliveryView AS
         LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
         LEFT JOIN city as c ON u.city = c.city
         LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
-
-
-
-
-
-
-
-
-
-

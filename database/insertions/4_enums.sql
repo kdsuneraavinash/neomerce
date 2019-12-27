@@ -28,5 +28,5 @@ insert into paymentmethod values ('cash', 'Cash on delivery');
 insert into paymentstatus values ('payed', 'Payment done');
 insert into paymentstatus values ('not_payed', 'Payment not completed');
 
-insert into pickupstatus values ('pending pick up','The user has not picked up the order yet');
-insert into pickupstatus values ('picked up','The user has picked up the order');
+insert into pickupstatus values ('pending pick up', 'The user has not picked up the order yet');
+insert into pickupstatus values ('picked up', 'The user has picked up the order');

@@ -1,46 +1,46 @@
 /* eslint-disable quote-props */
 const router = require('express').Router();
+const UUID = require('uuid/v4');
 const Order = require('../models/order');
 const Cart = require('../models/cart');
-const UUID = require('uuid/v4');
 
 router.post('/', async (req, res) => {
-
     /* Temporary adapter to map passed variables to suitable values */
-    if(req.body.delivery_method === 'deliver'){
-        req.body.delivery_method = 'home_delivery'
-    }else{
-        req.body.delivery_method = 'shop_pickup'
+    if (req.body.delivery_method === 'deliver') {
+        req.body.delivery_method = 'home_delivery';
+    } else {
+        req.body.delivery_method = 'shop_pickup';
     }
-    if(req.body.payment_method != 'card'){
-        req.body.payment_method = 'cash'
+    if (req.body.payment_method !== 'card') {
+        req.body.payment_method = 'cash';
     }
 
     /* Check if all the items are avaiable in stocks */
     const result = await Cart.checkStock(req.sessionID);
 
     if (result == null) {
-        try{
+        try {
             /* Get details needed to make and order(subtotal and delivery_charge) */
-            let dataObj =await Order.getOrderDetails(req)
+            const dataObj = await Order.getOrderDetails(req);
 
             /* In case user refresh the order confirmation page, redirects him to home */
-            if(dataObj.subtotal === 0){
-                res.redirect('/')
+            if (dataObj.subtotal === 0) {
+                res.redirect('/');
             }
 
             let totalCost;
 
             /* Define total based on the delivery type */
-            if(req.body.delivery_method === 'home_delivery'){
-                totalCost = (parseFloat(dataObj.subtotal) + parseFloat(dataObj.delivery_charge)).toFixed(2)
-            }else{
-                totalCost = dataObj.subtotal
+            if (req.body.delivery_method === 'home_delivery') {
+                totalCost = (parseFloat(dataObj.subtotal)
+                    + parseFloat(dataObj.delivery_charge)).toFixed(2);
+            } else {
+                totalCost = dataObj.subtotal;
             }
 
             /* Create the order */
-            const orderId = UUID()
-            await Order.createOrder(req.sessionID,req.body,orderId,totalCost)
+            const orderId = UUID();
+            await Order.createOrder(req.sessionID, req.body, orderId, totalCost);
 
             res.render('order', {
                 loggedIn: req.session.user != null,
@@ -66,28 +66,15 @@ router.post('/', async (req, res) => {
                     'city': req.body.city,
                     'postal': req.body.postcode,
                 },
-                items: dataObj.items
+                items: dataObj.items,
             });
-
-
-        }catch(err){
-            console.log(err)
-            res.redirect('/checkout')
+        } catch (err) {
+            console.log(err);
+            res.redirect('/checkout');
         }
-
-      
     } else {
         res.redirect(`/cart?error=${result}`);
     }
-    
-    
-
-
-
-
-
-
-
 });
 
 router.get('/', (req, res) => {
