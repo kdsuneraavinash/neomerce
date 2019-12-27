@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     if (req.body.delivery_method === 'deliver') {
         req.body.delivery_method = 'home_delivery';
     } else {
-        req.body.delivery_method = 'shop_pickup';
+        req.body.delivery_method = 'store_pickup';
     }
     if (req.body.payment_method !== 'card') {
         req.body.payment_method = 'cash';

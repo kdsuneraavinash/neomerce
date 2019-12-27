@@ -14,8 +14,8 @@ insert into cartitemstatus values ('transferred', 'Cart items transferred from a
 insert into orderstatus values ('ordered', 'Ordered');
 insert into orderstatus values ('completed', 'Order completed');
 
-insert into deliverymethod values ('shop_pickup', 'Pick up from the shop');
-insert into deliverymethod values ('home_delivery', 'Deliver to the home');
+insert into dispatchmethod values ('store_pickup', 'Pick up from the store');
+insert into dispatchmethod values ('home_delivery', 'Deliver to the home');
 
 insert into deliverystatus values ('ongoing', 'Delivery Ongoing');
 insert into deliverystatus values ('delivered', 'Delivery Completed');
