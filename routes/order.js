@@ -69,8 +69,7 @@ router.post('/', async (req, res) => {
                 items: dataObj.items,
             });
         } catch (err) {
-            console.log(err);
-            res.redirect('/checkout');
+            res.redirect(`/checkout?error=${err}`);
         }
     } else {
         res.redirect(`/cart?error=${result}`);

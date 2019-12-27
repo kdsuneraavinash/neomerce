@@ -33,7 +33,6 @@ const getOrderDetails = async (req) => {
         const deliveryDetailQuery = 'SELECT citytype.delivery_charge from citytype,city where city.city_type=citytype.city_type and city.city=$1';
         const deliverValues = [req.body.city];
         result = await connection.query(deliveryDetailQuery, deliverValues);
-        console.log(`FROM getOrder del ${result.rows[0].delivery_charge}`);
         productDetailsObject.delivery_charge = result.rows[0].delivery_charge;
     }
     return productDetailsObject;
