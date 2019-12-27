@@ -24,7 +24,7 @@ router.post('/register', async (req, res) => {
             addressLine1, addressLine2, city, postalCode, encryptedPassword);
         if (success) {
             req.session.user = true;
-            res.redirect('/profile');
+            res.redirect('/user/profile');
         } else {
             res.redirect('register');
         }

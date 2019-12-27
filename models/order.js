@@ -71,7 +71,6 @@ const getRecentOrders = async (sessionId) => {
 };
 
 
-module.exports = { createOrder, getOrderDetails, getRecentOrders };
 
 const getOrderHistory = async(orderID) => {
 
@@ -92,4 +91,16 @@ const getOrderHistory = async(orderID) => {
 
 
 }
+
+
+
+
+
+
+
+
+
+module.exports = { createOrder, getOrderDetails, getRecentOrders };
+
+
 
