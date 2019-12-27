@@ -1,0 +1,129 @@
+<!--
+Required format:
+
+{
+    title: 'Simple Table',
+    id: 'chartid', // Unique ID for each chart,
+    height: '500px',
+    data:  [{
+            "label": "USA",
+            "value": 4025
+        }, {
+            "label": "China",
+            "value": 1882
+        }, {
+            "label": "Japan",
+            "value": 1809
+        }, {
+            "label": "Germany",
+            "value": 1322
+        }, {
+            "label": "UK",
+            "value": 1122
+        }, {
+            "label": "France",
+            "value": 1114
+        }, {
+            "label": "India",
+            "value": 984
+        }, {
+            "label": "Spain",
+            "value": 711
+        }, {
+            "label": "Netherlands",
+            "value": 665
+        }, {
+            "label": "Russia",
+            "value": 580
+        }, {
+            "label": "South Korea",
+            "value": 443
+        }, {
+            "label": "Canada",
+            "value": 441
+        }, {
+            "label": "Brazil",
+            "value": 395
+        }, {
+            "label": "Italy",
+            "value": 386
+        }, {
+            "label": "Australia",
+            "value": 384
+        }, {
+            "label": "Taiwan",
+            "value": 338
+        }, {
+            "label": "Poland",
+            "value": 328
+        }]
+}
+-->
+
+
+<div class="card">
+    <div class="card-header"> <%= title %></div>
+    <div class="card-body">
+        <div id="<%= id %>"></div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('<%= id %>').style.width = '100%';
+    document.getElementById('<%= id %>').style.height = '<%= height %>';
+
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("<%= id %>", am4charts.XYChart3D);
+
+        // Add data
+        chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+
+        // Create axes
+        let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "label";
+        categoryAxis.renderer.labels.template.rotation = 270;
+        categoryAxis.renderer.labels.template.hideOversized = false;
+        categoryAxis.renderer.minGridDistance = 20;
+        categoryAxis.renderer.labels.template.horizontalCenter = "right";
+        categoryAxis.renderer.labels.template.verticalCenter = "middle";
+        categoryAxis.tooltip.label.rotation = 270;
+        categoryAxis.tooltip.label.horizontalCenter = "right";
+        categoryAxis.tooltip.label.verticalCenter = "middle";
+
+        let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.title.fontWeight = "bold";
+
+        // Create series
+        var series = chart.series.push(new am4charts.ColumnSeries3D());
+        series.dataFields.valueY = "value";
+        series.dataFields.categoryX = "label";
+        series.name = "value";
+        series.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+        series.columns.template.fillOpacity = .8;
+
+        var columnTemplate = series.columns.template;
+        columnTemplate.strokeWidth = 2;
+        columnTemplate.strokeOpacity = 1;
+        columnTemplate.stroke = am4core.color("#FFFFFF");
+
+        columnTemplate.adapter.add("fill", function (fill, target) {
+            return chart.colors.getIndex(target.dataItem.index);
+        })
+
+        columnTemplate.adapter.add("stroke", function (stroke, target) {
+            return chart.colors.getIndex(target.dataItem.index);
+        })
+
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.lineX.strokeOpacity = 0;
+        chart.cursor.lineY.strokeOpacity = 0;
+
+    }); // end am4core.ready()
+</script>

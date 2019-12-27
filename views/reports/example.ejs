@@ -1,0 +1,183 @@
+<%- include('common/header', {title: 'Example Report'}) %>
+
+<%# EDIT A COPY. DO NOT MODIFY THIS FILE %>
+<%# DEMO: https://coreui.io/demo/3.0-beta.0 %>
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/table', {
+            title: 'Simple Table',
+            rows: 7,
+            columns: 4,
+            headers: ['Username', 'Date registered', 'Role', 'Status'],
+            rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
+            data: [
+                ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
+                ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
+                ['Chetan Mohamed', '2014/01/12', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+                ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
+                ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+                ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
+                ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+            ]
+        }) %>
+    </div>
+
+    <div class="col-lg-6">
+        <%- include('components/pie_chart', {
+            title: 'Pie Chart',
+            id: 'chartid1', // Unique ID for each chart
+            height: '400px',
+            data:  [
+                    {
+                        label: "Lithuania",
+                        value: 501.9
+                    },
+                    {
+                        label: "Czech Republic",
+                        value: 301.9
+                    },
+                    {
+                        label: "Ireland",
+                        value: 201.1
+                    },
+                    {
+                        label: "Germany",
+                        value: 165.8
+                    },
+                    {
+                        label: "Australia",
+                        value: 139.9
+                    },
+                    {
+                        label: "Austria",
+                        value: 128.3
+                    }
+                ]
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <%- include('components/table', {
+                title: 'Simple Table With 12 col width',
+                rows: 7,
+                columns: 4,
+                headers: ['Username', 'Date registered', 'Role', 'Status'],
+                rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
+                data: [
+                    ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
+                    ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
+                    ['Chetan Mohamed', '2014/01/12', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+                    ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
+                    ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+                    ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
+                    ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+                ]
+            }) %>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-4">
+        <%- include('components/callout', {
+            title: 'Simple Table',
+            color: 'success', 
+            value: '43',
+            percentage: 25,
+            helpertext: 'Widget helper text',
+        }) %>
+    </div>
+    <div class="col-4">
+        <%- include('components/callout', {
+            title: 'Simple Table',
+            color: 'warning', 
+            value: '1221',
+            percentage: 53,
+            helpertext: 'Widget helper text',
+        }) %>
+    </div>
+    <div class="col-4">
+        <%- include('components/callout', {
+            title: 'Simple Table',
+            color: 'danger', 
+            value: '12,454',
+            percentage: 89,
+            helpertext: 'Widget helper text',
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/line_chart', {
+            title: 'Line Chart',
+            id: 'chartid2', // Unique ID for each chart,
+            height: '500px',
+            data:  [
+                    {
+                        date: new Date('2020-01-01'),
+                        value: 501.9
+                    },
+                    {
+                        date: new Date('2020-01-02'),
+                        value: 301.9
+                    },
+                    {
+                        date: new Date('2020-01-03'),
+                        value: 201.1
+                    },
+                    {
+                        date: new Date('2020-01-04'),
+                        value: 165.8
+                    },
+                    {
+                        date: new Date('2020-01-05'),
+                        value: 139.9
+                    },
+                    {
+                        date: new Date('2020-01-06'),
+                        value: 128.3
+                    }
+                ]
+        }) %>
+    </div>
+
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+            title: 'Bar Chart',
+            id: 'chartid3', // Unique ID for each chart
+            height: '500px',
+            data:  [
+                    {
+                        label: "Lithuania",
+                        value: 501.9
+                    },
+                    {
+                        label: "Czech Republic",
+                        value: 301.9
+                    },
+                    {
+                        label: "Ireland",
+                        value: 201.1
+                    },
+                    {
+                        label: "Germany",
+                        value: 165.8
+                    },
+                    {
+                        label: "Australia",
+                        value: 139.9
+                    },
+                    {
+                        label: "Austria",
+                        value: 128.3
+                    }
+                ]
+        }) %>
+    </div>
+</div>
+
+<%- include('common/footer') %>

@@ -1,0 +1,93 @@
+<!--
+Required format:
+
+{
+    title: 'Simple Table',
+    id: 'chartid', // Unique ID for each chart,
+    height: '500px',
+    data:  [
+            {
+                date: new Date('2020-01-01'),
+                value: 501.9
+            },
+            {
+                date: new Date('2020-01-02'),
+                value: 301.9
+            },
+            {
+                date: new Date('2020-01-03'),
+                value: 201.1
+            },
+            {
+                date: new Date('2020-01-04'),
+                value: 165.8
+            },
+            {
+                date: new Date('2020-01-05'),
+                value: 139.9
+            },
+            {
+                date: new Date('2020-01-06'),
+                value: 128.3
+            }
+        ]
+}
+-->
+
+
+<div class="card">
+    <div class="card-header"> <%= title %></div>
+    <div class="card-body">
+        <div id="<%= id %>"></div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('<%= id %>').style.width = '100%';
+    document.getElementById('<%= id %>').style.height = '<%= height %>';
+
+    am4core.ready(function () {
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("<%= id %>", am4charts.XYChart);
+
+        // Add data
+        chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+        chart.data.forEach((v) => {
+            v.date = new Date(v.date);
+        });
+
+
+        // Create axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.minGridDistance = 50;
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+        // Create series
+        var series = chart.series.push(new am4charts.LineSeries());
+        series.dataFields.valueY = "value";
+        series.dataFields.dateX = "date";
+        series.strokeWidth = 2;
+        series.minBulletDistance = 10;
+        series.tooltipText = "{valueY}";
+        series.tooltip.pointerOrientation = "vertical";
+        series.tooltip.background.cornerRadius = 20;
+        series.tooltip.background.fillOpacity = 0.5;
+        series.tooltip.label.padding(12, 12, 12, 12)
+
+        // Add scrollbar
+        chart.scrollbarX = new am4charts.XYChartScrollbar();
+        chart.scrollbarX.series.push(series);
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.xAxis = dateAxis;
+        chart.cursor.snapToSeries = series;
+
+    }); // end am4core.ready()
+</script>

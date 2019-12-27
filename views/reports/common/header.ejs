@@ -13,12 +13,89 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-flash.min.css">
 
-    <title>CoreUI</title>
+    <title><%= title %></title>
+
+    <style>
+        #loader {
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            position: fixed;
+            display: block;
+            background-color: #ffffff;
+            z-index: 9999;
+            text-align: center;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        #loader.loaded {
+            visibility: hidden;
+            display: none;
+        }
+
+        #loader>.spinner-border,
+        #loader>.spinner-grow {
+            margin-top: 48vh;
+            margin-left: 48vw;
+        }
+
+        body::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        body::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 2px #ccc;
+            -webkit-box-shadow: inset 0 0 2px #ccc;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #454277;
+            outline: 1px solid #000
+        }
+    </style>
 </head>
 
 <body class="c-app">
+    <div id="loader" class="d-flex content-justify-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
+    <!--These need to load before any chart-->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/frozen.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
     <div class="c-wrapper">
-        <div class="c-body">
-            <%- include('sidebar') %>
+
+        <nav class="c-header fixed-top c-header-dark bg-primary">
+            <a class="c-header-brand" href="#">Neomerce</a>
+            <ul class="c-header-nav mr-auto">
+                <li class="c-header-nav-item active">
+                    <a class="c-header-nav-link"><%= title %></a>
+                </li>
+            </ul>
+
+            <div class="form-inline my-2 my-lg-0 text-white">
+                <div class="c-header-nav-item dropdown">
+                    <div style="cursor: pointer;" class="c-header-nav-link dropdown-toggle text-white" href="#"
+                        id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                        Hello K. D. Sunera Chandrasiri
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/user/profile">Profile</a>
+                        <a class="dropdown-item" href="/user/logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="c-body" style="margin-top: 56px;">
+            <%- include('sidebar', {title}) %>
+
             <main class="c-main p-3">

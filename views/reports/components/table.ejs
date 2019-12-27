@@ -1,0 +1,46 @@
+<!--
+Required format:
+
+{
+    title: 'Simple Table',
+    rows: 5,
+    columns: 4,
+    headers: ['Username', 'Date registered', 'Role', 'Status'],
+    rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
+    data: [
+        ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
+        ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
+        ['Chetan Mohamed', '2014/01/12', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+        ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
+        ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
+    ]
+}
+-->
+
+<div class="card">
+    <div class="card-header"> <%= title %></div>
+    <div class="card-body">
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr>
+                    <%for (header of headers) {%>
+                    <th><%=header%></th>
+                    <%}-%>
+                </tr>
+            </thead>
+            <tbody>
+                <%for (row of data){%>
+                <tr>
+                    <%for (i of Array(columns).keys()) {%>
+                    <%if (rawhtml[i]) {%>
+                    <td><%-row[i]%></td>
+                    <%} else {%>
+                    <td><%=row[i]%></td>
+                    <%} %>
+                    <%}%>
+                </tr>
+                <%}-%>
+            </tbody>
+        </table>
+    </div>
+</div>

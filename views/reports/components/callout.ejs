@@ -1,0 +1,22 @@
+<!--
+Required format:
+
+{
+    title: 'Simple Table',
+    color: 'warning', // danger, primary, success, secondary, dark, light
+    value: 12,345,
+    percentage: 25,
+    helpertext: 'Widget helper text',
+}
+-->
+
+<div class="card text-white bg-gradient-<%= color %>">
+    <div class="card-body">
+        <div class="text-value-lg"><%= value %></div>
+        <div><%= title %></div>
+        <div class="progress progress-white progress-xs my-2">
+            <div class="progress-bar" role="progressbar" <%- `style="width:` + percentage + `%"` %>
+                aria-valuenow="<%= percentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+        </div><small class="text-muted"><%= helpertext %></small>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+<!--
+Required format:
+
+{
+    title: 'Simple Table',
+    id: 'chartid', // Unique ID for each chart,
+    height: '500px',
+    data:  [
+            {
+                label: "Lithuania",
+                value: 501.9
+            },
+            {
+                label: "Czech Republic",
+                value: 301.9
+            },
+            {
+                label: "Ireland",
+                value: 201.1
+            },
+            {
+                label: "Germany",
+                value: 165.8
+            },
+            {
+                label: "Australia",
+                value: 139.9
+            },
+            {
+                label: "Austria",
+                value: 128.3
+            }
+        ]
+}
+-->
+
+<div class="card">
+    <div class="card-header"> <%= title %></div>
+    <div class="card-body">
+        <div id="<%= id %>"></div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('<%= id %>').style.width = '100%';
+    document.getElementById('<%= id %>').style.height = '<%= height %>';
+
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_frozen);
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        var chart = am4core.create("<%= id %>", am4charts.PieChart3D);
+        chart.hiddenState.properties.opacity = 0;
+
+        chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+
+        chart.innerRadius = am4core.percent(40);
+        chart.depth = 120;
+
+        chart.legend = new am4charts.Legend();
+
+        var series = chart.series.push(new am4charts.PieSeries3D());
+        series.dataFields.value = "value";
+        series.dataFields.depthValue = "value";
+        series.dataFields.category = "date";
+        series.slices.template.cornerRadius = 5;
+        series.colors.step = 3;
+
+    }); // end am4core.ready()
+</script>
