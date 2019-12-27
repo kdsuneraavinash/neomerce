@@ -44,7 +44,7 @@ const getRecentOrders = async (sessionId) => {
     const itemsInfoQueryString = `select 
                                     order_id, 
                                     order_status, 
-                                    order_date,
+                                    order_date as timestamp_date,
                                     to_char(order_date, 'dd month yyyy') as order_date,
                                     '["' || string_agg(product_id, '","') || '"]' as product_ids,
                                     '["' || string_agg(image_url,  '","') || '"]' as image_urls,
@@ -63,6 +63,7 @@ const getRecentOrders = async (sessionId) => {
                                     ) as variantimages using(order_id) 
                                 where session_id = $1
                                 group by order_id
+                                order by timestamp_date desc
                                 limit 5;`;
     const itemInfoValues = [sessionId];
     const out = await connection.query(itemsInfoQueryString, itemInfoValues);
