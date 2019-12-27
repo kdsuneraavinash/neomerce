@@ -3,7 +3,7 @@ const connection = require('../config/db');
 const getCities = async (search) => {
     const query = `select city, delivery_days, delivery_charge 
                     from city natural join citytype 
-                    where lower(city.city) like $1
+                    where lower(city.city) like lower($1)
                     limit 5`;
     const values = [
         `%${search

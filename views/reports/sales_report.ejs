@@ -1,0 +1,107 @@
+<%- include('common/header', {title: 'Example Sales Report'}) %>
+
+
+<div class="row">
+    <div class="col-6">
+        <canvas id="chart1" width="400" height="100"></canvas></div>
+    <div class="col-6">
+
+        <table class="table" style="font-size: 10px;">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Sales</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for (index of Array(10).keys()) {%>
+                <tr>
+                    <th scope="row"><%= index + 1%></th>
+                    <td>IOGEAR GBU211 Bluetooth To USB Adapter</td>
+                    <td>12</td>
+                </tr>
+                <%}%>
+    </tbody>
+</table>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-5">
+        <table class="table"style="font-size: 10px;">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Sales</th>
+                    <th scope="col" class="text-right">Income</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for (index of Array(10).keys()) {%>
+                <tr>
+                    <th scope="row"><%= index + 1%></th>
+                    <td>Electronic Devices</td>
+                    <td>12</td>
+                    <td class="text-right">LKR 400.00</td>
+                </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+    <canvas id="chart2" width="400" height="100"></canvas>
+</div>
+
+<hr/>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+<script>
+    var ctx = document.getElementById('chart1').getContext('2d');
+    var ctx2 = document.getElementById('chart2').getContext('2d');
+
+    var chart1 = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ]
+            }]
+        },
+    });
+
+    var myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [10, 20, 30],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ]
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'Red',
+                'Yellow',
+                'Blue'
+            ]
+        },
+    });
+</script>
+
+
+<%- include('common/footer') %>
