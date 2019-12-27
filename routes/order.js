@@ -23,6 +23,12 @@ router.post('/', async (req, res) => {
         try{
             /* Get details needed to make and order(subtotal and delivery_charge) */
             let dataObj =await Order.getOrderDetails(req)
+
+            /* In case user refresh the order confirmation page, redirects him to home */
+            if(dataObj.subtotal === 0){
+                res.redirect('/')
+            }
+
             let totalCost;
 
             /* Define total based on the delivery type */
