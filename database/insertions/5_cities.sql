@@ -7,6 +7,7 @@ insert into city values ('Galle', 'main');
 insert into city values ('Gampaha', 'main');
 insert into city values ('Hambantota', 'main');
 insert into city values ('Jaffna', 'main');
+insert into city values ('Kalutara South', 'main');
 insert into city values ('Kalutara', 'main');
 insert into city values ('Kandy', 'main');
 insert into city values ('Kegalle', 'secondary');

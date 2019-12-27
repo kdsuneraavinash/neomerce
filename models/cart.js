@@ -100,8 +100,6 @@ const proceedCheckOut = async (sessionID, loggedIn) => {
         [productDetailsObject.delivery_info] = result.rows;
         // TODO:(lahiru) Fix telephone number load issue
         productDetailsObject.delivery_info.phone_number = '1112229990';
-        // TODO:(lahiru) Fix delivery days estimation
-        productDetailsObject.delivery_info.delivery_days = '5 days';
     }
 
     const itemsInfoQueryString = `SELECT variant_id, product_id, quantity, 

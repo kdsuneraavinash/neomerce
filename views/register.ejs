@@ -9,7 +9,7 @@
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
     <script src="/js/window-date-picker.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
 
     <script>
         let app = new Vue({
@@ -26,14 +26,31 @@
                 city: '',
                 postalCode: '',
                 errors: [],
+                emailExists: false,
+                cityExists: true,
             },
             methods: {
+                emailCheck: function (e) {
+                    fetch('/api/email/' + this.email)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            this.emailExists = data.result;
+                        });
+                },
+                cityCheck: function (e) {
+                    fetch('/api/city/' + this.city)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log(data);
+                            this.cityExists = data.result;
+                        });
+                },
                 checkForm: function (e) {
                     if (this.password && (this.retype_password === this.password) && this.firstName &&
                         this.lastName && this.addressLine1 && this.addressLine2 && this.telephoneNumber &&
                         this.city && this.postalCode &&
                         this.telephoneNumber && phoneNumberRegex.test(this.telephoneNumber) &&
-                        this.email && emailRegex.test(this.email)
+                        this.email && emailRegex.test(this.email) && !emailExists && cityExists
 
                     ) {
                         return true;
@@ -55,15 +72,36 @@
                     if (!this.email) this.errors.push('Email Address required.');
                     if (!emailRegex.test(this.email)) this.errors.push('Email Address format invalid.');
 
+                    if (this.emailExists) this.errors.push('Email address is already registered.');
+                    if (!this.cityExists) this.errors.push('Invalid city selected.');
+
                     e.preventDefault();
                 }
             }
         });
 
+        new Autocomplete('#autocomplete', {
+            search: (input) => {
+                const url = `/api/cities?search=${encodeURI(input)}`;
+                return new Promise((resolve) => {
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            resolve(data);
+                        });
+                });
+            },
+            getResultValue: (result) => result.city,
+            onSubmit: (result) => {
+                app.city = result.city;
+            },
+        });
+
+
         const picker = new WindowDatePicker({
             el: '#yellow-picker',
             toggleEl: '#birthday',
-            inputEl: '#birthday'
+            inputEl: '#birthday',
         });
     </script>
 </body>

@@ -1,5 +1,6 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
 DROP PROCEDURE IF EXISTS placeOrder;
+DROP PROCEDURE IF EXISTS addVisitedRecord;
 DROP PROCEDURE IF EXISTS addTagToCategory;
 DROP PROCEDURE IF EXISTS addProduct;
 DROP PROCEDURE IF EXISTS assignSession;
@@ -20,6 +21,7 @@ DROP TABLE IF EXISTS OrderItem cascade;
 DROP TABLE IF EXISTS OrderData cascade;
 DROP TABLE IF EXISTS CartItem cascade;
 DROP TABLE IF EXISTS VariantAttribute cascade;
+DROP TABLE IF EXISTS VisitedProduct cascade;
 DROP TABLE IF EXISTS Variant cascade;
 DROP TABLE IF EXISTS ProductAttribute cascade;
 DROP TABLE IF EXISTS ProductCategory cascade;
@@ -328,6 +330,16 @@ CREATE TABLE Variant (
     unique(sku_id)
 );
 
+-- Products Visited by a Customer
+CREATE TABLE VisitedProduct (
+    entry_id uuid4 default generate_uuid4(),
+    product_id uuid4,
+    customer_id uuid4,
+    visited_date timestamp not null default NOW(),
+    foreign key (product_id) references Product(product_id),
+    foreign key (customer_id) references Customer(customer_id)
+);
+
 -- Attributes common to a variant
 CREATE TABLE VariantAttribute (
     variant_id uuid4,
@@ -621,7 +633,11 @@ AS $$
 DECLARE
 customer_id uuid4 := (select customer_id from session where session_id=$1);
 var_existing_email varchar(255) := (SELECT email from userinformation where email = $2);
+var_city int := (SELECT count(*) from city where city = $7);
 BEGIN
+    if (var_city = 0) then
+        RAISE EXCEPTION 'Unknown city %. Please select a valid city.', $7;
+    end if;
     if (var_existing_email is null) then
         INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
         INSERT INTO accountcredential values (customer_id, $10); 
@@ -739,7 +755,7 @@ $$;
 
 
 
--- Procedure to check availability of items in a cart.
+-- Procedure to check availability of items in a cart (session_id)
 CREATE OR REPLACE PROCEDURE checkAvailability(SESSION_UUID)
 LANGUAGE plpgsql    
 AS $$
@@ -751,7 +767,6 @@ BEGIN
         where customer_id = customer_id_ and cart_item_status='added'; 
 END;
 $$;
-
 
 -- Procedure to place an order(session_id, first_name, last_name, email, 
 --                                phone_number, delivery_method, addr_line1, addr_line2, city, post_code,
@@ -791,6 +806,16 @@ BEGIN
 END;
 $$;
 
+-- Procedure to add a record to denote that user viewed item (session_id, product_id)
+CREATE OR REPLACE PROCEDURE addVisitedRecord(SESSION_UUID, UUID4)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from session where session_id=$1);
+BEGIN
+	INSERT INTO VisitedProduct values (default, $2, var_customer_id); 
+END;
+$$;
 
 /*
   _           _                    
@@ -803,8 +828,9 @@ $$;
 
 CREATE INDEX ON ProductImage(product_id);
 CREATE INDEX ON Variant(product_id);
-CREATE INDEX ON Product(title);
+CREATE INDEX ON Product((lower(title)));
 CREATE INDEX ON CartItem(variant_id, customer_id);
+CREATE INDEX ON City((lower(city)));
 
 /*
         _                   

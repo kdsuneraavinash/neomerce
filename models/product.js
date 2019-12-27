@@ -26,6 +26,9 @@ const getProduct = async (req, res, productId) => {
     if (out.rows.length === 0) throw Error('No such product');
     const result = out.rows[0];
 
+    // Add record
+    await connection.query('CALL addVisitedRecord($1, $2)', [req.sessionID, productId]);
+
     result.attributes = await getProductAttributes(req, res, productId);
     return result;
 };
@@ -67,17 +70,16 @@ const getProductsFromAllCategories = async () => {
 
 
 const getRelatedProducts = async (req, res, productId, limit) => {
-    const query = `select distinct ProductBasicView.product_id, 
+    const query = `select ProductBasicView.product_id, 
                         ProductBasicView.title, 
                         ProductBasicView.min_selling_price, 
                         ProductBasicView.image_url
                     from ProductBasicView, ProductCategory as child, ProductCategory as parent
                     where parent.product_id = $1 and 
                             parent.category_id = child.category_id and
-                            parent.category_id not in (select distinct parent_id from category where parent_id is not null) and
+                            parent.category_id not in (select distinct on (parent_id) parent_id from category where parent_id is not null) and
                             child.product_id = ProductBasicView.product_id and
                             ProductBasicView.product_id != $1
-                    order by ProductBasicView.min_selling_price
                     limit $2;`;
     const values = [productId, limit];
     const out = await connection.query(query, values);
@@ -96,7 +98,7 @@ const getRecentProducts = async (req, res, limit) => {
 const getProductsFromQuery = async (req, res, searchQuery) => {
     const query = `select product_id, title, min_selling_price, image_url 
                             from ProductBasicView natural left outer join ProductTag
-                            where tag_id in (select tag_id from tag where tag like $1) or title like $1
+                            where tag_id in (select tag_id from tag where tag like $1) or lower(title) like lower($1)
                             order by min_selling_price 
                             limit 99`;
     const values = [

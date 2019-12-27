@@ -1,3 +1,10 @@
+<style>
+    input {
+        font-size: 13px !important;
+        color: black;
+    }
+</style>
+
 <section class="checkout_area section_gap" id="checkout_form">
     <div class="container">
 
@@ -36,7 +43,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <h3>Your Details</h3>
-                    <div class="row contact_form pb-3">
+                    <div class="row pb-3">
                         <div class="col-md-6 form-group">
                             <input type="text" class="form-control" v-model:value="first_name" :readonly="loggedIn"
                                 placeholder="First Name">
@@ -50,13 +57,17 @@
                                 placeholder="Telephone Number">
                         </div>
                         <div class="col-md-6 form-group">
-                            <input type="email" class="form-control" v-model:value="email" :readonly="loggedIn"
-                                placeholder="Email Address">
+                            <input @input="emailCheck" @blur="emailCheck" type="email" class="form-control p-3"
+                                name="email" placeholder="Email (username@site.com)" v-model="email"
+                                :readonly="loggedIn">
+                            <div v-if="emailExists && !loggedIn" class="col-md-12">
+                                <small>Registered account. <a href="/user/login?redirect=/checkout">Sign in</a></small>
+                            </div>
                         </div>
 
                     </div>
                     <h3>Delivery Details</h3>
-                    <div class="row contact_form">
+                    <div class="row ">
 
                         <div class="col-md-12 form-group">
                             <select style="display: none;">
@@ -66,10 +77,13 @@
                             <div class="nice-select wide" tabindex="0"><span class="current">Deliver to an
                                     address</span>
                                 <ul class="list">
-                                    <li class="option" v-on:click="delivery_method = 'deliver'" value="deliver">
+                                    <li class="option"
+                                        v-on:click="delivery_method = 'deliver'; cityCheck(); createAutoComplete()"
+                                        value="deliver">
                                         Deliver to an address
                                     </li>
-                                    <li class="option" v-on:click="delivery_method = 'pickup'; payment_method = 'card'"
+                                    <li class="option"
+                                        v-on:click="delivery_method = 'pickup'; payment_method = 'card'; cityExists = true;"
                                         value="pickup">
                                         Store pickup
                                     </li>
@@ -93,9 +107,19 @@
                                 <input type="text" class="form-control" placeholder="Address Line 2"
                                     v-model:value="addr_line2">
                             </div>
-                            <div class="col-md-12 form-group mb-2">
-                                <input type="text" class="form-control" placeholder="City" v-model:value="city">
+
+
+                            <div class="col-md-12 form-group">
+                                <div id="autocomplete" class="autocomplete">
+                                    <input @input="cityCheck" @blur="cityCheck" type="text" class="form-control p-3"
+                                        name="city" v-model="city" placeholder="City (Select from dropdown)">
+                                    <ul class="bg-white"></ul>
+                                </div>
+                                <div v-if="!cityExists" class="col-md-12 text-danger">
+                                    <small>City is invalid. Please select a city from suggestions.</small>
+                                </div>
                             </div>
+
                             <div class="col-md-12 form-group">
                                 <input type="text" class="form-control" placeholder="PostCode" v-model:value="postcode">
                             </div>
@@ -120,10 +144,6 @@
                                     <div class="ml-4">
                                         <li v-for="error in errors"> {{ error }}</li>
                                     </div>
-
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
                                 </div>
                             </div>
                         </div>

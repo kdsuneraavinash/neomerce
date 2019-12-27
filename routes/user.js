@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const City = require('../models/city');
 const helper = require('../utils/helper');
 
 
 /* GET endpoint for user registration. Render the user registration page upon request */
 router.get('/register', async (req, res) => {
-    const cities = await City.getCities();
-    res.render('register', { cities, error: req.query.error });
+    res.render('register', { error: req.query.error });
 });
 
 /* POST endpoint for user registration. */
@@ -69,18 +67,14 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/check/:email', async (req, res) => {
-    try {
-        const result = await User.checkEmail(req.params.email);
-        if (result) {
-            res.send('Email Already registered');
-        } else {
-            res.send('Valid');
-        }
-    } catch (error) {
-        res.send('Something went wrong');
+router.get('/profile', async (req, res) => {
+    if (req.session.user == null) {
+        res.redirect('/');
+        return;
     }
+    const recentProducts = await User.recentProducts(req.sessionID);
+    const userInfo = await User.userInfo(req.sessionID);
+    res.render('profile', { loggedIn: req.session.user != null, recentProducts, userInfo });
 });
-
 
 module.exports = router;

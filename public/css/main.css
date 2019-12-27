@@ -6263,7 +6263,7 @@ label {
   height: 1px;
 }
 .categories_post:hover .categories_details {
-  background: rgba(255, 186, 0, 0.8);
+  background: #454277;
 }
 
 /*============ blog_left_sidebar css ==============*/
