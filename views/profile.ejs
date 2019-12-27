@@ -5,9 +5,15 @@
 <body>
     <%- include('common/navbar') %>
     <%- include('common/banner', {title: 'Profile', description: 'Your neomerce profile details'}) %>
-    <%- include ('partial/profile', {recentProducts, userInfo}) %>
+    <%- include ('partial/profile', {recentProducts, userInfo, recentOrders}) %>
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
+
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 </body>
 
 </html>

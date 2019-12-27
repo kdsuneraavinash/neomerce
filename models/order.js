@@ -40,4 +40,33 @@ const getOrderDetails = async (req) => {
 };
 
 
-module.exports = { createOrder, getOrderDetails };
+const getRecentOrders = async (sessionId) => {
+    const itemsInfoQueryString = `select 
+                                    order_id, 
+                                    order_status, 
+                                    order_date,
+                                    to_char(order_date, 'dd month yyyy') as order_date,
+                                    '["' || string_agg(product_id, '","') || '"]' as product_ids,
+                                    '["' || string_agg(image_url,  '","') || '"]' as image_urls,
+                                    '["' || string_agg(title,  '","') || '"]' as titles,
+                                    '[' || string_agg(cast (selling_price  as text),  ',') || ']' as selling_prices,
+                                    '[' || string_agg(cast (quantity  as text),  ',') || ']' as quantities,
+                                    count(product_id) as products
+                                from orderdata 
+                                    join customer using(customer_id) 
+                                    join session using(customer_id) 
+                                    join (
+                                        select product_id, image_url, order_id, productbasicview.title, selling_price, orderitem.quantity
+                                        from variant 
+                                            join orderitem using(variant_id)
+                                            join productbasicview using(product_id)
+                                    ) as variantimages using(order_id) 
+                                where session_id = $1
+                                group by order_id;`;
+    const itemInfoValues = [sessionId];
+    const out = await connection.query(itemsInfoQueryString, itemInfoValues);
+    return out.rows;
+};
+
+
+module.exports = { createOrder, getOrderDetails, getRecentOrders };

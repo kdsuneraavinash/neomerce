@@ -77,13 +77,13 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/', (req, res) => {
+router.get('/:id', (req, res) => {
     res.render('order', {
         loggedIn: req.session.user != null,
         show_thanks: false,
-        subtotal: '13800.00',
-        delivery: '800.00',
-        total: '14600.00',
+        subtotal: '13800.00' - 0,
+        delivery: '800.00' - 0,
+        total: '14600.00' - 0,
         order: {
             'id': '5de2acbf2a97',
             'date': '27/09/2019',
@@ -105,17 +105,17 @@ router.get('/', (req, res) => {
         items: [
             {
                 id: '5de2acbf14d983e4e097b174',
-                product: 'SUPPORTAL NEW XUMONK ZENSOR FOR SPORTS PERSON',
+                product_title: 'SUPPORTAL NEW XUMONK ZENSOR FOR SPORTS PERSON',
                 variant: 'Blue Colored Variant',
-                unitprice: '4900.00',
+                selling_price: '4900.00' - 0,
                 quantity: 1,
                 totalprice: '4900.00',
             },
             {
                 id: '5de2acbf2a9751c69c33133d',
-                product: 'SUPPORTAL NEW XUMONK ZENSOR FOR SPORTS PERSON',
-                variant: 'Red Colored Variant',
-                unitprice: '8900.00',
+                product_title: 'SUPPORTAL NEW XUMONK ZENSOR FOR SPORTS PERSON',
+                variant: 'Red Colored Variant' - 0,
+                selling_price: '8900.00',
                 quantity: 1,
                 totalprice: '8900.00',
             },

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const Order = require('../models/order');
 const helper = require('../utils/helper');
 
 
@@ -23,7 +24,7 @@ router.post('/register', async (req, res) => {
             addressLine1, addressLine2, city, postalCode, encryptedPassword);
         if (success) {
             req.session.user = true;
-            res.redirect('/');
+            res.redirect('/profile');
         } else {
             res.redirect('register');
         }
@@ -72,9 +73,15 @@ router.get('/profile', async (req, res) => {
         res.redirect('/');
         return;
     }
+    const recentOrders = await Order.getRecentOrders(req.sessionID);
     const recentProducts = await User.recentProducts(req.sessionID);
     const userInfo = await User.userInfo(req.sessionID);
-    res.render('profile', { loggedIn: req.session.user != null, recentProducts, userInfo });
+    res.render('profile', {
+        loggedIn: req.session.user != null,
+        recentProducts,
+        userInfo,
+        recentOrders,
+    });
 });
 
 module.exports = router;
