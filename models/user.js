@@ -59,7 +59,7 @@ const recentProducts = async (sessionId) => {
                             select distinct on (product_id) product_id, min_selling_price, title, image_url, visited_date
                                 from productbasicview natural join visitedproduct natural join session 
                                 where session_id = $1
-                            ) as tbl order by visited_date desc limit 5`;
+                            ) as tbl order by visited_date desc limit 10`;
     const values = [sessionId];
     const out = await pool.query(queryString, values);
     return out.rows;
