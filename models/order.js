@@ -62,7 +62,8 @@ const getRecentOrders = async (sessionId) => {
                                             join productbasicview using(product_id)
                                     ) as variantimages using(order_id) 
                                 where session_id = $1
-                                group by order_id;`;
+                                group by order_id
+                                limit 5;`;
     const itemInfoValues = [sessionId];
     const out = await connection.query(itemsInfoQueryString, itemInfoValues);
     return out.rows;
