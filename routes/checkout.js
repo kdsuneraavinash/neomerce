@@ -4,9 +4,6 @@ const Order = require('../models/order')
 
 router.get('/', async (req, res) => {
 
-
-    console.log(req.body)
-
     const dataObj = Order.getOrderDetails(req)
 
     /* After order confirmation user redirect back to check out and try to check out again */
