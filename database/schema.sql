@@ -38,6 +38,8 @@ DROP TABLE IF EXISTS Tag cascade;
 DROP TABLE IF EXISTS ProductTag cascade;
 DROP TABLE IF EXISTS CartItemStatus cascade;
 DROP TABLE IF EXISTS OrderStatus cascade;
+DROP TABLE IF EXISTS Pickup cascade;
+DROP TABLE IF EXISTS PickupStatus cascade;
 DROP DOMAIN IF EXISTS MONEY_UNIT cascade;
 DROP DOMAIN IF EXISTS VALID_EMAIL cascade;
 DROP DOMAIN IF EXISTS VALID_PHONE cascade;
@@ -442,6 +444,26 @@ CREATE TABLE Delivery (
     foreign key (city) references City(city) on update cascade
 );
 
+--Pick up status
+CREATE TABLE PickupStatus (
+    pickup_status varchar(15),
+    description varchar(127),
+    primary key (pickup_status)
+);
+
+
+-- Pick up details
+CREATE TABLE Pickup (
+    order_id uuid4,
+    pickup_status varchar(15) not null,
+    pickedup_date timestamp,
+    primary key (order_id),
+    foreign key (order_id) references OrderData(order_id),
+    foreign key (pickup_status) references PickupStatus(pickup_status) on update cascade
+    
+);
+
+
 -- User Inforation (If user is a guest)
 CREATE TABLE GuestInfomation (
     order_id uuid4,
@@ -739,15 +761,9 @@ AS $$
 DECLARE
 customer_id_ uuid4 := (select customer_id from session where session_id=$1);
 customer_type varchar(15) := (select account_type from customer where customer_id=customer_id_);
-delivery_status varchar(15);
 payment_status varchar(15);
 BEGIN
 
-	if $6 = 'shop_pickup' then
-	delivery_status := 'pending pick up';
-	else
-	delivery_status := 'ongoing';
-	end if;
 	if $11 = 'card' then
 	payment_status := 'payed';
 	else
@@ -759,7 +775,12 @@ BEGIN
 	PERFORM variant_id,quantity from ProductVariantView, LATERAL reduceStock(variant_id,quantity) where customer_id = customer_id_;
 	PERFORM variant_id,quantity from ProductVariantView, LATERAL addOrderItem(variant_id,$12,quantity) where customer_id = customer_id_;
 	UPDATE cartitem SET cart_item_status = 'ordered' where customer_id = customer_id_ and cart_item_status = 'added';
-	INSERT INTO delivery values ($12,$6,delivery_status,$7,$8,$9,$10,NOW());
+	
+	if $6 = 'shop_pickup' then
+	INSERT INTO pickup values ($12,'pending pick up');
+	else
+	INSERT INTO delivery values ($12,$6,'ongoing',$7,$8,$9,$10,NOW());
+	end if;
 	INSERT INTO payment values ($12,$11,payment_status,NOW(),$13);
 	If customer_type = 'guest' then
 	INSERT INTO guestinfomation values ($12,$2,$3,$4,$5);
