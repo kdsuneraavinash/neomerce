@@ -72,3 +72,24 @@ const getRecentOrders = async (sessionId) => {
 
 
 module.exports = { createOrder, getOrderDetails, getRecentOrders };
+
+const getOrderHistory = async(orderID) => {
+
+    let result;
+    const querString1 = 'SELECT customer.customer_id,customer.account_type from customer,orderdata where customer.customer_id = orderdata.customer_id and orderdata.order_id=$1'
+    const values1 = [orderID]
+    result = await connection.query(querString1,values1)
+    if(result.rows[0].account_type = 'user'){
+        const account_type = 'user'
+        const customer_id = result.rows[0].customer_id
+    }else{
+        const account_type = 'guest'
+    }
+
+    
+    
+
+
+
+}
+

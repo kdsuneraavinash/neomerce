@@ -77,7 +77,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/', (req, res) => {
     res.render('order', {
         loggedIn: req.session.user != null,
         show_thanks: false,
