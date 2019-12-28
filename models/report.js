@@ -6,7 +6,7 @@ const getProductCounts = async () => {
     from product, variant, orderitem
     where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id
     group by product.product_id
-    order by quantity desc`;
+    order by quantity desc limit 10`;
 
     const out = await connection.query(query);
     // console.log(out.rows);
@@ -31,7 +31,7 @@ const getProductCounts = async () => {
 
 const getCategoryReport = async () => {
     const query = `
-    select category.category_id,category.title,category.parent_id,sum(categoryjoin.quantity),sum(categoryjoin.income) 
+    select category.category_id,category.title,category.parent_id,sum(categoryjoin.quantity) as quantity,sum(categoryjoin.income) as income
     from (
         select productdetails.product_id,productdetails.title,productdetails.quantity,productdetails.income,productcategory.category_id 
         from (
@@ -49,7 +49,18 @@ const getCategoryReport = async () => {
 
     const out = await connection.query(query);
     console.log(out.rows);
-    return null;
+    const items = [];
+    out.rows.forEach((i) => {
+        const item = [];
+        item.push(i.category_id);
+        item.push(i.title);
+        item.push(i.parent_id);
+        item.push(i.quantity);
+        item.push(i.income);
+
+        items.push(item);
+    });
+    return [items, out.rowCount];
 };
 
 module.exports = { getProductCounts, getCategoryReport };

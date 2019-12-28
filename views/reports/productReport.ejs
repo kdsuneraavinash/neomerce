@@ -14,18 +14,32 @@
         </li>
     </ul>
 </li> -->
-
-<h2>Top trending products</h2>
+<br>
+<h2>Top Categories</h2>
+<br>
+<div class="row-lg-6">
+    <%- include('components/table', {
+                title: 'Product Table',
+                rows: categoryItemCount,
+                columns: 5,
+                headers: ['Category ID', 'Category Name','Parent ID', 'Quantity','Income'],
+                rawhtml: [false, false, false,false,false], // Whether each column is raw html(true) or plain text(false)
+                data: categoryItems
+            }) %>
+</div>
+<br>
+<h2>Top 10 trending products</h2>
 <br>
 <div class="column">
+
     <div class="row-lg-6">
         <%- include('components/table', {
             title: 'Product Table',
-            rows: itemCount,
+            rows: productItemCount,
             columns: 4,
             headers: ['Procut ID', 'Product Name', 'Quantity','Income'],
             rawhtml: [false, false, false,false], // Whether each column is raw html(true) or plain text(false)
-            data: items
+            data: productItems
         }) %>
     </div>
 
@@ -34,7 +48,7 @@
             title: 'Pie Chart',
             id: 'chartid1', // Unique ID for each chart
             height: '400px',
-            data:  itemsWithQuantity,
+            data:  productItemsWithQuantity,
         }) %>
     </div>
 </div>
