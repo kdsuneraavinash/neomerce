@@ -76,7 +76,7 @@
                                 <h5></h5>
                             </td>
                             <td>
-                                <p><%= order_info.payment_amount - delivery_info.delivery_charge %></p>
+                                <p><%= order_info.payment_amount - (delivery_info.delivery_charge ? delivery_info.delivery_charge : 0) %></p>
                             </td>
                         </tr>
                         <tr>
@@ -87,7 +87,7 @@
                                 <h5></h5>
                             </td>
                             <td>
-                                <p><%= delivery_info.delivery_charge%></p>
+                                <p><%= delivery_info.delivery_charge ? delivery_info.delivery_charge : 0%></p>
                             </td>
                         </tr>
                         <tr>
