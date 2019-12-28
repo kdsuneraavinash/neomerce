@@ -12,7 +12,7 @@ DROP PROCEDURE IF EXISTS addItemToCart;
 DROP PROCEDURE IF EXISTS removeCartItem;
 DROP TABLE IF EXISTS GuestInfomation cascade;
 DROP TABLE IF EXISTS Delivery cascade;
-DROP TABLE IF EXISTS DeliveryMethod cascade;
+DROP TABLE IF EXISTS DispatchMethod cascade;
 DROP TABLE IF EXISTS DeliveryStatus cascade;
 DROP TABLE IF EXISTS Payment cascade;
 DROP TABLE IF EXISTS PaymentStatus cascade;
@@ -377,13 +377,23 @@ CREATE TABLE OrderStatus (
     primary key (order_status)
 );
 
+
+-- Dispatch Method: HomeDelivery/StorePickup (ENUM)
+CREATE TABLE DispatchMethod (
+    dispatch_method varchar(15),
+    description varchar(127),
+    primary key (dispatch_method)
+);
+
 -- Orders
 CREATE TABLE OrderData (
     order_id uuid4 default generate_uuid4(),
     customer_id uuid4 not null,
     order_status varchar(15) not null,
-    order_date timestamp,
+    dispatch_method varchar(15) not null,
+    order_date timestamp not null,
     primary key (order_id),
+    foreign key (dispatch_method) references DispatchMethod(dispatch_method) on update cascade,
     foreign key (order_status) references OrderStatus(order_status),
     foreign key (customer_id) references Customer(customer_id)
 );
@@ -433,17 +443,9 @@ CREATE TABLE DeliveryStatus (
     primary key (delivery_status)
 );
 
--- Delivery Method: Shipping/StorePickup (ENUM)
-CREATE TABLE DeliveryMethod (
-    delivery_method varchar(15),
-    description varchar(127),
-    primary key (delivery_method)
-);
-
 -- Delivery Information
 CREATE TABLE Delivery (
     order_id uuid4,
-    delivery_method varchar(15) not null,
     delivery_status varchar(15) not null,
     addr_line1 varchar(255),
     addr_line2 varchar(255),
@@ -452,7 +454,6 @@ CREATE TABLE Delivery (
     delivered_date timestamp,
     primary key (order_id),
     foreign key (order_id) references OrderData(order_id),
-    foreign key (delivery_method) references DeliveryMethod(delivery_method) on update cascade,
     foreign key (delivery_status) references DeliveryStatus(delivery_status) on update cascade,
     foreign key (city) references City(city) on update cascade
 );
@@ -788,16 +789,20 @@ BEGIN
 	    payment_status := 'not_payed';
 	end if;
 
+    if $6 = 'store_pickup' then
+        INSERT into orderdata values ($12,customer_id_, 'ordered','store_pickup',NOW());
+    else
+        INSERT into orderdata values ($12,customer_id_, 'ordered','home_delivery',NOW());
+	end if;
 
-	INSERT into orderdata values ($12,customer_id_, 'ordered', NOW());
 	PERFORM variant_id, quantity from ProductVariantView, LATERAL reduceStock(variant_id, quantity) where customer_id = customer_id_;
 	PERFORM variant_id, quantity from ProductVariantView, LATERAL addOrderItem(variant_id, $12, quantity) where customer_id = customer_id_;
 	UPDATE cartitem SET cart_item_status = 'ordered' where customer_id = customer_id_ and cart_item_status = 'added';
 	
-	if $6 = 'shop_pickup' then
+	if $6 = 'store_pickup' then
 	    INSERT INTO pickup values ($12,'pending pick up');
 	else
-	    INSERT INTO delivery values ($12, $6, 'ongoing', $7, $8, $9, $10, NOW());
+	    INSERT INTO delivery values ($12,'ongoing', $7, $8, $9, $10, NOW());
 	end if;
 	INSERT INTO payment values ($12, $11, payment_status, NOW(), $13);
 	If customer_type = 'guest' then
