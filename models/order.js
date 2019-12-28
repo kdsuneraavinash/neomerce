@@ -1,6 +1,6 @@
 const connection = require('../config/db');
 
-
+/* Function to create an order */
 const createOrder = async (sessionID, body, orderID, totalprice) => {
     const createOrderQueryString = 'CALL placeOrder($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)';
     const createOrderValues = [sessionID, body.first_name, body.last_name,
@@ -10,6 +10,7 @@ const createOrder = async (sessionID, body, orderID, totalprice) => {
     await connection.query(createOrderQueryString, createOrderValues);
 };
 
+/* Function to get details required to create an order */
 const getOrderDetails = async (req) => {
     const productDetailsObject = {};
     let result;
@@ -39,7 +40,7 @@ const getOrderDetails = async (req) => {
     return productDetailsObject;
 };
 
-
+/* Function to get recent orders for a particular session */
 const getRecentOrders = async (sessionId) => {
     const itemsInfoQueryString = `select 
                                     order_id, 
@@ -71,11 +72,12 @@ const getRecentOrders = async (sessionId) => {
 };
 
 
-
+/* Function to get the order history for a particular order id */
 const getOrderHistory = async(orderID) => {
     let orderHistoryDataObj = {customer_info:{},delivery_info:{},order_info:{},items:{}}
     let result;
     const values = [orderID]
+    /* Ouery to get customer details of a registered user */
     const querString1 = `SELECT u.customer_id, u.email, u.first_name, u.last_name, d.addr_line1,
                         d.addr_line2, d.city, d.postcode, t.phone_number, ct.delivery_days, ct.delivery_charge,
                         o.dispatch_method,p.payment_amount,p.payment_method,o.order_date
@@ -88,6 +90,7 @@ const getOrderHistory = async(orderID) => {
                         LEFT JOIN citytype as ct ON ct.city_type=c.city_type where o.order_id = $1`                    
     result = await connection.query(querString1,values)
     if(result.rows[0]){
+        /* If the order dispatch method is home delivery */
         if(result.rows[0].dispatch_method === 'home_delivery'){
             orderHistoryDataObj.delivery_info.addr_line1 = result.rows[0].addr_line1
             orderHistoryDataObj.delivery_info.addr_line2 = result.rows[0].addr_line2
@@ -105,6 +108,7 @@ const getOrderHistory = async(orderID) => {
         orderHistoryDataObj.order_info.payment_amount = result.rows[0].payment_amount
         orderHistoryDataObj.order_info.order_date = result.rows[0].order_date
     }else{
+        /* Query to get customer information of a guest user */
         const querString2 = `SELECT g.email, g.first_name, g.last_name,g.phone_number,d.addr_line1,
                             d.addr_line2, d.city, d.postcode,ct.delivery_days, ct.delivery_charge,
                             o.dispatch_method,p.payment_amount,p.payment_method,o.order_date
@@ -123,7 +127,7 @@ const getOrderHistory = async(orderID) => {
         orderHistoryDataObj.order_info.payment_method = result.rows[0].payment_method
         orderHistoryDataObj.order_info.payment_amount = result.rows[0].payment_amount
         orderHistoryDataObj.order_info.order_date = result.rows[0].order_date
-
+        /* If the order dispatch method is home delivery */
         if(result.rows[0].dispatch_method === 'home_delivery'){
             orderHistoryDataObj.delivery_info.addr_line1 = result.rows[0].addr_line1
             orderHistoryDataObj.delivery_info.addr_line2 = result.rows[0].addr_line2
@@ -135,7 +139,7 @@ const getOrderHistory = async(orderID) => {
         }
 
     }
-
+    /* Query to get orderitems of a certain order */
     const querString3 = `SELECT product.title,product.product_id,variant.variant_id,variant.selling_price,orderitem.quantity 
                         from product,variant,orderitem where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id
                         and orderitem.order_id = $1`
@@ -148,14 +152,6 @@ const getOrderHistory = async(orderID) => {
 
 
 }
-
-
-
-
-
-
-
-
 
 module.exports = { createOrder, getOrderDetails, getRecentOrders ,getOrderHistory};
 

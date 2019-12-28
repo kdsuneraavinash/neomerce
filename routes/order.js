@@ -45,32 +45,6 @@ router.post('/', async (req, res) => {
 
             res.redirect(`/order/${orderId}`)
 
-            // res.render('order', {
-            //     loggedIn: req.session.user != null,
-            //     show_thanks: false,
-            //     subtotal: dataObj.subtotal,
-            //     delivery: req.body.delivery_method === 'home_delivery' ? dataObj.delivery_charge : 0,
-            //     total: totalCost,
-            //     order: {
-            //         'id': orderId,
-            //         'date': new Date(),
-            //         'payment_method': req.body.payment_method,
-            //         'delivery_method': req.body.delivery_method,
-            //     },
-            //     user: {
-            //         'firstname': req.body.first_name,
-            //         'lastname': req.body.last_name,
-            //         'phonenumber': req.body.phone_number,
-            //         'email': req.body.email,
-            //     },
-            //     deliveryaddress: {
-            //         'address1': req.body.addr_line1,
-            //         'address2': req.body.addr_line2,
-            //         'city': req.body.city,
-            //         'postal': req.body.postcode,
-            //     },
-            //     items: dataObj.items,
-            // });
         } catch (err) {
             res.redirect(`/checkout?error=${err}`);
         }
@@ -81,8 +55,8 @@ router.post('/', async (req, res) => {
 
 router.get('/:orderId', async (req, res) => {
 
+    /* Create an order history object with all the information needed for order history page */
     let orderHistoryObj = await Order.getOrderHistory(req.params.orderId)
-    console.log(orderHistoryObj)
 
     res.render('order', {
         loggedIn: req.session.user != null,
