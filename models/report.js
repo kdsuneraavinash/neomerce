@@ -74,6 +74,11 @@ const getCategoryReport = async () => {
         treeItems.push(treeItem);
         treeItemParents.push(treeItemParent);
     });
+    console.log('treeItems: ');
+    console.log(treeItems);
+    console.log('parents: ');
+    console.log(treeItemParents);
+
     return [items, out.rowCount, treeItems, treeItemParents, treeItems.length];
 };
 
