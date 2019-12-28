@@ -3,6 +3,7 @@ Required format:
 
 {
     title: 'Simple Table',
+    id: 'table1', // Unique id for each table
     rows: 5,
     columns: 4,
     headers: ['Username', 'Date registered', 'Role', 'Status'],
@@ -25,22 +26,25 @@ Required format:
 -->
 
 <%
+ordered_parents = [];
 function preOrderHelper(root, level) {
     level += 1
     if (root !== null) {
         root.push(level);
+        ordered_parents.push(root);
         root = root[0];
     }
     parents.filter((v) => v[1] === root).forEach((v) => preOrderHelper(v, level));
 }
 
 preOrderHelper(null, -1);
+parents = ordered_parents;
 %>
 
 <div class="card">
     <div class="card-header"> <%= title %></div>
     <div class="card-body">
-        <table id="tree-table" class="table table-responsive-sm">
+        <table id="<%= id %>" class="table table-responsive-sm">
             <thead class="thead-dark">
                 <tr>
                     <%for (header of headers) {%>
@@ -77,7 +81,7 @@ preOrderHelper(null, -1);
 
 <script>
     $(function () {
-        let $table = $('#tree-table');
+        let $table = $('#<%= id %>');
         let rows = $table.find('tr');
 
         rows.each(function (index, row) {
