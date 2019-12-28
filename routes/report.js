@@ -14,4 +14,14 @@ router.get('/product/', async (req, res) => {
     });
 });
 
+router.get('/category/', async (req, res) => {
+    const result = await Report.getCategoryReport();
+    // console.log(result[2]);
+    // res.render('reports/productReport', {
+    //     items: result[0],
+    //     itemCount: result[1],
+    //     itemsWithQuantity: result[2],
+    // });
+});
+
 module.exports = router;
