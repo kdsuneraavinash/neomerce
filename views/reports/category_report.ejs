@@ -1,0 +1,39 @@
+<%- include('common/header', {title: 'Category Report'}) %>
+
+<br>
+<h2>Category Sales Report</h2>
+<br>
+<div class="row">
+    <div class="col-12">
+        <%- include('components/tree_table', {
+            title: 'Category Sales',
+            id: 'treetable_category', // Unique id for each table
+            rows: treeItemCount,
+            columns: 3,
+            headers: ['Category ', 'Quantity', 'Income',],
+            rawhtml: [false, false, false], // Whether each column is raw html(true) or plain text(false)
+            data: treeItems,
+            parents: treeItemParents // Current row id, parent row id('null' if no parent)
+                
+        }) %>
+    </div>
+</div>
+
+<br>
+<h2>Top Categories</h2>
+<br>
+<div class="row-lg-6">
+    <%- include('components/table', {
+                title: 'Product Table',
+                rows: categoryItemCount,
+                columns: 5,
+                headers: ['Category ID', 'Category Name','Parent ID', 'Quantity','Income'],
+                rawhtml: [false, false, false,false,false], // Whether each column is raw html(true) or plain text(false)
+                data: categoryItems
+            }) %>
+</div>
+<br>
+
+
+
+<%- include('common/footer') %>

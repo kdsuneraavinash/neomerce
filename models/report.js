@@ -48,19 +48,33 @@ const getCategoryReport = async () => {
 `;
 
     const out = await connection.query(query);
-    console.log(out.rows);
+    // console.log(out.rows);
     const items = [];
+    const treeItems = [];
+    const treeItemParents = [];
     out.rows.forEach((i) => {
         const item = [];
+        const treeItem = [];
+        const treeItemParent = [];
+
         item.push(i.category_id);
         item.push(i.title);
         item.push(i.parent_id);
         item.push(i.quantity);
         item.push(i.income);
 
+        treeItem.push(i.title);
+        treeItem.push(i.quantity);
+        treeItem.push(i.income);
+
+        treeItemParent.push(i.category_id);
+        treeItemParent.push(i.parent_id);
+
         items.push(item);
+        treeItems.push(treeItem);
+        treeItemParents.push(treeItemParent);
     });
-    return [items, out.rowCount];
+    return [items, out.rowCount, treeItems, treeItemParents, treeItems.length];
 };
 
 module.exports = { getProductCounts, getCategoryReport };
