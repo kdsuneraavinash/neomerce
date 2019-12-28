@@ -43,32 +43,34 @@ router.post('/', async (req, res) => {
             const orderId = UUID();
             await Order.createOrder(req.sessionID, req.body, orderId, totalCost);
 
-            res.render('order', {
-                loggedIn: req.session.user != null,
-                show_thanks: false,
-                subtotal: dataObj.subtotal,
-                delivery: req.body.delivery_method === 'home_delivery' ? dataObj.delivery_charge : 0,
-                total: totalCost,
-                order: {
-                    'id': orderId,
-                    'date': new Date(),
-                    'payment_method': req.body.payment_method,
-                    'delivery_method': req.body.delivery_method,
-                },
-                user: {
-                    'firstname': req.body.first_name,
-                    'lastname': req.body.last_name,
-                    'phonenumber': req.body.phone_number,
-                    'email': req.body.email,
-                },
-                deliveryaddress: {
-                    'address1': req.body.addr_line1,
-                    'address2': req.body.addr_line2,
-                    'city': req.body.city,
-                    'postal': req.body.postcode,
-                },
-                items: dataObj.items,
-            });
+            res.redirect(`/order/${orderId}`)
+
+            // res.render('order', {
+            //     loggedIn: req.session.user != null,
+            //     show_thanks: false,
+            //     subtotal: dataObj.subtotal,
+            //     delivery: req.body.delivery_method === 'home_delivery' ? dataObj.delivery_charge : 0,
+            //     total: totalCost,
+            //     order: {
+            //         'id': orderId,
+            //         'date': new Date(),
+            //         'payment_method': req.body.payment_method,
+            //         'delivery_method': req.body.delivery_method,
+            //     },
+            //     user: {
+            //         'firstname': req.body.first_name,
+            //         'lastname': req.body.last_name,
+            //         'phonenumber': req.body.phone_number,
+            //         'email': req.body.email,
+            //     },
+            //     deliveryaddress: {
+            //         'address1': req.body.addr_line1,
+            //         'address2': req.body.addr_line2,
+            //         'city': req.body.city,
+            //         'postal': req.body.postcode,
+            //     },
+            //     items: dataObj.items,
+            // });
         } catch (err) {
             res.redirect(`/checkout?error=${err}`);
         }
@@ -77,49 +79,16 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/', (req, res) => {
+router.get('/:orderId', async (req, res) => {
+
+    let orderHistoryObj = await Order.getOrderHistory(req.params.orderId)
+    console.log(orderHistoryObj)
+
     res.render('order', {
         loggedIn: req.session.user != null,
         show_thanks: false,
-        subtotal: '13800.00' - 0,
-        delivery: '800.00' - 0,
-        total: '14600.00' - 0,
-        order: {
-            'id': '5de2acbf2a97',
-            'date': '27/09/2019',
-            'payment_method': 'pay_on_delivery',
-            'delivery_method': 'delivery',
-        },
-        user: {
-            'firstname': 'John',
-            'lastname': 'Doe',
-            'phonenumber': '1233332233',
-            'email': 'user@user.com',
-        },
-        deliveryaddress: {
-            'address1': '56/8',
-            'address2': 'Street 1',
-            'city': 'City 2',
-            'postal': '12000',
-        },
-        items: [
-            {
-                id: '5de2acbf14d983e4e097b174',
-                product_title: 'SUPPORTAL NEW XUMONK ZENSOR FOR SPORTS PERSON',
-                variant: 'Blue Colored Variant',
-                selling_price: '4900.00' - 0,
-                quantity: 1,
-                totalprice: '4900.00',
-            },
-            {
-                id: '5de2acbf2a9751c69c33133d',
-                product_title: 'SUPPORTAL NEW XUMONK ZENSOR FOR SPORTS PERSON',
-                variant: 'Red Colored Variant' - 0,
-                selling_price: '8900.00',
-                quantity: 1,
-                totalprice: '8900.00',
-            },
-        ],
+        orderHistoryObj:orderHistoryObj
+
     });
 });
 
