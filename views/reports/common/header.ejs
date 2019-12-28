@@ -2,9 +2,12 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/img/fav.png">
+    <meta name="author" content="teampulse">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta charset="UTF-8">
 
     <!-- CoreUI CSS -->
     <link rel="stylesheet" href="https://unpkg.com/@coreui/coreui@3.0.0-beta.1/dist/css/coreui.min.css"
@@ -14,48 +17,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-flash.min.css">
 
     <title><%= title %></title>
-
-    <style>
-        #loader {
-            width: 100vw;
-            height: 100vh;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            position: fixed;
-            display: block;
-            background-color: #ffffff;
-            z-index: 9999;
-            text-align: center;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        #loader.loaded {
-            visibility: hidden;
-            display: none;
-        }
-
-        #loader>.spinner-border,
-        #loader>.spinner-grow {
-            margin-top: 48vh;
-            margin-left: 48vw;
-        }
-
-        body::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        body::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 2px #ccc;
-            -webkit-box-shadow: inset 0 0 2px #ccc;
-        }
-
-        body::-webkit-scrollbar-thumb {
-            background-color: #454277;
-            outline: 1px solid #000
-        }
-    </style>
+    <%- include('styles', {title}) %>
 </head>
 
 <body class="c-app">
@@ -74,18 +36,17 @@
     <div class="c-wrapper">
 
         <nav class="c-header fixed-top c-header-dark bg-primary">
-            <a class="c-header-brand" href="#">Neomerce</a>
             <ul class="c-header-nav mr-auto">
                 <li class="c-header-nav-item active">
-                    <a class="c-header-nav-link"><%= title %></a>
+                    <strong class="c-header-nav-link"><%= title %></strong>
                 </li>
             </ul>
 
-            <div class="form-inline my-2 my-lg-0 text-white">
-                <div class="c-header-nav-item dropdown">
+            <div class="form-inline my-2 my-lg-0 text-white mr-1">
+                <div class="c-header-nav-item dropdown dont-print">
                     <div style="cursor: pointer;" class="c-header-nav-link dropdown-toggle text-white" href="#"
                         id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                        Hello K. D. Sunera Chandrasiri
+                        K. D. Sunera Chandrasiri
                     </div>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/user/profile">Profile</a>
@@ -95,7 +56,7 @@
             </div>
         </nav>
 
-        <div class="c-body" style="margin-top: 56px;">
+        <div class="c-body">
             <%- include('sidebar', {title}) %>
 
-            <main class="c-main p-3">
+            <main class="c-main p-3" style="margin-top: 56px;">

@@ -1,4 +1,5 @@
-<div class="c-sidebar c-sidebar-dark c-sidebar-show">
+<div class="c-sidebar fixed c-sidebar-dark c-sidebar-show mt-auto"
+    style="height: 100vh; position: fixed; padding-top: 56px;">
     <ul class="c-sidebar-nav">
         <li class="c-sidebar-nav-title">Neomerce Report Platform</li>
         <%for (t of [
@@ -13,5 +14,16 @@
             </a>
         </li>
         <%}%>
+        <li class="c-sidebar-nav-item mt-auto">
+            <a type="button" onclick="window.print()" class="c-sidebar-nav-link c-sidebar-nav-link-success">
+              <i class="c-sidebar-nav-icon cil-print "></i> Print
+            </a>
+        </li>
+
+        <li class="c-sidebar-nav-item">
+            <a type="button" href="/" class="c-sidebar-nav-link c-sidebar-nav-link-danger">
+              <i class="c-sidebar-nav-icon cil-exit-to-app"></i> Exit
+            </a>
+        </li>
     </ul>
 </div>

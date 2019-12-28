@@ -1,0 +1,98 @@
+<style>
+    /* Print background colors */
+
+    * {
+        -webkit-print-color-adjust: exact;
+    }
+
+    /* Preloader */
+
+    #loader {
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        position: fixed;
+        display: block;
+        background-color: #ffffff;
+        z-index: 9999;
+        text-align: center;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    #loader.loaded {
+        visibility: hidden;
+        display: none;
+    }
+
+    #loader>.spinner-border,
+    #loader>.spinner-grow {
+        margin-top: 48vh;
+        margin-left: 48vw;
+    }
+
+    /* Scrollbar */
+
+    body::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    body::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 2px #ccc;
+        -webkit-box-shadow: inset 0 0 2px #ccc;
+    }
+
+    body::-webkit-scrollbar-thumb {
+        background-color: #454277;
+        outline: 1px solid #000
+    }
+
+    /* Making Printer Friendly */
+
+    @media screen {
+        main {
+            margin-left: 256px;
+        }
+    }
+
+    @media only screen and (max-width: 600px) {
+        .c-sidebar {
+            display: none;
+        }
+
+        main {
+            margin-left: 0;
+        }
+    }
+
+    @media print {
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 98vw;
+        }
+
+        .c-header-nav {
+            margin-left: auto;
+        }
+
+        .dont-print,
+        .c-sidebar {
+            display: none;
+        }
+
+        div {
+            page-break-inside: avoid;
+        }
+
+        .only-in-print {
+            display: block;
+        }
+    }
+
+    .only-in-print {
+        display: none;
+    }
+</style>
