@@ -14,26 +14,19 @@
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/@coreui/icons@1.0.0-beta.0/css/all.min.css">
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-flash.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-loading-bar.min.css">
 
     <title><%= title %></title>
     <%- include('styles', {title}) %>
 </head>
 
 <body class="c-app">
-    <div id="loader" class="d-flex content-justify-center">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-
     <!--These need to load before any chart-->
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/frozen.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-    <script src="//code.jquery.com/jquery.min.js"></script>
-
+    <script src="/js/vendor/jquery-2.2.4.min.js"></script>
 
     <div class="c-wrapper">
 
