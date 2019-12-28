@@ -137,8 +137,12 @@ $$ LANGUAGE PLpgSQL;
 -- Function to reduce stock of a variant. Called inside placeOrder procedure.(variant_id, new_quantity)
 CREATE OR REPLACE FUNCTION reduceStock(UUID4, INT) RETURNS boolean AS
 $$
+DECLARE
+existing_quantity int := (SELECT quantity from variant where variant_id = $1);
+new_quantity int;
 BEGIN
-	UPDATE variant SET quantity = $2 where variant_id = $1;
+    new_quantity := existing_quantity - $2;
+	UPDATE variant SET quantity = new_quantity where variant_id = $1;
 	return true;
 END;
 $$ LANGUAGE PLpgSQL;
