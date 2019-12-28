@@ -17,26 +17,26 @@
 
 <h2>Top 10 trending products</h2>
 <br>
-    <div class="row">
-        <div class="col-lg-6">
-            <%- include('components/table', {
+<div class="column">
+    <div class="row-lg-6">
+        <%- include('components/table', {
             title: 'Product Table',
             rows: itemCount,
-            columns: 3,
-            headers: ['Procut ID', 'Product Name', 'No of sales'],
-            rawhtml: [false, false, false], // Whether each column is raw html(true) or plain text(false)
+            columns: 4,
+            headers: ['Procut ID', 'Product Name', 'Quantity','Income'],
+            rawhtml: [false, false, false,false], // Whether each column is raw html(true) or plain text(false)
             data: items
         }) %>
-        </div>
+    </div>
 
-        <div class="col-lg-6">
-            <%- include('components/pie_chart', {
+    <div class="row-lg-6">
+        <%- include('components/pie_chart', {
             title: 'Pie Chart',
             id: 'chartid1', // Unique ID for each chart
             height: '400px',
             data:  itemsWithQuantity,
         }) %>
-        </div>
     </div>
+</div>
 
-    <%- include('common/footer') %>
+<%- include('common/footer') %>

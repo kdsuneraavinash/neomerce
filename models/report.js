@@ -2,7 +2,12 @@ const connection = require('../config/db');
 
 
 const getProductCounts = async () => {
-    const query = 'select product.product_id, product.title,sum(orderitem.quantity) as quantity from product,variant,orderitem where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id group by product.product_id order by quantity desc limit 10';
+    const query = `select product.product_id, product.title,sum(orderitem.quantity) as quantity,sum(orderitem.quantity)*sum(variant.selling_price)  as income 
+    from product, variant, orderitem
+    where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id
+    group by product.product_id
+    order by quantity desc limit 10`;
+
     const out = await connection.query(query);
     // console.log(out.rows);
     const items = [];
@@ -12,6 +17,8 @@ const getProductCounts = async () => {
         item.push(i.product_id);
         item.push(i.title);
         item.push(i.quantity);
+        item.push(i.income);
+
         items.push(item);
 
         itemsWithQuantity.push({

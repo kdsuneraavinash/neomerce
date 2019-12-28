@@ -7,7 +7,7 @@ router.get('/example/', async (req, res) => {
 router.get('/product/', async (req, res) => {
     const result = await Report.getProductCounts();
     console.log(result[2]);
-    res.render('reports/product', {
+    res.render('reports/productReport', {
         items: result[0],
         itemCount: result[1],
         itemsWithQuantity: result[2],
