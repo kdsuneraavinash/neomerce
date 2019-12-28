@@ -27,6 +27,12 @@ Required format:
 
 <%
 ordered_parents = [];
+ordered_data = [];
+
+for(i of Array(rows).keys()){
+    parents[i].push(i);
+}
+
 function preOrderHelper(root, level) {
     level += 1
     if (root !== null) {
@@ -38,7 +44,13 @@ function preOrderHelper(root, level) {
 }
 
 preOrderHelper(null, -1);
+
+for (parent of ordered_parents) {
+    ordered_data.push(data[parent[2]]);
+}
+
 parents = ordered_parents;
+data = ordered_data;
 %>
 
 <div class="card">
@@ -56,7 +68,7 @@ parents = ordered_parents;
                 <%for (rowi of Array(rows).keys()){%>
                 <%row = data[rowi]%>
                 <%parent = parents[rowi]%>
-                <tr data-id="<%= parent[0] %>" data-parent="<%= parent[1] %>" data-level="<%= parent[2] %>">
+                <tr data-id="<%= parent[0] %>" data-parent="<%= parent[1] %>" data-level="<%= parent[3] %>">
                     <%for (i of Array(columns).keys()) {%>
                     <%  if (i === 0) { %>
                     <%      if (rawhtml[i]) {%>
