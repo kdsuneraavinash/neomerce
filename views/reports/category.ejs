@@ -1,0 +1,42 @@
+<%- include('common/header', {title: 'Example Report'}) %>
+
+<!-- <li class="submenu dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+        aria-expanded="false">Categories</a>
+    <ul class="dropdown-menu">
+        <li class="nav-item"><a class="nav-link" href="?category=760aa25b-f984-4a3d-9c5d-d1313f49fe08">
+                Electronics
+            </a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="?category=e802a9e5-ba12-4ba1-8bb3-007bff45caf6">
+                Toys & Games
+            </a>
+        </li>
+    </ul>
+</li> -->
+
+<h2>Top 10 trending products</h2>
+<br>
+    <div class="row">
+        <div class="col-lg-6">
+            <%- include('components/table', {
+            title: 'Product Table',
+            rows: itemCount,
+            columns: 3,
+            headers: ['Procut ID', 'Product Name', 'No of sales'],
+            rawhtml: [false, false, false], // Whether each column is raw html(true) or plain text(false)
+            data: items
+        }) %>
+        </div>
+
+        <div class="col-lg-6">
+            <%- include('components/pie_chart', {
+            title: 'Pie Chart',
+            id: 'chartid1', // Unique ID for each chart
+            height: '400px',
+            data:  itemsWithQuantity,
+        }) %>
+        </div>
+    </div>
+
+    <%- include('common/footer') %>
