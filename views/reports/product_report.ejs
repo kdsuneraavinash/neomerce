@@ -9,20 +9,20 @@
         <%- include('components/table', {
             title: 'Product Table',
             rows: productItemCount,
-            columns: 4,
-            headers: ['Procut ID', 'Product Name', 'Quantity','Income'],
-            rawhtml: [false, false, false,false], // Whether each column is raw html(true) or plain text(false)
+            columns: 3,
+            headers: ['Product Name', 'Quantity','Income'],
+            rawhtml: [false, false,false], // Whether each column is raw html(true) or plain text(false)
             data: productItems
         }) %>
     </div>
 
     <div class="row-lg-6">
-        <%- include('components/pie_chart', {
-            title: 'Pie Chart',
-            id: 'piechart_product', // Unique ID for each chart
-            height: '400px',
-            data:  productItemsWithQuantity,
-        }) %>
+        <%- include('components/bar_chart', {
+                title: 'Bar Chart',
+                id: 'barchart_product', // Unique ID for each chart
+                height: '1200px',
+                data:  productItemsWithQuantity
+            }) %>
     </div>
 </div>
 

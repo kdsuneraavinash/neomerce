@@ -20,19 +20,28 @@
 </div>
 
 <br>
-<h2>Top Categories</h2>
+<h2>Top 10 Categories</h2>
 <br>
 <div class="row-lg-6">
     <%- include('components/table', {
                 title: 'Product Table',
                 rows: categoryItemCount,
-                columns: 5,
-                headers: ['Category ID', 'Category Name','Parent ID', 'Quantity','Income'],
-                rawhtml: [false, false, false,false,false], // Whether each column is raw html(true) or plain text(false)
+                columns: 3,
+                headers: ['Category Name', 'Quantity','Income'],
+                rawhtml: [false,false,false], // Whether each column is raw html(true) or plain text(false)
                 data: categoryItems
             }) %>
 </div>
 <br>
+
+<div class="row-lg-6">
+    <%- include('components/bar_chart', {
+                title: 'Bar Chart',
+                id: 'barchart_category', // Unique ID for each chart
+                height: '1200px',
+                data:  categoryitemsWithQuantity
+            }) %>
+</div>
 
 
 

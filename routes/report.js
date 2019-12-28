@@ -15,14 +15,16 @@ router.get('/product/', async (req, res) => {
 });
 
 router.get('/category/', async (req, res) => {
-    const categoryResult = await Report.getCategoryReport();
+    const categoryTreeResult = await Report.getCategoryTreeReport();
+    const topCategoryLeafNodes = await Report.getTopCategoryLeafNodes();
     // console.log(productResult[2]);
     res.render('reports/category_report', {
-        categoryItems: categoryResult[0],
-        categoryItemCount: categoryResult[1],
-        treeItems: categoryResult[2],
-        treeItemParents: categoryResult[3],
-        treeItemCount: categoryResult[4],
+        categoryItems: topCategoryLeafNodes[0],
+        categoryItemCount: topCategoryLeafNodes[1],
+        categoryitemsWithQuantity: topCategoryLeafNodes[2],
+        treeItems: categoryTreeResult[0],
+        treeItemParents: categoryTreeResult[1],
+        treeItemCount: categoryTreeResult[2],
     });
 });
 
