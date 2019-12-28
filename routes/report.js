@@ -4,10 +4,10 @@ const Report = require('../models/report');
 router.get('/example/', async (req, res) => {
     res.render('reports/example');
 });
-router.get('/category/', async (req, res) => {
+router.get('/product/', async (req, res) => {
     const result = await Report.getProductCounts();
     console.log(result[2]);
-    res.render('reports/category', {
+    res.render('reports/product', {
         items: result[0],
         itemCount: result[1],
         itemsWithQuantity: result[2],
