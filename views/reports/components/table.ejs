@@ -21,10 +21,10 @@ Required format:
     <div class="card-header"> <%= title %></div>
     <div class="card-body">
         <table class="table table-responsive-sm">
-            <thead>
+            <thead class="thead-dark">
                 <tr>
                     <%for (header of headers) {%>
-                    <th><%=header%></th>
+                    <th class="col"><%=header%></th>
                     <%}-%>
                 </tr>
             </thead>
