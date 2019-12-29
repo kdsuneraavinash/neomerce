@@ -97,6 +97,7 @@ monthlyData.forEach((v) => {
         <%}%>
     </div>
     <div class="col">
+        <%if (last_order){%>
         <%- include('components/callout', {
             title: 'Remaining Stocks',
             color: 'bg-amber-500' , 
@@ -104,12 +105,13 @@ monthlyData.forEach((v) => {
             percentage: '100',
             helpertext: 'Last Order on: ' + last_order.date,
         }) %>
+        <%}%>
     </div>
 </div>
 
 <div class="row">
+        <div class="col-lg-6">
     <% if (visitedItems.length){%>
-    <div class="col-lg-6">
         <%- include('components/line_chart', {
             title: 'Visited Users from ' + visitedItems[0].date.toISOString().split('T')[0],
             id: 'visited_users_chart', 
@@ -117,11 +119,19 @@ monthlyData.forEach((v) => {
             color: '#3F51B5',
             data:  visitedItems,
         }) %>
+        <%}else{%>
+        <%- include('components/line_chart', {
+                title: 'Visited Users'  ,
+                id: 'visited_users_chart', 
+                height: '500px',
+                color: '#3F51B5',
+                data:  [],
+            }) %>
+        <%}%>
     </div>
-    <%}%>
 
-    <% if (orderedItems.length){%>
     <div class="col-lg-6">
+        <% if (orderedItems.length){%>
         <%- include('components/line_chart', {
             title: 'Orders from ' + orderedItems[0].date.toISOString().split('T')[0]  ,
             id: 'prd_sales_chart', 
@@ -129,8 +139,16 @@ monthlyData.forEach((v) => {
             color: '#009688',
             data:  orderedItems,
         }) %>
+        <%}else{%>
+        <%- include('components/line_chart', {
+                title: 'Orders'  ,
+                id: 'prd_sales_chart', 
+                height: '500px',
+                color: '#009688',
+                data:  [],
+            }) %>
+        <%}%>
     </div>
-    <%}%>
 </div>
 
 <div class="row">
@@ -141,9 +159,9 @@ monthlyData.forEach((v) => {
             height: '800px',
             data:  monthlyData,
         }) %>
-</div>
-<div class="col-lg-4">
-    <%- include('components/table', {
+    </div>
+    <div class="col-lg-4">
+        <%- include('components/table', {
             title: 'Monthly Orders vs Visits',
             rows: 12,
             numeric: [false, true, true],
@@ -152,7 +170,7 @@ monthlyData.forEach((v) => {
             rawhtml: [false, false, false],
             data: monthlyData.map((v) => [v.month, v.visits, v.orders])
         }) %>
-</div>
+    </div>
 </div>
 
 
