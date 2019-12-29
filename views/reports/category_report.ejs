@@ -1,5 +1,9 @@
 <%- include('common/header', {title: 'Category Report'}) %>
 
+<%
+categoryItems.forEach((v) => v[1] = `<a target='_blank' href='/category?category=${v[1]}'>Link</a>`);
+%>
+
 <div class="row">
     <div class="col-6">
         <%- include('components/tree_table', {
@@ -7,7 +11,7 @@
             id: 'treetable_category', 
             rows: treeItemCount,
             columns: 3,
-            headers: ['Category ', 'Quantity', 'Income (LKR)',],
+            headers: ['Category', 'Quantity', 'Income (LKR)',],
             numeric: [false, true, true],
             rawhtml: [false, false, false], 
             data: treeItems,
@@ -19,10 +23,11 @@
         <%- include('components/table', {
             title: 'Top Category Sales',
             rows: categoryItemCount,
-            numeric: [false, true, true],
-            columns: 3,
-            headers: ['Category Name', 'Quantity','Income (LKR)'],
-            rawhtml: [false,false,false],
+            columns: 4,
+            headers: ['Category Name', 'Page', 'Quantity', 'Income (LKR)',],
+            numeric: [false, false, true, true],
+            rawhtml: [false, true, false, false], 
+            print: [true, false, true, true], 
             data: categoryItems
         }) %>
     </div>

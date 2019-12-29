@@ -49,7 +49,7 @@ const getTopCategoryLeafNodes = async () => {
     const itemsWithQuantity = [];
     const itemsWithIncome = [];
     out.rows.forEach((value) => {
-        items.push([value.title, value.quantity, value.income]);
+        items.push([value.title, value.category_id, value.quantity, value.income]);
         itemsWithQuantity.push({ label: value.title, value: value.quantity - 0 });
         itemsWithIncome.push({ label: value.title, value: value.income - 0 });
     });

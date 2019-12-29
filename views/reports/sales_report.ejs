@@ -1,8 +1,6 @@
 <%- include('common/header', {title: 'Sales Report'}) %>
 <%
-productItems.forEach((v) => {
-             v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`
-            });
+productItems.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
 %>
 
 <div class="row">
