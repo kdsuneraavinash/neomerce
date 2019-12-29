@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 const router = require('express').Router();
 const UUID = require('uuid/v4');
 const Order = require('../models/order');
@@ -43,8 +42,7 @@ router.post('/', async (req, res) => {
             const orderId = UUID();
             await Order.createOrder(req.sessionID, req.body, orderId, totalCost);
 
-            res.redirect(`/order/${orderId}`)
-
+            res.redirect(`/order/${orderId}`);
         } catch (err) {
             res.redirect(`/checkout?error=${err}`);
         }
@@ -53,23 +51,20 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/:orderId',async (req, res) => {
-
+router.get('/:orderId', async (req, res) => {
     /* check for user permission to view order history */
     const permission = await Order.orderHistoryPermissionChecker(req);
-    if(!permission){
-        res.redirect('/')
+    if (!permission) {
+        res.redirect('/');
     }
 
-
     /* Create an order history object with all the information needed for order history page */
-    let orderHistoryObj = await Order.getOrderHistory(req.params.orderId)
+    const orderHistoryObj = await Order.getOrderHistory(req.params.orderId);
 
     res.render('order', {
         loggedIn: req.session.user != null,
         show_thanks: false,
-        orderHistoryObj:orderHistoryObj
-
+        orderHistoryObj,
     });
 });
 
