@@ -1,4 +1,5 @@
 const connection = require('../config/db');
+const helper = require('../utils/helper');
 
 /* Function to create an order */
 const createOrder = async (sessionID, body, orderID, totalprice) => {
@@ -153,7 +154,17 @@ const getOrderHistory = async(orderID) => {
 
 }
 
-module.exports = { createOrder, getOrderDetails, getRecentOrders ,getOrderHistory};
+
+const orderHistoryPermissionChecker = async (req) => {
+    const queryString = 'SELECT checkOrderHistoryPriviledge($1,$2)'
+    const values = [req.sessionID,req.params.orderId]
+    const result = await connection.query(queryString,values)
+    return result.rows[0]
+}
+
+
+
+module.exports = { createOrder, getOrderDetails, getRecentOrders ,getOrderHistory,orderHistoryPermissionChecker};
 
 
 

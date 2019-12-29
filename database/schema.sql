@@ -161,6 +161,24 @@ END;
 $$ LANGUAGE PLpgSQL;
 
 
+
+-- Function to check user priviledges to view order history
+CREATE OR REPLACE FUNCTION checkOrderHistoryPriviledge(SESSION_UUID,UUID4) RETURNS boolean AS
+$$
+DECLARE
+customer_id1 uuid4 := (select customer_id from session where session_id=$1);
+customer_id2 uuid4 := (select customer_id from orderdata where order_id = $2); 
+BEGIN
+	if customer_id1 = customer_id2 then 
+        return true;
+	else
+	    return false;
+	end if;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
+
 /* 
   _        _     _           
  | |      | |   | |          
