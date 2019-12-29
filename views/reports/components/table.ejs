@@ -1,25 +1,6 @@
-<%#
-Required format:
-
-{
-    title: 'Simple Table',
-    rows: 5,
-    columns: 4,
-    headers: ['Username', 'Date registered', 'Role', 'Status'],
-    rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
-    numeric: [false, false, false, false],
-    data: [
-        ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
-        ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
-        ['Chetan Mohamed', '2014/01/12', 'Member', '<span class="badge badge-warning">Inactive</span>'],
-        ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
-        ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
-    ]
-}
-%>
-
 <%
 if (!locals.numeric) numeric = Array(columns).fill(false);
+if (!locals.print) print = Array(columns).fill(true);
 %>
 
 <div class="card">
@@ -29,11 +10,12 @@ if (!locals.numeric) numeric = Array(columns).fill(false);
             <thead class="thead-dark">
                 <tr>
                     <%for (i of Array(columns).keys()) {%>
-                    <%if(numeric[i]) {%>
-                    <th class="text-right"><%=headers[i]%></th>
-                    <%} else {%>
-                    <th><%=headers[i]%></th>
-                    <%} %>
+                    <%  classes = []
+                        if (numeric[i]) classes.push('text-right');
+                        if (!print[i]) classes.push('dont-print');
+                        %>
+
+                    <th class="<%= classes.join(' ') %>"><%=headers[i]%></th>
                     <%}-%>
                 </tr>
             </thead>
@@ -41,12 +23,15 @@ if (!locals.numeric) numeric = Array(columns).fill(false);
                 <%for (row of data){%>
                 <tr>
                     <%for (i of Array(columns).keys()) {%>
+                    <%  classes = []
+                        if (numeric[i]) classes.push('text-right');
+                        if (!print[i]) classes.push('dont-print');
+                    %>
+
                     <%if (rawhtml[i]) {%>
-                    <td><%-row[i]%></td>
-                    <%} else if(numeric[i]) {%>
-                    <td class="text-right"><%=row[i]%></td>
+                    <td class="<%= classes.join(' ') %>"><%-row[i]%></td>
                     <%} else {%>
-                    <td><%=row[i]%></td>
+                    <td class="<%= classes.join(' ') %>"><%=row[i]%></td>
                     <%} %>
                     <%}%>
                 </tr>

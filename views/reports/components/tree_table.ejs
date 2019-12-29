@@ -1,31 +1,3 @@
-<%#
-Required format:
-
-{
-    title: 'Simple Table',
-    id: 'table1', // Unique id for each table
-    rows: 5,
-    columns: 4,
-    headers: ['Username', 'Date registered', 'Role', 'Status'],
-    rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
-    numeric: [false, false, false, false],
-    data: [
-        ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
-        ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
-        ['Chetan Mohamed', '2014/01/12', 'Member', '<span class="badge badge-warning">Inactive</span>'],
-        ['Derick Maximinus', '2012/11/31', 'Staff', '<span class="badge badge-success">Active</span>'],
-        ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
-    ],
-    parents: [
-        ['row1', null],  // Current row id, parent row id('null' if no parent)
-        ['row2', 'row1'], 
-        ['row3', 'row1'], 
-        ['row4', 'row3'], 
-        ['row5', null]
-    ]
-}
-%>
-
 <%
 if (!locals.numeric) numeric = Array(columns).fill(false);
 %>

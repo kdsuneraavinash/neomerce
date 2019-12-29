@@ -14,7 +14,7 @@ const getProductCounts = async () => {
     const items = [];
     const itemsWithQuantity = [];
     out.rows.forEach((value, index) => {
-        items.push([index + 1, value.title, value.quantity, value.income]);
+        items.push([index + 1, value.title, value.quantity, value.income, value.product_id]);
         itemsWithQuantity.push({ label: `#${index + 1}`, value: value.quantity - 0 });
     });
     return [items, itemsWithQuantity];
@@ -86,4 +86,78 @@ const getCategoryTreeReport = async () => {
 };
 
 
-module.exports = { getProductCounts, getCategoryTreeReport, getTopCategoryLeafNodes };
+const getProductVisitedCountReport = async (productId) => {
+    const query = `
+    select ROW_NUMBER() over(order by visited_date) as count, visited_date 
+        from visitedproduct 
+        where product_id=$1 order by visited_date limit 100;
+        `;
+
+    const out = await connection.query(query, [productId]);
+    const productVisits = [];
+    out.rows.forEach((value) => {
+        productVisits.push({
+            date: new Date(value.visited_date),
+            value: value.count - 0,
+        });
+    });
+
+    productVisits.push({
+        date: new Date(),
+        value: (productVisits.length) ? productVisits[productVisits.length - 1].value : 0,
+    });
+    return productVisits;
+};
+
+
+const getProductOrderedCountReport = async (productId) => {
+    const query = `
+            select orderdata.order_date
+                from orderdata join orderitem using(order_id) join variant using(variant_id)
+                where product_id=$1 order by order_date;
+        `;
+
+    const out = await connection.query(query, [productId]);
+    const productOrders = [];
+    out.rows.forEach((value, index) => {
+        productOrders.push({
+            date: new Date(value.order_date),
+            value: index + 1,
+        });
+    });
+    productOrders.push({
+        date: new Date(),
+        value: (productOrders.length) ? productOrders[productOrders.length - 1].value : 0,
+    });
+    return productOrders;
+};
+
+const getProductData = async (productId) => {
+    const out = {};
+
+    let query = 'select * from product where product_id=$1';
+
+    [out.productData] = (await connection.query(query, [productId])).rows;
+
+    query = `select variant_id, quantity, title, selling_price, listed_price
+                from Variant
+                where product_id = $1`;
+    out.variantData = (await connection.query(query, [productId])).rows;
+    return out;
+};
+
+const getProducts = async () => {
+    const query = 'select * from productbasicview order by added_date';
+    const out = await connection.query(query);
+    return out.rows;
+};
+
+module.exports = {
+    getProductCounts,
+    getCategoryTreeReport,
+    getTopCategoryLeafNodes,
+    getProductVisitedCountReport,
+    getProductOrderedCountReport,
+    getProductData,
+    getProducts,
+};

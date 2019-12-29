@@ -84,7 +84,7 @@
     <div class="col-4">
         <%- include('components/callout', {
             title: 'Simple Table',
-            color: 'success', 
+            color: 'bg-red-500', 
             value: '43',
             percentage: 25,
             helpertext: 'Widget helper text',
@@ -93,7 +93,7 @@
     <div class="col-4">
         <%- include('components/callout', {
             title: 'Simple Table',
-            color: 'warning', 
+            color: 'bg-green-500', 
             value: '1221',
             percentage: 53,
             helpertext: 'Widget helper text',
@@ -102,7 +102,7 @@
     <div class="col-4">
         <%- include('components/callout', {
             title: 'Simple Table',
-            color: 'danger', 
+            color: 'bg-blue-500', 
             value: '12,454',
             percentage: 89,
             helpertext: 'Widget helper text',
@@ -114,6 +114,7 @@
     <div class="col-lg-6">
         <%- include('components/line_chart', {
             title: 'Line Chart',
+            color: '#F44336',
             id: 'chartid2', // Unique ID for each chart,
             height: '500px',
             data:  [

@@ -1,15 +1,21 @@
 <%- include('common/header', {title: 'Sales Report'}) %>
+<%
+productItems.forEach((v) => {
+             v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`
+            });
+%>
 
 <div class="row">
     <div class="col-lg-6">
         <%- include('components/table', {
             title: 'Top 10 Bestselling Products',
             rows: productItemCount,
-            columns: 4,
-            headers: ['#', 'Product Name', 'Quantity','Income (LKR)'],
-            rawhtml: [false, false, false, false], 
-            numeric: [true, false, true, true],
-            data: productItems
+            columns: 5,
+            headers: ['#', 'Product Name', 'Quantity','Income (LKR)', 'Report'],
+            rawhtml: [false, false, false, false, true], 
+            numeric: [true, false, true, true, false],
+            data: productItems,
+            print: [true, true, true, true,  false]
         }) %>
     </div>
     <div class="col-lg-6">

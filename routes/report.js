@@ -15,7 +15,28 @@ router.get('/sales/', async (req, res) => {
 });
 
 router.get('/product/', async (req, res) => {
-    res.render('reports/product_report');
+    const productId = req.query.id;
+    if (!productId) {
+        const products = await Report.getProducts();
+        res.render('reports/product_report_overview', { products, error: req.query.error });
+        return;
+    }
+
+    try {
+        const { productData, variantData } = await Report.getProductData(productId);
+        const productVisitedReport = await Report.getProductVisitedCountReport(productId);
+        const productOrderedReport = await Report.getProductOrderedCountReport(productId);
+        productVisitedReport.unshift({ date: productData.added_date, value: 0 });
+        productOrderedReport.unshift({ date: productData.added_date, value: 0 });
+        res.render('reports/product_report', {
+            visitedItems: productVisitedReport,
+            orderedItems: productOrderedReport,
+            productData,
+            variantData,
+        });
+    } catch (error) {
+        res.redirect(`/report/product?error=${error}`);
+    }
 });
 
 router.get('/category/', async (req, res) => {
