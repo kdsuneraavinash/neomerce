@@ -8,31 +8,35 @@
                 <div class="details_item">
                     <h4>Order Info</h4>
                     <ul class="list">
-                        <li><a href="#"><span>Order id</span> : <%= order.id %></a></li>
-                        <li><a href="#"><span>Date</span> : <%= order.date %></a></li>
-                        <li><a href="#"><span>Payment Method</span> : <%= order.payment_method %></a></li>
-                        <li><a href="#"><span>Delivery method</span> : <%= order.delivery_method %></a></li>
+                        <li><a href="#"><span>Order id</span> : <%= order_info.order_id %></a></li>
+                        <li><a href="#"><span>Date</span> : <%= order_info.order_date %></a></li>
+                        <li><a href="#"><span>Payment Method</span> : <%= order_info.payment_method %></a></li>
+                        <li><a href="#"><span>Delivery method</span> : <%= order_info.dispatch_method %></a></li>
                     </ul>
                 </div>
             </div>
+            
             <div class="col-lg-4">
+                    <%if (orderHistoryObj.delivery_info.delivery_charge) {%>
                 <div class="details_item">
                     <h4>Delivery Address</h4>
                     <ul class="list">
-                        <li><a href="#"><span>Address Line 1</span> : <%= deliveryaddress.address1 %> </a></li>
-                        <li><a href="#"><span>Address Line 2</span> : <%= deliveryaddress.address2 %> </a></li>
-                        <li><a href="#"><span>City</span> : <%= deliveryaddress.city %> </a></li>
-                        <li><a href="#"><span>Postal code </span> : <%= deliveryaddress.postal %> </a></li>
+                        <li><a href="#"><span>Address Line 1</span> : <%= delivery_info.addr_line1 %> </a></li>
+                        <li><a href="#"><span>Address Line 2</span> : <%= delivery_info.addr_line2 %> </a></li>
+                        <li><a href="#"><span>City</span> : <%= delivery_info.city %> </a></li>
+                        <li><a href="#"><span>Postal code </span> : <%= delivery_info.postcode %> </a></li>
                     </ul>
                 </div>
+                <% } %>
             </div>
+            
             <div class="col-lg-4">
                 <div class="details_item">
                     <h4>User Information</h4>
                     <ul class="list">
-                        <li><a href="#"><span>Name</span> : <%= user.firstname %> &nbsp; <%= user.lastname %></a></li>
-                        <li><a href="#"><span>Phone Number</span> : <%= user.phonenumber %></a></li>
-                        <li><a href="#"><span>Email</span> : <%= user.email %></a></li>
+                        <li><a href="#"><span>Name</span> : <%= customer_info.first_name %> &nbsp; <%= customer_info.last_name %></a></li>
+                        <li><a href="#"><span>Phone Number</span> : <%= customer_info.phone_number %></a></li>
+                        <li><a href="#"><span>Email</span> : <%= customer_info.email %></a></li>
                     </ul>
                 </div>
             </div>
@@ -53,7 +57,7 @@
                         <% for (const item of items) {%>
                         <tr>
                             <td>
-                                <p><%= item.product_title%></p>
+                                <p><%= item.title%></p>
                             </td>
                             <td>
                                 <h5>x <%= item.quantity%></h5>
@@ -72,7 +76,7 @@
                                 <h5></h5>
                             </td>
                             <td>
-                                <p><%= subtotal.toFixed(2)%></p>
+                                <p><%= order_info.payment_amount - (delivery_info.delivery_charge ? delivery_info.delivery_charge : 0) %></p>
                             </td>
                         </tr>
                         <tr>
@@ -83,7 +87,7 @@
                                 <h5></h5>
                             </td>
                             <td>
-                                <p><%= delivery%></p>
+                                <p><%= delivery_info.delivery_charge ? delivery_info.delivery_charge : 0%></p>
                             </td>
                         </tr>
                         <tr>
@@ -94,7 +98,7 @@
                                 <h5></h5>
                             </td>
                             <td>
-                                <p><%= total%></p>
+                                <p><%= order_info.payment_amount%></p>
                             </td>
                         </tr>
                     </tbody>
