@@ -1,0 +1,38 @@
+<div class="card dont-print">
+    <div class="card-header bg-dark text-white"> <%= title %></div>
+    <div class="card-body">
+        <div id="<%= id %>"></div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('<%= id %>').style.width = '100%';
+    document.getElementById('<%= id %>').style.height = '<%= height %>';
+
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_material);
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        var chart = am4core.create("<%= id %>", am4charts.PieChart3D);
+        chart.hiddenState.properties.opacity = 0;
+
+        chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+
+        chart.innerRadius = am4core.percent(40);
+        chart.depth = 50;
+
+        chart.legend = new am4charts.Legend();
+
+        var series = chart.series.push(new am4charts.PieSeries3D());
+        series.dataFields.value = "value";
+        series.dataFields.depthValue = "value";
+        series.dataFields.category = "label";
+        series.slices.template.cornerRadius = 5;
+        series.colors.step = 3;
+
+    }); // end am4core.ready()
+</script>

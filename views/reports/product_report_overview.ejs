@@ -1,0 +1,46 @@
+<%- include('common/header', {title: 'Product Report'}) %>
+
+<% if (error != null){ %>
+<div class="mb-3">
+    <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+        <strong>Error: </strong> <%=error.replace("error: ","")%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<% }%>
+
+<form class="form-horizontal dont-print" action="/report/product" method="get">
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="input-group"><span class="input-group-prepend">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="cil-magnifying-glass"> </span> &nbsp;Search
+                    </button>
+                </span>
+                <input name="id" class="form-control" id="input1-group2" type="text" name="input1-group2"
+                    placeholder="Product ID">
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-lg-12">
+        <%- include('components/table', {
+            title: 'Variants',
+            rows: products.length,
+            numeric: [false, false, false, true, false],
+            columns: 5,
+            headers: ['Product Title', 'View', 'Product ID','Minimum Selling Price (LKR)', 'Image'],
+            rawhtml: [false, true, true,  false, true],
+            data: products.map((v) => [ v.title, `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v.product_id}'>View</a>`,
+             `<small>${v.product_id}</small>`, v.min_selling_price, 
+             `<img class='lazy' data-src='${v.image_url}' height=50 width=50></img>'`]),
+            print: [true, false, true, true,  false]
+        }) %>
+    </div>
+</div>
+
+<%- include('common/footer') %>

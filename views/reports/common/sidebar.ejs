@@ -1,0 +1,32 @@
+<div class="c-sidebar fixed c-sidebar-dark c-sidebar-show mt-auto"
+    style="height: 100vh; position: fixed; padding-top: 56px;">
+    <ul class="c-sidebar-nav">
+        <li class="c-sidebar-nav-title">Neomerce Report Platform</li>
+        <%for (t of [
+            ['Sales Report', '/report/sales', 'cil-money'], 
+            ['Category Report', '/report/category', 'cil-object-group'], 
+            ['Product Report', '/report/product', 'cil-briefcase'], 
+            ['Time Based Report', '/report/time', 'cil-clock'], 
+            ['Customer Order Report', '/report/order', 'cil-cart'], 
+            ['Example Report', '/report/example', 'cil-chart'], 
+        ]) {%>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link <%= (t[0] === title) ? 'c-active' : ''%>" href="<%= t[1]%>">
+                <i class="c-sidebar-nav-icon <%= t[2] %>"></i>
+                <%=t[0] %>
+            </a>
+        </li>
+        <%}%>
+        <li class="c-sidebar-nav-item mt-auto">
+            <a type="button" onclick="window.print()" class="c-sidebar-nav-link c-sidebar-nav-link-warning bg-amber-500">
+              <i class="c-sidebar-nav-icon cil-print"></i> Print
+        </a>
+        </li>
+
+        <li class="c-sidebar-nav-item">
+            <a type="button" href="/" class="c-sidebar-nav-link c-sidebar-nav-link-danger bg-red-500">
+                <i class="c-sidebar-nav-icon cil-exit-to-app"></i> Exit
+            </a>
+        </li>
+    </ul>
+</div>

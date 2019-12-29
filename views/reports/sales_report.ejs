@@ -1,0 +1,43 @@
+<%- include('common/header', {title: 'Sales Report'}) %>
+<%
+products.forEach((v) => v[4] = `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v[4]}'>Report</a>`);
+%>
+
+<div class="row dont-print">
+    <div class="col-12">
+        <%- include('components/callout', {
+            title: 'Add Quartely Sales Report',
+            color: 'bg-red-500', 
+            value: '@Anju',
+            percentage: 100,
+            helpertext: '@Anju',
+        }) %>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/table', {
+            title: 'Top 10 Bestselling Products',
+            rows: products.length,
+            columns: 5,
+            headers: ['#', 'Product Name', 'Quantity','Income (LKR)', 'Report'],
+            rawhtml: [false, false, false, false, true], 
+            numeric: [true, false, true, true, false],
+            data: products,
+            print: [true, true, true, true,  false]
+        }) %>
+    </div>
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                title: 'Top 10 Bestselling Products',
+                id: 'barchart_product',
+                height: '600px',
+                data:  productVsQuantity
+            }) %>
+    </div>
+</div>
+
+<%- include('common/footer') %>

@@ -1,0 +1,42 @@
+<%
+if (!locals.numeric) numeric = Array(columns).fill(false);
+if (!locals.print) print = Array(columns).fill(true);
+%>
+
+<div class="card">
+    <div class="card-header bg-dark text-white"> <%= title %></div>
+    <div class="card-body">
+        <table class="table table-responsive-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <%for (i of Array(columns).keys()) {%>
+                    <%  classes = []
+                        if (numeric[i]) classes.push('text-right');
+                        if (!print[i]) classes.push('dont-print');
+                        %>
+
+                    <th class="<%= classes.join(' ') %>"><%=headers[i]%></th>
+                    <%}-%>
+                </tr>
+            </thead>
+            <tbody>
+                <%for (row of data){%>
+                <tr>
+                    <%for (i of Array(columns).keys()) {%>
+                    <%  classes = []
+                        if (numeric[i]) classes.push('text-right');
+                        if (!print[i]) classes.push('dont-print');
+                    %>
+
+                    <%if (rawhtml[i]) {%>
+                    <td class="<%= classes.join(' ') %>"><%-row[i]%></td>
+                    <%} else {%>
+                    <td class="<%= classes.join(' ') %>"><%=row[i]%></td>
+                    <%} %>
+                    <%}%>
+                </tr>
+                <%}-%>
+            </tbody>
+        </table>
+    </div>
+</div>

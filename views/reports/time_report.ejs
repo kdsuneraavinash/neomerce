@@ -1,0 +1,85 @@
+<%- include('common/header', {title: 'Time Based Report'}) %>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+<% if (error != null){ %>
+<div class="mb-3">
+    <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+        <strong>Error: </strong> <%=error.replace("error: ","")%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<% }%>
+
+<%
+if (!timerange){
+    date = new Date();
+    day = date.getDate();
+    month = date.getMonth();
+    year = date.getFullYear();
+    timerange = `${((month - 1)%12) + 1}/01/${year} - ${month + 1}/${day}/${year}`;
+}
+%>
+
+<form class="form-horizontal dont-print" action="/report/time" method="get">
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="input-group"><span class="input-group-prepend">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="cil-magnifying-glass"> </span> &nbsp;Search
+                    </button>
+                </span>
+                <input class="form-control" type="text" name="daterange" value="<%=timerange%>" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<% if(locals.products){
+    products.forEach((v) => v[4] = `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v[4]}'>Report</a>`);
+%>
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/table', {
+            title: 'Top 10 Bestselling Products between ' + timerange,
+            rows: products.length,
+            columns: 5,
+            headers: ['#', 'Product Name', 'Quantity','Income (LKR)', 'Report'],
+            rawhtml: [false, false, false, false, true], 
+            numeric: [true, false, true, true, false],
+            data: products,
+            print: [true, true, true, true,  false]
+        }) %>
+    </div>
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                title: 'Top 10 Bestselling Products between ' + timerange,
+                id: 'barchart_product',
+                height: '600px',
+                data:  productVsQuantity
+            }) %>
+    </div>
+</div>
+
+<%}%>
+
+<script>
+    $(function () {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function (start, end, label) {
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+    });
+</script>
+
+
+
+<%- include('common/footer') %>

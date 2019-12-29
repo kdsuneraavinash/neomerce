@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/img/fav.png">
+    <meta name="author" content="teampulse">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta charset="UTF-8">
+
+    <!-- CoreUI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@coreui/coreui@3.0.0-beta.1/dist/css/coreui.min.css"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/@coreui/icons@1.0.0-beta.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-loading-bar.min.css">
+    <link rel="stylesheet" href="/css/material.css">
+
+    <title><%= title %></title>
+    <%- include('styles', {title}) %>
+</head>
+
+<body class="c-app">
+    <!--These need to load before any chart-->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/material.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+    <script src="/js/vendor/jquery-2.2.4.min.js"></script>
+
+    <div class="c-wrapper">
+
+        <nav class="c-header fixed-top c-header-dark" style="background-color: #3C4B64;">
+            <ul class="c-header-nav mr-auto">
+                <li class="c-header-nav-item active">
+                    <strong class="c-header-nav-link"><%= title %></strong>
+                </li>
+            </ul>
+
+            <div class="form-inline my-2 my-lg-0 text-white mr-1">
+                <div class="c-header-nav-item dropdown dont-print">
+                    <div style="cursor: pointer;" class="c-header-nav-link dropdown-toggle text-white" href="#"
+                        id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                        K. D. Sunera Chandrasiri
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/user/profile">Profile</a>
+                        <a class="dropdown-item" href="/user/logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="c-body">
+            <%- include('sidebar', {title}) %>
+
+            <main class="c-main p-3" style="margin-top: 56px;">
