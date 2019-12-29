@@ -11,9 +11,10 @@ const getProductCounts = async () => {
     const out = await connection.query(query);
     const items = [];
     const itemsWithQuantity = [];
-    out.rows.forEach((i) => {
+    out.rows.forEach((i, index) => {
         const item = [];
         // item.push(i.product_id);
+        item.push(index + 1);
         item.push(i.title);
         item.push(i.quantity);
         item.push(i.income);
@@ -21,7 +22,7 @@ const getProductCounts = async () => {
         items.push(item);
 
         itemsWithQuantity.push({
-            label: i.title,
+            label: `#${index + 1}`,
             value: parseInt(i.quantity, 10),
         });
     });

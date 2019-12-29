@@ -1,4 +1,4 @@
-<!--
+<%#
 Required format:
 
 {
@@ -8,6 +8,7 @@ Required format:
     columns: 4,
     headers: ['Username', 'Date registered', 'Role', 'Status'],
     rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
+    numeric: [false, false, false, false],
     data: [
         ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
         ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
@@ -23,9 +24,15 @@ Required format:
         ['row5', null]
     ]
 }
--->
+%>
 
 <%
+if (!locals.numeric) numeric = Array(columns).fill(false);
+%>
+
+<%
+// Algorithm to reorganize tree nodes
+
 ordered_parents = [];
 ordered_data = [];
 
@@ -54,13 +61,17 @@ data = ordered_data;
 %>
 
 <div class="card">
-    <div class="card-header"> <%= title %></div>
+    <div class="card-header bg-dark text-white"> <%= title %></div>
     <div class="card-body">
         <table id="<%= id %>" class="table table-responsive-sm">
             <thead class="thead-dark">
                 <tr>
-                    <%for (header of headers) {%>
-                    <th><%=header%></th>
+                    <%for (i of Array(columns).keys()) {%>
+                    <%if(numeric[i]) {%>
+                    <th class="text-right"><%=headers[i]%></th>
+                    <%} else {%>
+                    <th><%=headers[i]%></th>
+                    <%} %>
                     <%}-%>
                 </tr>
             </thead>
@@ -70,19 +81,21 @@ data = ordered_data;
                 <%parent = parents[rowi]%>
                 <tr data-id="<%= parent[0] %>" data-parent="<%= parent[1] %>" data-level="<%= parent[3] %>">
                     <%for (i of Array(columns).keys()) {%>
+
                     <%  if (i === 0) { %>
-                    <%      if (rawhtml[i]) {%>
-                    <td data-column="name"><%-row[i]%></td>
-                    <%      } else {%>
-                    <td data-column="name"><%=row[i]%></td>
-                    <%      } %>
-                    <%  } else { %>
-                    <%      if (rawhtml[i]) {%>
-                    <td><%-row[i]%></td>
-                    <%      } else {%>
-                    <td><%=row[i]%></td>
-                    <%      } %>
-                    <%  }%>
+                    <% data_attrib = 'data-column=name' %>
+                    <%}else{%>
+                    <% data_attrib = '' %>
+                    <%}%>
+
+                    <%if (rawhtml[i]) {%>
+                    <td <%= data_attrib %>><%-row[i]%></td>
+                    <%} else if(numeric[i]) {%>
+                    <td <%= data_attrib %> class="text-right"><%=row[i]%></td>
+                    <%} else {%>
+                    <td <%= data_attrib %>><%=row[i]%></td>
+                    <%} %>
+
                     <%}%>
                 </tr>
                 <%}-%>
@@ -109,21 +122,22 @@ data = ordered_data;
             $columnName.css('padding-left', 25 * level);
 
             if (children.length) {
-                $columnName.prepend('<a type="button" class="cil-chevron-right mr-1"></a>');
+                $row.addClass('font-weight-bold');
+                $columnName.prepend('<a type="button" class="cil-chevron-bottom mr-1"></a>');
                 let expander = $columnName.find('a');
-
-                children.hide();
 
                 expander.on('click', function (e) {
                     var $target = $(e.target);
                     if ($target.hasClass('cil-chevron-bottom')) {
                         $target.removeClass('cil-chevron-bottom');
                         $target.addClass('cil-chevron-right');
+                        $row.removeClass('font-weight-bold');
 
                         reverseHide($table, $row);
                     } else {
                         $target.removeClass('cil-chevron-right');
                         $target.addClass('cil-chevron-bottom');
+                        $row.addClass('font-weight-bold');
 
                         children.show();
                     }

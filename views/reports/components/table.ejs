@@ -1,4 +1,4 @@
-<!--
+<%#
 Required format:
 
 {
@@ -7,6 +7,7 @@ Required format:
     columns: 4,
     headers: ['Username', 'Date registered', 'Role', 'Status'],
     rawhtml: [false, false, false, true], // Whether each column is raw html(true) or plain text(false)
+    numeric: [false, false, false, false],
     data: [
         ['Samppa Nori', '2012/01/01', 'Member', '<span class="badge badge-success">Active</span>'],
         ['Estavan Lykos', '2013/01/03', 'Staff', '<span class="badge badge-danger">Banned</span>'],
@@ -15,16 +16,24 @@ Required format:
         ['Friderik Dávid', '2009/04/11', 'Member', '<span class="badge badge-warning">Inactive</span>'],
     ]
 }
--->
+%>
+
+<%
+if (!locals.numeric) numeric = Array(columns).fill(false);
+%>
 
 <div class="card">
-    <div class="card-header"> <%= title %></div>
+    <div class="card-header bg-dark text-white"> <%= title %></div>
     <div class="card-body">
         <table class="table table-responsive-sm">
             <thead class="thead-dark">
                 <tr>
-                    <%for (header of headers) {%>
-                    <th><%=header%></th>
+                    <%for (i of Array(columns).keys()) {%>
+                    <%if(numeric[i]) {%>
+                    <th class="text-right"><%=headers[i]%></th>
+                    <%} else {%>
+                    <th><%=headers[i]%></th>
+                    <%} %>
                     <%}-%>
                 </tr>
             </thead>
@@ -34,6 +43,8 @@ Required format:
                     <%for (i of Array(columns).keys()) {%>
                     <%if (rawhtml[i]) {%>
                     <td><%-row[i]%></td>
+                    <%} else if(numeric[i]) {%>
+                    <td class="text-right"><%=row[i]%></td>
                     <%} else {%>
                     <td><%=row[i]%></td>
                     <%} %>

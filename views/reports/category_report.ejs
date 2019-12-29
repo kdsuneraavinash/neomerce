@@ -1,47 +1,40 @@
 <%- include('common/header', {title: 'Category Report'}) %>
 
-<br>
-<h2>Category Sales Report</h2>
-<br>
 <div class="row">
-    <div class="col-12">
+    <div class="col-6">
         <%- include('components/tree_table', {
             title: 'Category Sales',
-            id: 'treetable_category', // Unique id for each table
+            id: 'treetable_category', 
             rows: treeItemCount,
             columns: 3,
-            headers: ['Category ', 'Quantity', 'Income',],
-            rawhtml: [false, false, false], // Whether each column is raw html(true) or plain text(false)
+            headers: ['Category ', 'Quantity', 'Income (LKR)',],
+            numeric: [false, true, true],
+            rawhtml: [false, false, false], 
             data: treeItems,
-            parents: treeItemParents // Current row id, parent row id('null' if no parent)
+            parents: treeItemParents
                 
+        }) %>
+        <%- include('components/table', {
+            title: 'Top 10 Categories',
+            rows: categoryItemCount,
+            numeric: [false, true, true],
+            columns: 3,
+            headers: ['Category Name', 'Quantity','Income (LKR)'],
+            rawhtml: [false,false,false],
+            data: categoryItems
+        }) %>
+    </div>
+    <div class="col-6">
+        <%- include('components/bar_chart', {
+            title: 'Top 10 Category Sales Chart',
+            id: 'barchart_category',
+            height: '800px',
+            data:  categoryitemsWithQuantity
         }) %>
     </div>
 </div>
 
-<br>
-<h2>Top 10 Categories</h2>
-<br>
-<div class="row-lg-6">
-    <%- include('components/table', {
-                title: 'Product Table',
-                rows: categoryItemCount,
-                columns: 3,
-                headers: ['Category Name', 'Quantity','Income'],
-                rawhtml: [false,false,false], // Whether each column is raw html(true) or plain text(false)
-                data: categoryItems
-            }) %>
-</div>
-<br>
 
-<div class="row-lg-6">
-    <%- include('components/bar_chart', {
-                title: 'Bar Chart',
-                id: 'barchart_category', // Unique ID for each chart
-                height: '1200px',
-                data:  categoryitemsWithQuantity
-            }) %>
-</div>
 
 
 
