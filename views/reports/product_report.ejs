@@ -42,7 +42,7 @@ monthlyData.forEach((v) => {
 </div>
 
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-5">
         <div class="card">
             <div class="card-header bg-dark text-white">Product Details</div>
             <div class="card-body">
@@ -60,7 +60,7 @@ monthlyData.forEach((v) => {
             </div>
         </div>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-7">
         <%- include('components/table', {
             title: 'Variants',
             rows: variantData.length,
@@ -71,26 +71,44 @@ monthlyData.forEach((v) => {
             data: variantData.map((v) => [v.title, v.quantity, v.selling_price, v.listed_price])
         }) %>
     </div>
+</div>
 
-    <div class="col-lg-3">
+<div class="row">
+    <div class="col">
+        <%if (last_visit){%>
         <%- include('components/callout', {
-            title: 'Product Page Visits',
-            color: 'bg-indigo-500', 
-            value: last_visit.value,
-            percentage: 100,
-            helpertext: 'Last Visit on: ' + last_visit.date,
-        }) %>
+                title: 'Product Page Visits',
+                color:  'bg-indigo-500', 
+                value: last_visit.value ,
+                percentage: 100,
+                helpertext: 'Last Visit on: ' + last_visit.date ,
+            }) %>
+        <%}%>
+    </div>
+    <div class="col">
+        <%if (last_order){%>
         <%- include('components/callout', {
-            title: 'Total Product Sales',
-            color: 'bg-teal-500', 
-            value: last_order.value,
-            percentage: (last_order.value/last_visit.value) * 100,
+                title: 'Total Product Sales',
+                color: 'bg-teal-500' , 
+                value:  last_order.value,
+                percentage:(last_order.value/last_visit.value) * 100,
+                helpertext: 'Last Order on: ' + last_order.date,
+            }) %>
+        <%}%>
+    </div>
+    <div class="col">
+        <%- include('components/callout', {
+            title: 'Remaining Stocks',
+            color: 'bg-amber-500' , 
+            value: variantData.reduce((a, b) => a + b.quantity, 0),
+            percentage: '100',
             helpertext: 'Last Order on: ' + last_order.date,
         }) %>
     </div>
 </div>
 
 <div class="row">
+    <% if (visitedItems.length){%>
     <div class="col-lg-6">
         <%- include('components/line_chart', {
             title: 'Visited Users from ' + visitedItems[0].date.toISOString().split('T')[0],
@@ -100,8 +118,9 @@ monthlyData.forEach((v) => {
             data:  visitedItems,
         }) %>
     </div>
+    <%}%>
 
-
+    <% if (orderedItems.length){%>
     <div class="col-lg-6">
         <%- include('components/line_chart', {
             title: 'Orders from ' + orderedItems[0].date.toISOString().split('T')[0]  ,
@@ -111,6 +130,7 @@ monthlyData.forEach((v) => {
             data:  orderedItems,
         }) %>
     </div>
+    <%}%>
 </div>
 
 <div class="row">
@@ -121,9 +141,9 @@ monthlyData.forEach((v) => {
             height: '800px',
             data:  monthlyData,
         }) %>
-    </div>
-    <div class="col-lg-4">
-        <%- include('components/table', {
+</div>
+<div class="col-lg-4">
+    <%- include('components/table', {
             title: 'Monthly Orders vs Visits',
             rows: 12,
             numeric: [false, true, true],
@@ -132,7 +152,7 @@ monthlyData.forEach((v) => {
             rawhtml: [false, false, false],
             data: monthlyData.map((v) => [v.month, v.visits, v.orders])
         }) %>
-    </div>
+</div>
 </div>
 
 

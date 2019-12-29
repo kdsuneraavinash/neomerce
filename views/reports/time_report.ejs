@@ -42,7 +42,7 @@ if (!timerange){
 </form>
 
 <% if(locals.products){
-    products.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
+    products.forEach((v) => v[4] = `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v[4]}'>Report</a>`);
 %>
 
 <div class="row">

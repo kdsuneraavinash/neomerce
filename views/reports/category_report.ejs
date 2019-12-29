@@ -1,7 +1,7 @@
 <%- include('common/header', {title: 'Category Report'}) %>
 
 <%
-topCategoryData.forEach((v) => v[1] = `<a target='_blank' href='/category?category=${v[1]}'>Link</a>`);
+topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' target='_blank' href='/category?category=${v[1]}'>Visit</a>`);
 %>
 
 <div class="row">

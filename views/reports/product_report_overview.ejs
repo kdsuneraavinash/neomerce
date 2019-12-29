@@ -35,7 +35,7 @@
             columns: 5,
             headers: ['Product Title', 'View', 'Product ID','Minimum Selling Price (LKR)', 'Image'],
             rawhtml: [false, true, true,  false, true],
-            data: products.map((v) => [ v.title, `<a href='/report/product?id=${v.product_id}'>Link</a>`,
+            data: products.map((v) => [ v.title, `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v.product_id}'>View</a>`,
              `<small>${v.product_id}</small>`, v.min_selling_price, 
              `<img class='lazy' data-src='${v.image_url}' height=50 width=50></img>'`]),
             print: [true, false, true, true,  false]
