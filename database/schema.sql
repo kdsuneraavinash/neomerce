@@ -1,4 +1,5 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP PROCEDURE IF EXISTS placeOrder;
 DROP PROCEDURE IF EXISTS addVisitedRecord;
 DROP PROCEDURE IF EXISTS addTagToCategory;
 DROP PROCEDURE IF EXISTS addProduct;
@@ -11,7 +12,7 @@ DROP PROCEDURE IF EXISTS addItemToCart;
 DROP PROCEDURE IF EXISTS removeCartItem;
 DROP TABLE IF EXISTS GuestInfomation cascade;
 DROP TABLE IF EXISTS Delivery cascade;
-DROP TABLE IF EXISTS DeliveryMethod cascade;
+DROP TABLE IF EXISTS DispatchMethod cascade;
 DROP TABLE IF EXISTS DeliveryStatus cascade;
 DROP TABLE IF EXISTS Payment cascade;
 DROP TABLE IF EXISTS PaymentStatus cascade;
@@ -40,6 +41,8 @@ DROP TABLE IF EXISTS Tag cascade;
 DROP TABLE IF EXISTS ProductTag cascade;
 DROP TABLE IF EXISTS CartItemStatus cascade;
 DROP TABLE IF EXISTS OrderStatus cascade;
+DROP TABLE IF EXISTS Pickup cascade;
+DROP TABLE IF EXISTS PickupStatus cascade;
 DROP DOMAIN IF EXISTS MONEY_UNIT cascade;
 DROP DOMAIN IF EXISTS VALID_EMAIL cascade;
 DROP DOMAIN IF EXISTS VALID_PHONE cascade;
@@ -113,19 +116,63 @@ END
 $$ LANGUAGE PLpgSQL;
 
 
-
 -- Function to check for remaining stock of a certain variant.
--- Used for the checkAvailability procedure.
-CREATE OR REPLACE FUNCTION checkVariant(UUID4,INT) RETURNS boolean AS
+-- Used for the checkAvailability procedure. (variant_id, quantity)
+CREATE OR REPLACE FUNCTION checkVariant(UUID4, INT) RETURNS boolean AS
 $$
 DECLARE
 inventory_count int := (select quantity from variant where variant_id=$1);
-product_name varchar(255) := (select product.title from product,variant where variant.product_id=product.product_id and variant.variant_id = $1);
+product_name varchar(255) := (select product.title from product, variant 
+    where variant.product_id=product.product_id and variant.variant_id = $1);
 BEGIN
 	if inventory_count < $2 then 
         RAISE Exception '% out of stock. Only % items available in the stocks',product_name,inventory_count;
 	else
 	    return true;
+	end if;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
+-- Function to reduce stock of a variant. Called inside placeOrder procedure.(variant_id, new_quantity)
+CREATE OR REPLACE FUNCTION reduceStock(UUID4, INT) RETURNS boolean AS
+$$
+DECLARE
+existing_quantity int := (SELECT quantity from variant where variant_id = $1);
+new_quantity int;
+BEGIN
+    new_quantity := existing_quantity - $2;
+	UPDATE variant SET quantity = new_quantity where variant_id = $1;
+	return true;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
+-- Function to add order items into the orderitem table. Called inside placeOrder procedure.
+--                                  (variant_id, order_id, quantity)
+CREATE OR REPLACE FUNCTION addOrderItem(UUID4, UUID4, INT) RETURNS boolean AS
+$$
+DECLARE
+orderitem_id uuid4 := generate_uuid4();
+BEGIN
+	INSERT INTO orderitem values (orderitem_id, $1, $2, $3);
+	return true;
+END;
+$$ LANGUAGE PLpgSQL;
+
+
+
+-- Function to check user priviledges to view order history
+CREATE OR REPLACE FUNCTION checkOrderHistoryPriviledge(SESSION_UUID,UUID4) RETURNS boolean AS
+$$
+DECLARE
+customer_id1 uuid4 := (select customer_id from session where session_id=$1);
+customer_id2 uuid4 := (select customer_id from orderdata where order_id = $2); 
+BEGIN
+	if customer_id1 = customer_id2 then 
+        return true;
+	else
+	    return false;
 	end if;
 END;
 $$ LANGUAGE PLpgSQL;
@@ -352,13 +399,23 @@ CREATE TABLE OrderStatus (
     primary key (order_status)
 );
 
+
+-- Dispatch Method: HomeDelivery/StorePickup (ENUM)
+CREATE TABLE DispatchMethod (
+    dispatch_method varchar(15),
+    description varchar(127),
+    primary key (dispatch_method)
+);
+
 -- Orders
 CREATE TABLE OrderData (
     order_id uuid4 default generate_uuid4(),
     customer_id uuid4 not null,
     order_status varchar(15) not null,
-    order_date timestamp,
+    dispatch_method varchar(15) not null,
+    order_date timestamp not null,
     primary key (order_id),
+    foreign key (dispatch_method) references DispatchMethod(dispatch_method) on update cascade,
     foreign key (order_status) references OrderStatus(order_status),
     foreign key (customer_id) references Customer(customer_id)
 );
@@ -408,29 +465,39 @@ CREATE TABLE DeliveryStatus (
     primary key (delivery_status)
 );
 
--- Delivery Method: Shipping/StorePickup (ENUM)
-CREATE TABLE DeliveryMethod (
-    delivery_method varchar(15),
-    description varchar(127),
-    primary key (delivery_method)
-);
-
 -- Delivery Information
 CREATE TABLE Delivery (
     order_id uuid4,
-    delivery_method varchar(15) not null,
     delivery_status varchar(15) not null,
-    addr_line1 varchar(255) not null,
-    addr_line2 varchar(255) not null,
-    city varchar(127) not null,
-    postcode varchar(31) not null,
+    addr_line1 varchar(255),
+    addr_line2 varchar(255),
+    city varchar(127),
+    postcode varchar(31),
     delivered_date timestamp,
     primary key (order_id),
     foreign key (order_id) references OrderData(order_id),
-    foreign key (delivery_method) references DeliveryMethod(delivery_method) on update cascade,
     foreign key (delivery_status) references DeliveryStatus(delivery_status) on update cascade,
     foreign key (city) references City(city) on update cascade
 );
+
+--Pick up status
+CREATE TABLE PickupStatus (
+    pickup_status varchar(15),
+    description varchar(127),
+    primary key (pickup_status)
+);
+
+
+-- Pick up details
+CREATE TABLE Pickup (
+    order_id uuid4,
+    pickup_status varchar(15) not null,
+    pickedup_date timestamp,
+    primary key (order_id),
+    foreign key (order_id) references OrderData(order_id),
+    foreign key (pickup_status) references PickupStatus(pickup_status) on update cascade
+);
+
 
 -- User Inforation (If user is a guest)
 CREATE TABLE GuestInfomation (
@@ -724,6 +791,47 @@ BEGIN
 END;
 $$;
 
+-- Procedure to place an order(session_id, first_name, last_name, email, 
+--                                phone_number, delivery_method, addr_line1, addr_line2, city, post_code,
+--                                payment_method, order_id, payment_amount)
+CREATE OR REPLACE PROCEDURE placeOrder(SESSION_UUID, VARCHAR(255), VARCHAR(255), VARCHAR(127), CHAR(15),
+									   VARCHAR(15), VARCHAR(255), VARCHAR(255), VARCHAR(127), VARCHAR(31),
+                                       VARCHAR(15), UUID4, MONEY_UNIT)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+customer_id_ uuid4 := (select customer_id from session where session_id=$1);
+customer_type varchar(15) := (select account_type from customer where customer_id=customer_id_);
+payment_status varchar(15);
+BEGIN
+
+	if $11 = 'card' then
+	    payment_status := 'payed';
+	else
+	    payment_status := 'not_payed';
+	end if;
+
+    if $6 = 'store_pickup' then
+        INSERT into orderdata values ($12,customer_id_, 'ordered','store_pickup',NOW());
+    else
+        INSERT into orderdata values ($12,customer_id_, 'ordered','home_delivery',NOW());
+	end if;
+
+	PERFORM variant_id, quantity from ProductVariantView, LATERAL reduceStock(variant_id, quantity) where customer_id = customer_id_;
+	PERFORM variant_id, quantity from ProductVariantView, LATERAL addOrderItem(variant_id, $12, quantity) where customer_id = customer_id_;
+	UPDATE cartitem SET cart_item_status = 'ordered' where customer_id = customer_id_ and cart_item_status = 'added';
+	
+	if $6 = 'store_pickup' then
+	    INSERT INTO pickup values ($12,'pending pick up');
+	else
+	    INSERT INTO delivery values ($12,'ongoing', $7, $8, $9, $10, NOW());
+	end if;
+	INSERT INTO payment values ($12, $11, payment_status, NOW(), $13);
+	If customer_type = 'guest' then
+	    INSERT INTO guestinfomation values ($12, $2, $3, $4, $5);
+	End if;								   
+END;
+$$;
 
 -- Procedure to add a record to denote that user viewed item (session_id, product_id)
 CREATE OR REPLACE PROCEDURE addVisitedRecord(SESSION_UUID, UUID4)
@@ -781,7 +889,6 @@ CREATE OR REPLACE VIEW ProductVariantView AS
     LEFT JOIN product as p ON v.product_id = p.product_id where c.cart_item_status = 'added';
 
 
-
 CREATE OR REPLACE VIEW UserDeliveryView AS
     SELECT u.customer_id, u.email, u.first_name, u.last_name, u.addr_line1,
         u.addr_line2, u.city, u.postcode, t.phone_number, ct.delivery_days, ct.delivery_charge 
@@ -789,4 +896,3 @@ CREATE OR REPLACE VIEW UserDeliveryView AS
         LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
         LEFT JOIN city as c ON u.city = c.city
         LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
-

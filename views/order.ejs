@@ -3,17 +3,14 @@
 <%- include('common/head') %>
 
 <body>
-    <%- include('common/navbar') %>
+    <%- include('common/navbar',{'loggedIn':loggedIn}) %>
     <%- include('common/banner', {title: 'Order Information', description: 'View order information'}) %>}) %>
 
     <%- include ('partial/order', {
-            subtotal:subtotal,
-            delivery:delivery,
-            total: total,
-            order:order,
-            user: user,
-            deliveryaddress:deliveryaddress,
-            items:items
+            customer_info:orderHistoryObj.customer_info,
+            delivery_info:orderHistoryObj.delivery_info,
+            order_info:orderHistoryObj.order_info,
+            items:orderHistoryObj.items
         }) %>
 
     <%- include('common/footer') %>

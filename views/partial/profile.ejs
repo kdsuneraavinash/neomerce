@@ -6,7 +6,7 @@
                     <div class="col-lg-6">
                         <div class="categories_post">
                             <img style="height: 200px; object-fit: cover;"
-                                src="https://d4vj4z0ojbtdv.cloudfront.net/blog/wp-content/uploads/2018/08/ecommerce-cart-abandonment-zepo-blog.jpg"
+                                src="https://images.radio.com/wwlam/styles/nts_image_cover_tall_775x425/s3/Shopping%20Cart%20in%20Grocery%20Store%20%28DT%29.jpg"
                                 alt="cart">
                             <div class="categories_details">
                                 <div class="categories_text">
@@ -38,7 +38,36 @@
                     </div>
                 </div>
                 <div>
-                    <%#Recent Orders Here %>
+                    <h1 class="text-center">Your Recent Orders</h1>
+                    <hr />
+                </div>
+                <div class="mt-5">
+                    <% for (item of recentOrders){ %>
+                    <div class="card shadow-sm p-3 mb-3">
+                        <h4>Ordered on <%= item.order_date %>
+                            <span class="float-right">
+                                <span class="badge badge-warning p-2"><%= item.order_status %></span>
+                            </span>
+                        </h4>
+                        <div class="list-group my-2">
+                            <% for (i of [...Array(item.products - 0).keys()]){ %>
+                            <a href="/item/show/<%=JSON.parse(item.product_ids)[i] %>" class="p-2 text-dark"
+                                data-toggle="tooltip" data-placement="left"
+                                title=" <%= JSON.parse(item.titles)[i] %> (x  <%= JSON.parse(item.quantities)[i] %>)">
+                                <img style="object-fit: contain;" width="50" height="30" class="mr-3"
+                                    src="<%= JSON.parse(item.image_urls)[i] %>" alt="product">
+                                <%= JSON.parse(item.titles)[i].substring(0,  60) + '...' %>
+                                <strong class="float-right text-success">LKR
+                                    <%= JSON.parse(item.selling_prices)[i].toFixed(2) %></strong>
+                            </a>
+                            <% }%>
+                        </div>
+                        <div class="text-right">
+                            <a href="/order/<%= item.order_id %>" class="btn btn-outline-primary btn-block">Show
+                                details</a>
+                        </div>
+                    </div>
+                    <% }%>
                 </div>
             </div>
 

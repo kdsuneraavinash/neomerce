@@ -8,6 +8,17 @@
 <section class="checkout_area section_gap" id="checkout_form">
     <div class="container">
 
+        <% if (error != null){ %>
+        <div class="mb-0">
+            <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+                <strong>Error: </strong> <%=error.replace("error: ","")%>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <% }%>
+
         <% if (!loggedIn){%>
         <div class="returning_customer">
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
