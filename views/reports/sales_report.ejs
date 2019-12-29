@@ -1,6 +1,6 @@
 <%- include('common/header', {title: 'Sales Report'}) %>
 <%
-productItems.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
+products.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
 %>
 
 <div class="row dont-print">
@@ -21,12 +21,12 @@ productItems.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a
     <div class="col-lg-6">
         <%- include('components/table', {
             title: 'Top 10 Bestselling Products',
-            rows: productItemCount,
+            rows: products.length,
             columns: 5,
             headers: ['#', 'Product Name', 'Quantity','Income (LKR)', 'Report'],
             rawhtml: [false, false, false, false, true], 
             numeric: [true, false, true, true, false],
-            data: productItems,
+            data: products,
             print: [true, true, true, true,  false]
         }) %>
     </div>
@@ -35,7 +35,7 @@ productItems.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a
                 title: 'Top 10 Bestselling Products',
                 id: 'barchart_product',
                 height: '600px',
-                data:  productItemsWithQuantity
+                data:  productVsQuantity
             }) %>
     </div>
 </div>

@@ -1,91 +1,80 @@
 const connection = require('../config/db');
 
 
+const dateDataField = (a, b) => ({ date: new Date(a), value: b - 0 });
+
 const getProductCounts = async () => {
-    // TODO: (Anju) Optimize and fix query
-    const query = `select product.product_id, product.title,sum(orderitem.quantity) as quantity,sum(orderitem.quantity)*sum(variant.selling_price)  as income 
-                    from product, variant, orderitem
-                    where 
-                        orderitem.variant_id = variant.variant_id and 
-                        variant.product_id = product.product_id
+    const query = `select product.product_id, 
+                        product.title, 
+                        sum(orderitem.quantity) as quantity, 
+                        sum(payment.payment_amount)  as income 
+                    from product 
+                        join variant using(product_id) 
+                        join orderitem using(variant_id) 
+                        join payment using(order_id)
                     group by product.product_id
                     order by quantity desc limit 10`;
-
     const out = await connection.query(query);
-    const items = [];
-    const itemsWithQuantity = [];
-    out.rows.forEach((value, index) => {
-        items.push([index + 1, value.title, value.quantity, value.income, value.product_id]);
-        itemsWithQuantity.push({ label: `#${index + 1}`, value: value.quantity - 0 });
-    });
-    return [items, itemsWithQuantity];
+    const products = out.rows.map(
+        (value, index) => [index + 1, value.title, value.quantity, value.income, value.product_id],
+    );
+    const productVsQuantity = out.rows.map(
+        (value, index) => ({ label: `#${index + 1}`, value: value.quantity - 0 }),
+    );
+    return { products, productVsQuantity };
 };
 
 
 const getTopCategoryLeafNodes = async () => {
-    // TODO: (Anju) Optimize and fix query
-    const query = `
-        select allcategories.category_id,allcategories.title,allcategories.quantity,allcategories.income 
-    from (
-        select category.category_id,category.title,category.parent_id,sum(categoryjoin.quantity) as quantity,sum(categoryjoin.income) as income
-            from (
-                select productdetails.product_id,productdetails.title,productdetails.quantity,productdetails.income,productcategory.category_id 
-                from (
-                    select product.product_id, product.title,sum(orderitem.quantity) as quantity,sum(orderitem.quantity)*sum(variant.selling_price)  as income 
-                    from product, variant, orderitem
-                    where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id
-                    group by product.product_id
-                    order by quantity desc
-                ) as productdetails
-                join productcategory on productdetails.product_id=productcategory.product_id
-            ) as categoryjoin 
-            join category on categoryjoin.category_id=category.category_id
-            group by category.category_id
-        ) as allcategories 
-        join (select * from category where category_id not in (select distinct parent_id from category where parent_id is not null)) as leafnodes
-        on allcategories.category_id = leafnodes.category_id
-        order by quantity desc
-    `;
+    const query = `select category_id, 
+                        category.parent_id,
+                        category.title,
+                        sum(orderitem.quantity) as quantity, 
+                        sum(payment.payment_amount)  as income 
+                    from category
+                        join productcategory using(category_id)
+                        join variant using(product_id)
+                        join orderitem using(variant_id) 
+                        join payment using(order_id)
+                    where category_id not in (
+                        select parent_id from category where parent_id is not null
+                        )
+                    group by category_id
+                    order by income
+                    limit 10;`;
     const out = await connection.query(query);
-    const items = [];
-    const itemsWithQuantity = [];
-    const itemsWithIncome = [];
-    out.rows.forEach((value) => {
-        items.push([value.title, value.category_id, value.quantity, value.income]);
-        itemsWithQuantity.push({ label: value.title, value: value.quantity - 0 });
-        itemsWithIncome.push({ label: value.title, value: value.income - 0 });
-    });
-    return [items, itemsWithQuantity, itemsWithIncome];
+
+    const topCategoryData = out.rows.map(
+        (value) => [value.title, value.category_id, value.quantity, value.income],
+    );
+    const topCategoryVsQuantity = out.rows.map(
+        (value) => ({ label: value.title, value: value.quantity - 0 }),
+    );
+    const topCategoryVsIncome = out.rows.map(
+        (value) => ({ label: value.title, value: value.income - 0 }),
+    );
+
+    return { topCategoryData, topCategoryVsQuantity, topCategoryVsIncome };
 };
 
 
 const getCategoryTreeReport = async () => {
-    // TODO: (Anju) Optimize and fix query
-    const query = `
-    select category.category_id,category.title,category.parent_id,sum(categoryjoin.quantity) as quantity,sum(categoryjoin.income) as income
-    from (
-        select productdetails.product_id,productdetails.title,productdetails.quantity,productdetails.income,productcategory.category_id 
-        from (
-            select product.product_id, product.title,sum(orderitem.quantity) as quantity,sum(orderitem.quantity)*sum(variant.selling_price)  as income 
-            from product, variant, orderitem
-            where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id
-            group by product.product_id
-            order by quantity desc
-        ) as productdetails
-        join productcategory on productdetails.product_id=productcategory.product_id
-    ) as categoryjoin 
-    join category on categoryjoin.category_id=category.category_id
-    group by category.category_id
-`;
+    const query = `select category_id, 
+                        category.parent_id,
+                        category.title,
+                        sum(orderitem.quantity) as quantity, 
+                        sum(payment.payment_amount)  as income 
+                    from category
+                        join productcategory using(category_id)
+                        join variant using(product_id)
+                        join orderitem using(variant_id) 
+                        join payment using(order_id)
+                    group by category_id;`;
 
     const out = await connection.query(query);
-    const treeItems = [];
-    const treeItemParents = [];
-    out.rows.forEach((value) => {
-        treeItems.push([value.title, value.quantity, value.income]);
-        treeItemParents.push([value.category_id, value.parent_id]);
-    });
-    return [treeItems, treeItemParents];
+    const categoryData = out.rows.map((value) => [value.title, value.quantity, value.income]);
+    const categoryParents = out.rows.map((value) => [value.category_id, value.parent_id]);
+    return { categoryData, categoryParents };
 };
 
 
@@ -96,18 +85,9 @@ const getProductVisitedCountReport = async (productId) => {
                     where product_id=$1 order by visited_date limit 100`;
 
     const out = await connection.query(query, [productId]);
-    const productVisits = [];
-    out.rows.forEach((value) => {
-        productVisits.push({
-            date: new Date(value.visited_date),
-            value: value.count - 0,
-        });
-    });
-
-    productVisits.push({
-        date: new Date(),
-        value: (productVisits.length) ? productVisits[productVisits.length - 1].value : 0,
-    });
+    const productVisits = out.rows.map((value) => dateDataField(value.visited_date, value.count));
+    productVisits.push(dateDataField(new Date(),
+        productVisits.length ? productVisits[productVisits.length - 1].value : 0));
     return productVisits;
 };
 
@@ -120,27 +100,20 @@ const getProductOrderedCountReport = async (productId) => {
                     where product_id=$1 order by order_date`;
 
     const out = await connection.query(query, [productId]);
-    const productOrders = [];
-    out.rows.forEach((value, index) => {
-        productOrders.push({
-            date: new Date(value.order_date),
-            value: index + 1,
-        });
-    });
-    productOrders.push({
-        date: new Date(),
-        value: (productOrders.length) ? productOrders[productOrders.length - 1].value : 0,
-    });
+    const productOrders = out.rows.map(
+        (value, index) => dateDataField(value.order_date, index + 1),
+    );
+    productOrders.push(dateDataField(
+        new Date(), productOrders.length ? productOrders[productOrders.length - 1].value : 0,
+    ));
     return productOrders;
 };
 
 const getProductData = async (productId) => {
     const query1 = 'select * from product where product_id = $1';
     const out1 = await connection.query(query1, [productId]);
-
     const query2 = 'select * from Variant where product_id = $1';
     const out2 = await connection.query(query2, [productId]);
-
     return {
         productData: out1.rows[0],
         variantData: out2.rows,
@@ -169,13 +142,13 @@ const getPopularProductsBetweenDates = async (date1, date2) => {
                     order by quantity desc limit 10`;
 
     const out = await connection.query(query, [date1, date2]);
-    const items = [];
-    const itemsWithQuantity = [];
-    out.rows.forEach((value, index) => {
-        items.push([index + 1, value.title, value.quantity, value.income, value.product_id]);
-        itemsWithQuantity.push({ label: `#${index + 1}`, value: value.quantity - 0 });
-    });
-    return [items, itemsWithQuantity];
+    const products = out.rows.map(
+        (value, index) => [index + 1, value.title, value.quantity, value.income, value.product_id],
+    );
+    const productVsQuantity = out.rows.map(
+        (value, index) => ({ label: `#${index + 1}`, value: value.quantity - 0 }),
+    );
+    return { products, productVsQuantity };
 };
 
 module.exports = {

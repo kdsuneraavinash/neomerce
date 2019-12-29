@@ -6,11 +6,10 @@ router.get('/example/', async (req, res) => {
 });
 
 router.get('/sales/', async (req, res) => {
-    const productResult = await Report.getProductCounts();
+    const { products, productVsQuantity } = await Report.getProductCounts();
     res.render('reports/sales_report', {
-        productItems: productResult[0],
-        productItemCount: productResult[0].length,
-        productItemsWithQuantity: productResult[1],
+        products,
+        productVsQuantity,
     });
 });
 
@@ -40,16 +39,18 @@ router.get('/product/', async (req, res) => {
 });
 
 router.get('/category/', async (req, res) => {
-    const categoryTreeResult = await Report.getCategoryTreeReport();
-    const topCategoryLeafNodes = await Report.getTopCategoryLeafNodes();
+    const { categoryData, categoryParents } = await Report.getCategoryTreeReport();
+    const {
+        topCategoryData,
+        topCategoryVsQuantity,
+        topCategoryVsIncome,
+    } = await Report.getTopCategoryLeafNodes();
     res.render('reports/category_report', {
-        categoryItems: topCategoryLeafNodes[0],
-        categoryItemCount: topCategoryLeafNodes[0].length,
-        categoryitemsWithQuantity: topCategoryLeafNodes[1],
-        categoryItemsWithIncome: topCategoryLeafNodes[2],
-        treeItems: categoryTreeResult[0],
-        treeItemParents: categoryTreeResult[1],
-        treeItemCount: categoryTreeResult[0].length,
+        topCategoryData,
+        topCategoryVsQuantity,
+        topCategoryVsIncome,
+        categoryData,
+        categoryParents,
     });
 });
 
@@ -67,11 +68,11 @@ router.get('/time/', async (req, res) => {
         }
         const time1 = new Date(time1str);
         const time2 = new Date(time2str);
-        const productResult = await Report.getPopularProductsBetweenDates(time1, time2);
+        const { products, productVsQuantity } = await Report.getPopularProductsBetweenDates(time1,
+            time2);
         res.render('reports/time_report', {
-            productItems: productResult[0],
-            productItemCount: productResult[0].length,
-            productItemsWithQuantity: productResult[1],
+            products,
+            productVsQuantity,
             error: req.query.error,
             timerange,
         });

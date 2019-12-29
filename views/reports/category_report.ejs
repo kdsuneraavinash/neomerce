@@ -1,7 +1,7 @@
 <%- include('common/header', {title: 'Category Report'}) %>
 
 <%
-categoryItems.forEach((v) => v[1] = `<a target='_blank' href='/category?category=${v[1]}'>Link</a>`);
+topCategoryData.forEach((v) => v[1] = `<a target='_blank' href='/category?category=${v[1]}'>Link</a>`);
 %>
 
 <div class="row">
@@ -9,26 +9,26 @@ categoryItems.forEach((v) => v[1] = `<a target='_blank' href='/category?category
         <%- include('components/tree_table', {
             title: 'Category Sales Overview',
             id: 'treetable_category', 
-            rows: treeItemCount,
+            rows: categoryData.length,
             columns: 3,
             headers: ['Category', 'Quantity', 'Income (LKR)',],
             numeric: [false, true, true],
             rawhtml: [false, false, false], 
-            data: treeItems,
-            parents: treeItemParents
+            data: categoryData,
+            parents: categoryParents
                 
         }) %>
     </div>
     <div class="col-6">
         <%- include('components/table', {
             title: 'Top Category Sales',
-            rows: categoryItemCount,
+            rows: topCategoryData.length,
             columns: 4,
             headers: ['Category Name', 'Page', 'Quantity', 'Income (LKR)',],
             numeric: [false, false, true, true],
             rawhtml: [false, true, false, false], 
             print: [true, false, true, true], 
-            data: categoryItems
+            data: topCategoryData
         }) %>
     </div>
 </div>
@@ -39,7 +39,7 @@ categoryItems.forEach((v) => v[1] = `<a target='_blank' href='/category?category
             title: 'Category Sales Chart (With Quantity)',
             id: 'chart_category_quantity',
             height: '600px',
-            data:  categoryitemsWithQuantity
+            data:  topCategoryVsQuantity
         }) %>
     </div>
     <div class="col-6">
@@ -47,7 +47,7 @@ categoryItems.forEach((v) => v[1] = `<a target='_blank' href='/category?category
             title: 'Category Sales Chart (With Income - LKR)',
             id: 'chart_category_income',
             height: '600px',
-            data:  categoryItemsWithIncome
+            data:  topCategoryVsIncome
         }) %>
     </div>
 </div>

@@ -41,20 +41,20 @@ if (!timerange){
     </div>
 </form>
 
-<% if(locals.productItems){
-    productItems.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
+<% if(locals.products){
+    products.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
 %>
 
 <div class="row">
     <div class="col-lg-6">
         <%- include('components/table', {
             title: 'Top 10 Bestselling Products between ' + timerange,
-            rows: productItemCount,
+            rows: products.length,
             columns: 5,
             headers: ['#', 'Product Name', 'Quantity','Income (LKR)', 'Report'],
             rawhtml: [false, false, false, false, true], 
             numeric: [true, false, true, true, false],
-            data: productItems,
+            data: products,
             print: [true, true, true, true,  false]
         }) %>
     </div>
@@ -63,7 +63,7 @@ if (!timerange){
                 title: 'Top 10 Bestselling Products between ' + timerange,
                 id: 'barchart_product',
                 height: '600px',
-                data:  productItemsWithQuantity
+                data:  productVsQuantity
             }) %>
     </div>
 </div>
