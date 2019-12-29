@@ -108,6 +108,9 @@ data = ordered_data;
     $(function () {
         let $table = $('#<%= id %>');
         let rows = $table.find('tr');
+        let closedParent = 'cil-folder';
+        let openParent = 'cil-folder-open';
+        let leaf = 'cil-file';
 
         rows.each(function (index, row) {
             let $row = $(row);
@@ -118,32 +121,32 @@ data = ordered_data;
 
             let id = $row.data('id');
             let $columnName = $row.find('td[data-column="name"]');
-            let children = $table.find('tr[data-parent="' + id + '"]');
+            let children = $table.find(`tr[data-parent="${id}"]`);
             $columnName.css('padding-left', 25 * level);
 
             if (children.length) {
                 $row.addClass('font-weight-bold');
-                $columnName.prepend('<a type="button" class="cil-chevron-bottom mr-1"></a>');
+                $columnName.prepend(`<a type="button" class="${openParent} mr-1"></a>`);
                 let expander = $columnName.find('a');
 
                 expander.on('click', function (e) {
                     var $target = $(e.target);
-                    if ($target.hasClass('cil-chevron-bottom')) {
-                        $target.removeClass('cil-chevron-bottom');
-                        $target.addClass('cil-chevron-right');
+                    if ($target.hasClass(openParent)) {
+                        $target.removeClass(openParent);
+                        $target.addClass(closedParent);
                         $row.removeClass('font-weight-bold');
 
                         reverseHide($table, $row);
                     } else {
-                        $target.removeClass('cil-chevron-right');
-                        $target.addClass('cil-chevron-bottom');
+                        $target.removeClass(closedParent);
+                        $target.addClass(openParent);
                         $row.addClass('font-weight-bold');
 
                         children.show();
                     }
                 });
             } else {
-                $columnName.prepend('<i class="cil-object-group mr-1"></i>');
+                $columnName.prepend(`<i class="${leaf} mr-1"></i>`);
             }
         });
 
@@ -152,17 +155,18 @@ data = ordered_data;
             var
                 $element = $(element),
                 id = $element.data('id'),
-                children = table.find('tr[data-parent="' + id + '"]');
+                children = table.find(`tr[data-parent="${id}"]`);
 
             if (children.length) {
                 children.each(function (i, e) {
                     reverseHide(table, e);
+                    $(e).removeClass('font-weight-bold');
                 });
 
                 $element
-                    .find('.cil-chevron-bottom')
-                    .removeClass('cil-chevron-bottom')
-                    .addClass('cil-chevron-right');
+                    .find(`.${openParent}`)
+                    .removeClass(openParent)
+                    .addClass(closedParent);
 
                 children.hide();
             }

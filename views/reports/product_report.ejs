@@ -1,27 +1,5 @@
-<%- include('common/header', {title: 'Product Sales Report'}) %>
+<%- include('common/header', {title: 'Product Report'}) %>
 
-<div class="row">
-    <div class="col-lg-6">
-        <%- include('components/table', {
-            title: 'Top 10 Bestselling Products',
-            rows: productItemCount,
-            columns: 4,
-            headers: ['#', 'Product Name', 'Quantity','Income (LKR)'],
-            rawhtml: [false, false, false, false], 
-            numeric: [true, false, true, true],
-            data: productItems
-        }) %>
-    </div>
-    <div class="col-lg-6">
-        <%- include('components/bar_chart', {
-                title: 'Top 10 Bestselling Products',
-                id: 'barchart_product',
-                height: '600px',
-                data:  productItemsWithQuantity
-            }) %>
-    </div>
-</div>
 
-<div class="row">
-</div>
+
 <%- include('common/footer') %>

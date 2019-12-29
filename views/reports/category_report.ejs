@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-6">
         <%- include('components/tree_table', {
-            title: 'Category Sales',
+            title: 'Category Sales Overview',
             id: 'treetable_category', 
             rows: treeItemCount,
             columns: 3,
@@ -14,8 +14,10 @@
             parents: treeItemParents
                 
         }) %>
+    </div>
+    <div class="col-6">
         <%- include('components/table', {
-            title: 'Top 10 Categories',
+            title: 'Top Category Sales',
             rows: categoryItemCount,
             numeric: [false, true, true],
             columns: 3,
@@ -24,17 +26,26 @@
             data: categoryItems
         }) %>
     </div>
+</div>
+
+<div class="row">
     <div class="col-6">
-        <%- include('components/bar_chart', {
-            title: 'Top 10 Category Sales Chart',
-            id: 'barchart_category',
-            height: '800px',
+        <%- include('components/pie_chart', {
+            title: 'Category Sales Chart (With Quantity)',
+            id: 'chart_category_quantity',
+            height: '600px',
             data:  categoryitemsWithQuantity
         }) %>
     </div>
+    <div class="col-6">
+        <%- include('components/pie_chart', {
+            title: 'Category Sales Chart (With Income - LKR)',
+            id: 'chart_category_income',
+            height: '600px',
+            data:  categoryItemsWithIncome
+        }) %>
+    </div>
 </div>
-
-
 
 
 

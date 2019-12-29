@@ -4,14 +4,18 @@ const Report = require('../models/report');
 router.get('/example/', async (req, res) => {
     res.render('reports/example');
 });
-router.get('/product/', async (req, res) => {
+
+router.get('/sales/', async (req, res) => {
     const productResult = await Report.getProductCounts();
-    // console.log(productResult[2]);
-    res.render('reports/product_report', {
+    res.render('reports/sales_report', {
         productItems: productResult[0],
         productItemCount: productResult[0].length,
         productItemsWithQuantity: productResult[1],
     });
+});
+
+router.get('/product/', async (req, res) => {
+    res.render('reports/product_report');
 });
 
 router.get('/category/', async (req, res) => {
@@ -21,6 +25,7 @@ router.get('/category/', async (req, res) => {
         categoryItems: topCategoryLeafNodes[0],
         categoryItemCount: topCategoryLeafNodes[0].length,
         categoryitemsWithQuantity: topCategoryLeafNodes[1],
+        categoryItemsWithIncome: topCategoryLeafNodes[2],
         treeItems: categoryTreeResult[0],
         treeItemParents: categoryTreeResult[1],
         treeItemCount: categoryTreeResult[0].length,

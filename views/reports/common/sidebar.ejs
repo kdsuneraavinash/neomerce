@@ -3,26 +3,27 @@
     <ul class="c-sidebar-nav">
         <li class="c-sidebar-nav-title">Neomerce Report Platform</li>
         <%for (t of [
-            ['Product Sales Report', '/report/product'], 
-            ['Category Report', '/report/category'],
-            ['Example Report', '/report/example']
+            ['Sales Report', '/report/sales', 'cil-money'], 
+            ['Category Report', '/report/category', 'cil-object-group'], 
+            ['Product Report', '/report/product', 'cil-cart'], 
+            ['Example Report', '/report/example', 'cil-chart'], 
         ]) {%>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link <%= (t[0] === title) ? 'c-active' : ''%>" href="<%= t[1]%>">
-                <i class="c-sidebar-nav-icon cil-speedometer"></i>
+                <i class="c-sidebar-nav-icon <%= t[2] %>"></i>
                 <%=t[0] %>
             </a>
         </li>
         <%}%>
         <li class="c-sidebar-nav-item mt-auto">
             <a type="button" onclick="window.print()" class="c-sidebar-nav-link c-sidebar-nav-link-success">
-              <i class="c-sidebar-nav-icon cil-print "></i> Print
-            </a>
+              <i class="c-sidebar-nav-icon cil-print"></i> Print
+        </a>
         </li>
 
         <li class="c-sidebar-nav-item">
             <a type="button" href="/" class="c-sidebar-nav-link c-sidebar-nav-link-danger">
-              <i class="c-sidebar-nav-icon cil-exit-to-app"></i> Exit
+                <i class="c-sidebar-nav-icon cil-exit-to-app"></i> Exit
             </a>
         </li>
     </ul>

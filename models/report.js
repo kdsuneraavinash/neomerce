@@ -42,16 +42,18 @@ const getTopCategoryLeafNodes = async () => {
         ) as allcategories 
         join (select * from category where category_id not in (select distinct parent_id from category where parent_id is not null)) as leafnodes
         on allcategories.category_id = leafnodes.category_id
-        order by quantity desc limit 10
+        order by quantity desc
     `;
     const out = await connection.query(query);
     const items = [];
     const itemsWithQuantity = [];
+    const itemsWithIncome = [];
     out.rows.forEach((value) => {
         items.push([value.title, value.quantity, value.income]);
         itemsWithQuantity.push({ label: value.title, value: value.quantity - 0 });
+        itemsWithIncome.push({ label: value.title, value: value.income - 0 });
     });
-    return [items, itemsWithQuantity];
+    return [items, itemsWithQuantity, itemsWithIncome];
 };
 
 
