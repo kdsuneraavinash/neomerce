@@ -152,6 +152,24 @@ const getProducts = async () => {
     return out.rows;
 };
 
+
+const getPopularProductsBetweenDates = async (date1, date2) => {
+    const query = `select product.product_id, product.title, sum(orderitem.quantity) as quantity, sum(orderitem.quantity)*sum(variant.selling_price)  as income 
+                        from product join variant using(product_id) join orderitem using(variant_id) join orderdata using (order_id) 
+                        where orderdata.order_date between $1 and $2
+                        group by product.product_id
+                        order by quantity desc limit 10`;
+
+    const out = await connection.query(query, [date1, date2]);
+    const items = [];
+    const itemsWithQuantity = [];
+    out.rows.forEach((value, index) => {
+        items.push([index + 1, value.title, value.quantity, value.income, value.product_id]);
+        itemsWithQuantity.push({ label: `#${index + 1}`, value: value.quantity - 0 });
+    });
+    return [items, itemsWithQuantity];
+};
+
 module.exports = {
     getProductCounts,
     getCategoryTreeReport,
@@ -160,4 +178,5 @@ module.exports = {
     getProductOrderedCountReport,
     getProductData,
     getProducts,
+    getPopularProductsBetweenDates,
 };

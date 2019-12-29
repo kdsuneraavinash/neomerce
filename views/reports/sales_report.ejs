@@ -3,6 +3,20 @@
 productItems.forEach((v) => v[4] = `<a href='/report/product?id=${v[4]}'>Link</a>`);
 %>
 
+<div class="row dont-print">
+    <div class="col-12">
+        <%- include('components/callout', {
+            title: 'Add Quartely Sales Report',
+            color: 'bg-red-500', 
+            value: '@Anju',
+            percentage: 100,
+            helpertext: '@Anju',
+        }) %>
+    </div>
+</div>
+
+<hr />
+
 <div class="row">
     <div class="col-lg-6">
         <%- include('components/table', {

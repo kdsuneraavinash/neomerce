@@ -53,4 +53,36 @@ router.get('/category/', async (req, res) => {
     });
 });
 
+
+router.get('/time/', async (req, res) => {
+    try {
+        const timerange = req.query.daterange;
+        if (timerange == null) {
+            res.render('reports/time_report', { error: req.query.error, timerange: null });
+            return;
+        }
+        const [time1str, time2str] = timerange.split('-');
+        if (time1str === undefined || time2str === undefined) {
+            throw Error('Invalid data format');
+        }
+        const time1 = new Date(time1str);
+        const time2 = new Date(time2str);
+        const productResult = await Report.getPopularProductsBetweenDates(time1, time2);
+        res.render('reports/time_report', {
+            productItems: productResult[0],
+            productItemCount: productResult[0].length,
+            productItemsWithQuantity: productResult[1],
+            error: req.query.error,
+            timerange,
+        });
+    } catch (error) {
+        res.redirect(`/report/time?error=${error}`);
+    }
+});
+
+
+router.get('/order/', async (req, res) => {
+    res.render('reports/order_report');
+});
+
 module.exports = router;

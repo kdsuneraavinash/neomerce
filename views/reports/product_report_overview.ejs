@@ -1,6 +1,6 @@
 <%- include('common/header', {title: 'Product Report'}) %>
 
-<% if (locals.error != null){ %>
+<% if (error != null){ %>
 <div class="mb-3">
     <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
         <strong>Error: </strong> <%=error.replace("error: ","")%>
