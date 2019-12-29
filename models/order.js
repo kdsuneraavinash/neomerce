@@ -155,7 +155,7 @@ const orderHistoryPermissionChecker = async (req) => {
     const queryString = 'SELECT checkOrderHistoryPriviledge($1,$2)';
     const values = [req.sessionID, req.params.orderId];
     const result = await connection.query(queryString, values);
-    return result.rows[0];
+    return result.rows[0].checkorderhistorypriviledge;
 };
 
 

@@ -56,6 +56,7 @@ router.get('/:orderId', async (req, res) => {
     const permission = await Order.orderHistoryPermissionChecker(req);
     if (!permission) {
         res.redirect('/');
+        return;
     }
 
     /* Create an order history object with all the information needed for order history page */
