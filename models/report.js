@@ -40,7 +40,7 @@ const getTopCategoryLeafNodes = async () => {
                         select parent_id from category where parent_id is not null
                         )
                     group by category_id
-                    order by income
+                    order by quantity desc
                     limit 10;`;
     const out = await connection.query(query);
 
@@ -69,7 +69,7 @@ const getCategoryTreeReport = async () => {
                         join variant using(product_id)
                         join orderitem using(variant_id) 
                         join payment using(order_id)
-                    group by category_id;`;
+                    group by category_id`;
 
     const out = await connection.query(query);
     const categoryData = out.rows.map((value) => [value.title, value.quantity, value.income]);
