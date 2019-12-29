@@ -2,6 +2,7 @@ const connection = require('../config/db');
 
 
 const getProductCounts = async () => {
+    // TODO: (Anju) Optimize and fix query
     const query = `select product.product_id, product.title,sum(orderitem.quantity) as quantity,sum(orderitem.quantity)*sum(variant.selling_price)  as income 
                     from product, variant, orderitem
                     where 
@@ -22,6 +23,7 @@ const getProductCounts = async () => {
 
 
 const getTopCategoryLeafNodes = async () => {
+    // TODO: (Anju) Optimize and fix query
     const query = `
         select allcategories.category_id,allcategories.title,allcategories.quantity,allcategories.income 
     from (
@@ -58,6 +60,7 @@ const getTopCategoryLeafNodes = async () => {
 
 
 const getCategoryTreeReport = async () => {
+    // TODO: (Anju) Optimize and fix query
     const query = `
     select category.category_id,category.title,category.parent_id,sum(categoryjoin.quantity) as quantity,sum(categoryjoin.income) as income
     from (
@@ -87,11 +90,10 @@ const getCategoryTreeReport = async () => {
 
 
 const getProductVisitedCountReport = async (productId) => {
-    const query = `
-    select ROW_NUMBER() over(order by visited_date) as count, visited_date 
-        from visitedproduct 
-        where product_id=$1 order by visited_date limit 100;
-        `;
+    const query = `select ROW_NUMBER() over(order by visited_date) as count, 
+                        visited_date 
+                    from visitedproduct 
+                    where product_id=$1 order by visited_date limit 100`;
 
     const out = await connection.query(query, [productId]);
     const productVisits = [];
@@ -111,11 +113,11 @@ const getProductVisitedCountReport = async (productId) => {
 
 
 const getProductOrderedCountReport = async (productId) => {
-    const query = `
-            select orderdata.order_date
-                from orderdata join orderitem using(order_id) join variant using(variant_id)
-                where product_id=$1 order by order_date;
-        `;
+    const query = `select orderdata.order_date
+                    from orderdata 
+                        join orderitem using(order_id) 
+                        join variant using(variant_id)
+                    where product_id=$1 order by order_date`;
 
     const out = await connection.query(query, [productId]);
     const productOrders = [];
@@ -133,17 +135,16 @@ const getProductOrderedCountReport = async (productId) => {
 };
 
 const getProductData = async (productId) => {
-    const out = {};
+    const query1 = 'select * from product where product_id = $1';
+    const out1 = await connection.query(query1, [productId]);
 
-    let query = 'select * from product where product_id=$1';
+    const query2 = 'select * from Variant where product_id = $1';
+    const out2 = await connection.query(query2, [productId]);
 
-    [out.productData] = (await connection.query(query, [productId])).rows;
-
-    query = `select variant_id, quantity, title, selling_price, listed_price
-                from Variant
-                where product_id = $1`;
-    out.variantData = (await connection.query(query, [productId])).rows;
-    return out;
+    return {
+        productData: out1.rows[0],
+        variantData: out2.rows,
+    };
 };
 
 const getProducts = async () => {
@@ -154,11 +155,18 @@ const getProducts = async () => {
 
 
 const getPopularProductsBetweenDates = async (date1, date2) => {
-    const query = `select product.product_id, product.title, sum(orderitem.quantity) as quantity, sum(orderitem.quantity)*sum(variant.selling_price)  as income 
-                        from product join variant using(product_id) join orderitem using(variant_id) join orderdata using (order_id) 
-                        where orderdata.order_date between $1 and $2
-                        group by product.product_id
-                        order by quantity desc limit 10`;
+    const query = `select product.product_id, 
+                        product.title, 
+                        sum(orderitem.quantity) as quantity, 
+                        sum(payment.payment_amount)  as income 
+                    from product 
+                        join variant using(product_id) 
+                        join orderitem using(variant_id) 
+                        join orderdata using(order_id) 
+                        join payment using(order_id)
+                    where orderdata.order_date between $1 and $2
+                    group by product.product_id
+                    order by quantity desc limit 10`;
 
     const out = await connection.query(query, [date1, date2]);
     const items = [];
@@ -180,3 +188,29 @@ module.exports = {
     getProducts,
     getPopularProductsBetweenDates,
 };
+
+/*
+Visits grouped by month/year- for pareto diagram
+=================================================
+
+select to_char(visited_date,'mm') as month,
+        extract(year from visited_date) as year,
+        count(*)
+    from visitedproduct
+    where product_id='24acc4ba-a8d9-4b4d-9d75-8319ee313494'
+    group by 1,2;
+
+Income grouped by month/year- for pareto diagram
+=================================================
+
+    select to_char(orderdata.order_date, 'mm') as month,
+        extract(year from orderdata.order_date) as year,
+        sum(payment.payment_amount)
+    from orderdata
+        join orderitem using(order_id)
+        join variant using(variant_id)
+        join payment using(order_id)
+    where product_id='24acc4ba-a8d9-4b4d-9d75-8319ee313494'
+    group by 1,2
+
+*/
