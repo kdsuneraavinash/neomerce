@@ -34,6 +34,7 @@
 
         // Create series
         var series = chart.series.push(new am4charts.LineSeries());
+        series.bullets.push(new am4charts.CircleBullet());
         series.dataFields.valueY = "value";
         series.dataFields.dateX = "date";
         series.strokeWidth = 2;

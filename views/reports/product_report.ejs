@@ -3,6 +3,30 @@
 <%
 last_order = orderedItems[orderedItems.length-1];
 last_visit = visitedItems[visitedItems.length-1];
+
+let monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"];
+for (month of Array(13).keys()) {
+    if (month == 0) continue;
+    if (!monthlyData.find((v) => v.month == month)) {
+        monthlyData.push({ month, visits: 0, orders: 0 })
+    }
+}
+monthlyData.sort((a, b) => a.month - b.month);
+monthlyData.forEach((v) => {
+    v.month = monthNames[v.month - 1];
+})
 %>
 
 <h2 class="text-center"><%= productData.title %></h2>
@@ -69,7 +93,7 @@ last_visit = visitedItems[visitedItems.length-1];
 <div class="row">
     <div class="col-lg-6">
         <%- include('components/line_chart', {
-            title: 'Visited Users from ' + visitedItems[0].date ,
+            title: 'Visited Users from ' + visitedItems[0].date.toISOString().split('T')[0],
             id: 'visited_users_chart', 
             height: '500px',
             color: '#3F51B5',
@@ -80,7 +104,7 @@ last_visit = visitedItems[visitedItems.length-1];
 
     <div class="col-lg-6">
         <%- include('components/line_chart', {
-            title: 'Orders from ' + orderedItems[0].date ,
+            title: 'Orders from ' + orderedItems[0].date.toISOString().split('T')[0]  ,
             id: 'prd_sales_chart', 
             height: '500px',
             color: '#009688',
@@ -88,5 +112,28 @@ last_visit = visitedItems[visitedItems.length-1];
         }) %>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <%- include('components/stacked_column_chart', {
+            title: 'Monthly Orders vs Visits',
+            id: 'prd_monthly_chart', 
+            height: '800px',
+            data:  monthlyData,
+        }) %>
+    </div>
+    <div class="col-lg-4">
+        <%- include('components/table', {
+            title: 'Monthly Orders vs Visits',
+            rows: 12,
+            numeric: [false, true, true],
+            columns: 3,
+            headers: ['Month', 'Visits','Orders'],
+            rawhtml: [false, false, false],
+            data: monthlyData.map((v) => [v.month, v.visits, v.orders])
+        }) %>
+    </div>
+</div>
+
 
 <%- include('common/footer') %>

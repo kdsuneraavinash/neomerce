@@ -70,7 +70,6 @@ const getCategoryTreeReport = async () => {
                         join orderitem using(variant_id) 
                         join payment using(order_id)
                     group by category_id`;
-
     const out = await connection.query(query);
     const categoryData = out.rows.map((value) => [value.title, value.quantity, value.income]);
     const categoryParents = out.rows.map((value) => [value.category_id, value.parent_id]);
@@ -79,34 +78,55 @@ const getCategoryTreeReport = async () => {
 
 
 const getProductVisitedCountReport = async (productId) => {
-    const query = `select ROW_NUMBER() over(order by visited_date) as count, 
-                        visited_date 
+    const query = `select date(visited_date) as  visited_day,
+                        count(*)
                     from visitedproduct 
-                    where product_id=$1 order by visited_date limit 100`;
-
+                    where product_id=$1 
+                    group by visited_day
+                    order by visited_day`;
     const out = await connection.query(query, [productId]);
-    const productVisits = out.rows.map((value) => dateDataField(value.visited_date, value.count));
-    productVisits.push(dateDataField(new Date(),
-        productVisits.length ? productVisits[productVisits.length - 1].value : 0));
+    const productVisits = out.rows.map((value) => dateDataField(value.visited_day, value.count));
     return productVisits;
 };
 
 
 const getProductOrderedCountReport = async (productId) => {
-    const query = `select orderdata.order_date
+    const query = `select date(orderdata.order_date) as order_day, 
+                        count(orderitem.quantity) as sells
                     from orderdata 
                         join orderitem using(order_id) 
                         join variant using(variant_id)
-                    where product_id=$1 order by order_date`;
-
+                    where product_id=$1
+                    group by order_day
+                    order by order_day`;
     const out = await connection.query(query, [productId]);
     const productOrders = out.rows.map(
-        (value, index) => dateDataField(value.order_date, index + 1),
+        (value) => dateDataField(value.order_day, value.sells),
     );
-    productOrders.push(dateDataField(
-        new Date(), productOrders.length ? productOrders[productOrders.length - 1].value : 0,
-    ));
     return productOrders;
+};
+
+
+const getProductMonthlyOrdersReport = async (productId) => {
+    const query = `select * from
+                (
+                    select to_char(visited_date,'mm') as month,
+                        count(*) as visits
+                    from visitedproduct
+                    where product_id=$1
+                    group by month
+                ) as visits_month join
+                (    
+                    select to_char(orderdata.order_date, 'mm') as month,
+                        count(*) as orders
+                    from orderdata
+                        join orderitem using(order_id)
+                        join variant using(variant_id)
+                    where product_id=$1
+                    group by month
+                ) as orders_month using(month)`;
+    const out = await connection.query(query, [productId]);
+    return out.rows;
 };
 
 const getProductData = async (productId) => {
@@ -160,30 +180,5 @@ module.exports = {
     getProductData,
     getProducts,
     getPopularProductsBetweenDates,
+    getProductMonthlyOrdersReport,
 };
-
-/*
-Visits grouped by month/year- for pareto diagram
-=================================================
-
-select to_char(visited_date,'mm') as month,
-        extract(year from visited_date) as year,
-        count(*)
-    from visitedproduct
-    where product_id='24acc4ba-a8d9-4b4d-9d75-8319ee313494'
-    group by 1,2;
-
-Income grouped by month/year- for pareto diagram
-=================================================
-
-    select to_char(orderdata.order_date, 'mm') as month,
-        extract(year from orderdata.order_date) as year,
-        sum(payment.payment_amount)
-    from orderdata
-        join orderitem using(order_id)
-        join variant using(variant_id)
-        join payment using(order_id)
-    where product_id='24acc4ba-a8d9-4b4d-9d75-8319ee313494'
-    group by 1,2
-
-*/

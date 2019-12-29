@@ -23,15 +23,25 @@ router.get('/product/', async (req, res) => {
 
     try {
         const { productData, variantData } = await Report.getProductData(productId);
-        const productVisitedReport = await Report.getProductVisitedCountReport(productId);
-        const productOrderedReport = await Report.getProductOrderedCountReport(productId);
-        productVisitedReport.unshift({ date: productData.added_date, value: 0 });
-        productOrderedReport.unshift({ date: productData.added_date, value: 0 });
+        const visitedItems = await Report.getProductVisitedCountReport(productId);
+        const orderedItems = await Report.getProductOrderedCountReport(productId);
+        const monthlyData = await Report.getProductMonthlyOrdersReport(productId);
+
+        visitedItems.forEach((value, index) => {
+            if (index === 0) return;
+            visitedItems[index].value += visitedItems[index - 1].value;
+        });
+        orderedItems.forEach((value, index) => {
+            if (index === 0) return;
+            orderedItems[index].value += orderedItems[index - 1].value;
+        });
+
         res.render('reports/product_report', {
-            visitedItems: productVisitedReport,
-            orderedItems: productOrderedReport,
+            visitedItems,
+            orderedItems,
             productData,
             variantData,
+            monthlyData,
         });
     } catch (error) {
         res.redirect(`/report/product?error=${error}`);
