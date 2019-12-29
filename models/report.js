@@ -3,31 +3,24 @@ const connection = require('../config/db');
 
 const getProductCounts = async () => {
     const query = `select product.product_id, product.title,sum(orderitem.quantity) as quantity,sum(orderitem.quantity)*sum(variant.selling_price)  as income 
-    from product, variant, orderitem
-    where orderitem.variant_id = variant.variant_id and variant.product_id = product.product_id
-    group by product.product_id
-    order by quantity desc limit 10`;
+                    from product, variant, orderitem
+                    where 
+                        orderitem.variant_id = variant.variant_id and 
+                        variant.product_id = product.product_id
+                    group by product.product_id
+                    order by quantity desc limit 10`;
 
     const out = await connection.query(query);
     const items = [];
     const itemsWithQuantity = [];
-    out.rows.forEach((i, index) => {
-        const item = [];
-        // item.push(i.product_id);
-        item.push(index + 1);
-        item.push(i.title);
-        item.push(i.quantity);
-        item.push(i.income);
-
-        items.push(item);
-
-        itemsWithQuantity.push({
-            label: `#${index + 1}`,
-            value: parseInt(i.quantity, 10),
-        });
+    out.rows.forEach((value, index) => {
+        items.push([index + 1, value.title, value.quantity, value.income]);
+        itemsWithQuantity.push({ label: `#${index + 1}`, value: value.quantity - 0 });
     });
-    return [items, out.rowCount, itemsWithQuantity];
+    return [items, itemsWithQuantity];
 };
+
+
 const getTopCategoryLeafNodes = async () => {
     const query = `
         select allcategories.category_id,allcategories.title,allcategories.quantity,allcategories.income 
@@ -54,23 +47,13 @@ const getTopCategoryLeafNodes = async () => {
     const out = await connection.query(query);
     const items = [];
     const itemsWithQuantity = [];
-    out.rows.forEach((i) => {
-        const item = [];
-
-        // item.push(i.category_id);
-        item.push(i.title);
-        // item.push(i.parent_id);
-        item.push(i.quantity);
-        item.push(i.income);
-
-        items.push(item);
-        itemsWithQuantity.push({
-            label: i.title,
-            value: parseInt(i.quantity, 10),
-        });
+    out.rows.forEach((value) => {
+        items.push([value.title, value.quantity, value.income]);
+        itemsWithQuantity.push({ label: value.title, value: value.quantity - 0 });
     });
-    return [items, items.length, itemsWithQuantity];
+    return [items, itemsWithQuantity];
 };
+
 
 const getCategoryTreeReport = async () => {
     const query = `
@@ -93,21 +76,12 @@ const getCategoryTreeReport = async () => {
     const out = await connection.query(query);
     const treeItems = [];
     const treeItemParents = [];
-    out.rows.forEach((i) => {
-        const treeItem = [];
-        const treeItemParent = [];
-
-        treeItem.push(i.title);
-        treeItem.push(i.quantity);
-        treeItem.push(i.income);
-
-        treeItemParent.push(i.category_id);
-        treeItemParent.push(i.parent_id);
-
-        treeItems.push(treeItem);
-        treeItemParents.push(treeItemParent);
+    out.rows.forEach((value) => {
+        treeItems.push([value.title, value.quantity, value.income]);
+        treeItemParents.push([value.category_id, value.parent_id]);
     });
-    return [treeItems, treeItemParents, treeItems.length];
+    return [treeItems, treeItemParents];
 };
+
 
 module.exports = { getProductCounts, getCategoryTreeReport, getTopCategoryLeafNodes };
