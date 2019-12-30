@@ -19,7 +19,7 @@ const validateRegistration = async (req,res,next) => {
     })
 
     try{
-        await schema.validateAsync({email:email,password:password,retype_password:retype_password,first_name:firstName,last_name:lastName,addr_line1:addressLine1,addr_line2:addressLine2,phone_number:telephoneNumber,postalCode:postalCode,city:'Horana'})
+        await schema.validateAsync({email:email,password:password,retype_password:retype_password,first_name:firstName,last_name:lastName,addr_line1:addressLine1,addr_line2:addressLine2,phone_number:telephoneNumber,postalCode:postalCode,city:city})
         next()
     }catch(err){
         helper.errorResponse(res,err)
