@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const Order = require('../models/order');
 const helper = require('../utils/helper');
+const validator = require('../utils/validation')
 
 
 /* GET endpoint for user registration. Render the user registration page upon request */
@@ -11,8 +12,8 @@ router.get('/register', async (req, res) => {
 });
 
 /* POST endpoint for user registration. */
-router.post('/register', async (req, res) => {
-    // TODO: validation here
+router.post('/register',validator.validateRegistration,async (req, res) => {
+
     const {
         body: {
             email, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,
