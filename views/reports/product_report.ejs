@@ -74,8 +74,8 @@ monthlyData.forEach((v) => {
 </div>
 
 <div class="row">
+    <%if (last_visit){%>
     <div class="col">
-        <%if (last_visit){%>
         <%- include('components/callout', {
                 title: 'Product Page Visits',
                 color:  'bg-indigo-500', 
@@ -83,10 +83,10 @@ monthlyData.forEach((v) => {
                 percentage: 100,
                 helpertext: 'Last Visit on: ' + last_visit.date ,
             }) %>
-        <%}%>
     </div>
-    <div class="col">
+    <%}%>
         <%if (last_order){%>
+    <div class="col">
         <%- include('components/callout', {
                 title: 'Total Product Sales',
                 color: 'bg-teal-500' , 
@@ -94,24 +94,22 @@ monthlyData.forEach((v) => {
                 percentage:(last_order.value/last_visit.value) * 100,
                 helpertext: 'Last Order on: ' + last_order.date,
             }) %>
-        <%}%>
     </div>
+    <%}%>
     <div class="col">
-        <%if (last_order){%>
         <%- include('components/callout', {
             title: 'Remaining Stocks',
             color: 'bg-amber-500' , 
             value: variantData.reduce((a, b) => a + b.quantity, 0),
             percentage: '100',
-            helpertext: 'Last Order on: ' + last_order.date,
+            helpertext: 'Total variants in  stock for the product',
         }) %>
-        <%}%>
-    </div>
+</div>
 </div>
 
 <div class="row">
-        <div class="col-lg-6">
-    <% if (visitedItems.length){%>
+    <div class="col-lg-6">
+        <% if (visitedItems.length){%>
         <%- include('components/line_chart', {
             title: 'Visited Users from ' + visitedItems[0].date.toISOString().split('T')[0],
             id: 'visited_users_chart', 
@@ -122,9 +120,9 @@ monthlyData.forEach((v) => {
         <%}else{%>
         <%- include('components/line_chart', {
                 title: 'Visited Users'  ,
-                id: 'visited_users_chart', 
+                id: 'placeholder1', 
                 height: '500px',
-                color: '#3F51B5',
+                color: '',
                 data:  [],
             }) %>
         <%}%>
@@ -142,9 +140,9 @@ monthlyData.forEach((v) => {
         <%}else{%>
         <%- include('components/line_chart', {
                 title: 'Orders'  ,
-                id: 'prd_sales_chart', 
+                id: 'placeholder2', 
                 height: '500px',
-                color: '#009688',
+                color: '',
                 data:  [],
             }) %>
         <%}%>
