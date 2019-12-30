@@ -27,5 +27,22 @@ const validateRegistration = async (req,res,next) => {
     
 }
 
+const validateLogin = async (req,res,next) => {
+    console.log(req.body)
+    const {body:{email,password}} = req
+    const schema = Joi.object({
+        email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+        password:Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required()
+    })
 
-module.exports = {validateRegistration}
+    try {
+        await schema.validateAsync({email:email,password:password})
+        next()
+    } catch (error) {
+        helper.errorResponse(res,error)
+    }
+
+}
+
+
+module.exports = {validateRegistration,validateLogin}

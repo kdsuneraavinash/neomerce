@@ -48,7 +48,7 @@ router.get('/login', (req, res) => {
 });
 
 
-router.post('/login', async (req, res) => {
+router.post('/login',validator.validateLogin,async (req, res) => {
     const { body: { email, password } } = req;
     try {
         const passwordValidated = await User.validatePassword(email, password);
