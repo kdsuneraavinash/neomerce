@@ -1,19 +1,19 @@
 const router = require('express').Router();
 const Report = require('../models/report');
 
-const adminAuthChecker = async (req, res, next) => {
-    if (req.session.user && req.session.cookie) {
-        const { permission, name } = await Report.reportViewPermissionChecker(req.sessionID);
-        if (permission) {
-            req.name = name;
-            next();
-            return;
-        }
-    }
-    res.redirect('/');
-};
+// const adminAuthChecker = async (req, res, next) => {
+//     if (req.session.user && req.session.cookie) {
+//         const { permission, name } = await Report.reportViewPermissionChecker(req.sessionID);
+//         if (permission) {
+//             req.name = name;
+//             next();
+//             return;
+//         }
+//     }
+//     res.redirect('/');
+// };
 
-router.use(adminAuthChecker);
+// router.use(adminAuthChecker);
 
 router.get('/example/', async (req, res) => {
     res.render('reports/example', { name: req.name });
