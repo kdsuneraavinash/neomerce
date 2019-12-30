@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/img/fav.png">
+    <meta name="author" content="teampulse">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta charset="UTF-8">
+
+    <title>404</title>
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Muli:400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Passion+One" rel="stylesheet">
+
+    <!-- Font Awesome Icon -->
+    <link type="text/css" rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    <!-- Custom stlylesheet -->
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #notfound {
+            position: relative;
+            height: 100vh;
+        }
+
+        #notfound .notfound-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://w.wallhaven.cc/full/4y/wallhaven-4y88dl.jpg');
+            background-size: cover;
+        }
+
+        #notfound .notfound-bg:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+
+        #notfound .notfound {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        #notfound .notfound:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.7);
+            -webkit-box-shadow: 0px 0px 0px 30px rgba(255, 255, 255, 0.7) inset;
+            box-shadow: 0px 0px 0px 30px rgba(255, 255, 255, 0.7) inset;
+            z-index: -1;
+        }
+
+        .notfound {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            padding: 30px;
+            line-height: 1.4;
+        }
+
+        .notfound .notfound-404 {
+            position: relative;
+            height: 200px;
+        }
+
+        .notfound .notfound-404 h1 {
+            font-family: 'Passion One', cursive;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            font-size: 220px;
+            margin: 0px;
+            color: #222225;
+            text-transform: uppercase;
+        }
+
+        .notfound h2 {
+            font-family: 'Muli', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: #222225;
+            margin-top: 26px;
+            margin-bottom: 20px;
+        }
+
+        .notfound-search {
+            position: relative;
+            padding-right: 120px;
+            max-width: 420px;
+            width: 100%;
+            margin: 30px auto 20px;
+        }
+
+        .notfound-search input {
+            font-family: 'Muli', sans-serif;
+            width: 100%;
+            height: 40px;
+            padding: 3px 15px;
+            color: #fff;
+            font-weight: 400;
+            font-size: 18px;
+            background: #222225;
+            border: none;
+        }
+
+        .notfound-search button {
+            font-family: 'Muli', sans-serif;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            width: 120px;
+            height: 40px;
+            text-align: center;
+            border: none;
+            background: #579AAD;
+            cursor: pointer;
+            padding: 0;
+            color: #fff;
+            font-weight: 400;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .notfound a {
+            font-family: 'Muli', sans-serif;
+            display: inline-block;
+            font-weight: 400;
+            text-decoration: none;
+            background-color: transparent;
+            color: #222225;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .notfound-social {
+            margin-bottom: 15px;
+        }
+
+        .notfound-social>a {
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            width: 40px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #222225;
+            margin: 3px;
+            -webkit-transition: 0.2s all;
+            transition: 0.2s all;
+        }
+
+        .notfound-social>a:hover {
+            color: #fff;
+            background-color: #579AAD;
+        }
+
+        @media only screen and (max-width: 480px) {
+            .notfound .notfound-404 {
+                height: 146px;
+            }
+
+            .notfound .notfound-404 h1 {
+                font-size: 146px;
+            }
+
+            .notfound h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+</head>
+
+<body>
+
+    <div id="notfound">
+        <div class="notfound-bg"></div>
+        <div class="notfound">
+            <div class="notfound-404">
+                <h1><%=code%></h1>
+            </div>
+            <h2><%=failed%></h2>
+            <form action="/category" method="get" class="notfound-search">
+                <input name="query" type="text" placeholder="Search...">
+                <button type="submit">Search</button>
+            </form>
+            <div class="notfound-social">
+                <a href="#"><i class="fa fa-facebook"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+                <a href="#"><i class="fa fa-pinterest"></i></a>
+                <a href="#"><i class="fa fa-google-plus"></i></a>
+            </div>
+            <a href="/">Back To Homepage</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

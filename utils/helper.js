@@ -3,17 +3,10 @@ const errorResponse = (res, message) => {
     if (message.message) {
         failed = message.message;
     }
-    res.json({
+    res.render('error', {
         code: 400,
         failed,
     });
 };
 
-const successResponse = (res, data) => {
-    res.json({
-        code: 200,
-        data,
-    });
-};
-
-module.exports = { errorResponse, successResponse };
+module.exports = { errorResponse };

@@ -63,6 +63,10 @@ app.use(require('./routes'));
 const port = process.env.PORT || 3000;
 const address = process.env.SERVER_ADDRESS || '127.0.0.1';
 
+app.get('*', (req, res) => {
+    res.status(404).render('error', { code: 404, failed: 'OOPS! Not found' });
+});
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _) => {
     (new Ouch()).pushHandler(new Ouch.handlers.PrettyPageHandler('orange'))
