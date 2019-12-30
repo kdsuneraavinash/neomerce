@@ -7,11 +7,10 @@ const getProductCounts = async () => {
     const query = `select product.product_id, 
                         product.title, 
                         sum(orderitem.quantity) as quantity, 
-                        sum(payment.payment_amount)  as income 
+                        sum(variant.selling_price*orderitem.quantity) as income
                     from product 
                         join variant using(product_id) 
-                        join orderitem using(variant_id) 
-                        join payment using(order_id)
+                        join orderitem using(variant_id)
                     group by product.product_id
                     order by quantity desc limit 10`;
     const out = await connection.query(query);
@@ -26,12 +25,11 @@ const getTopCategoryLeafNodes = async () => {
                         category.parent_id,
                         category.title,
                         sum(orderitem.quantity) as quantity, 
-                        sum(payment.payment_amount)  as income 
+                        sum(variant.selling_price*orderitem.quantity) as income
                     from category
                         join productcategory using(category_id)
                         join variant using(product_id)
-                        join orderitem using(variant_id) 
-                        join payment using(order_id)
+                        join orderitem using(variant_id)
                     where category_id not in (
                         select parent_id from category where parent_id is not null
                         )
@@ -48,12 +46,11 @@ const getCategoryTreeReport = async () => {
                         category.parent_id,
                         category.title,
                         sum(orderitem.quantity) as quantity, 
-                        sum(payment.payment_amount)  as income 
+                        sum(variant.selling_price*orderitem.quantity) as income
                     from category
                         join productcategory using(category_id)
                         join variant using(product_id)
-                        join orderitem using(variant_id) 
-                        join payment using(order_id)
+                        join orderitem using(variant_id)
                     group by category_id`;
     const out = await connection.query(query);
     const categoryData = out.rows.map((value) => [value.title, value.quantity, value.income]);
@@ -135,13 +132,12 @@ const getProducts = async () => {
 const getPopularProductsBetweenDates = async (date1, date2) => {
     const query = `select product.product_id, 
                         product.title, 
-                        sum(orderitem.quantity) as quantity, 
-                        sum(payment.payment_amount)  as income 
+                        sum(orderitem.quantity) as quantity,
+                        sum(variant.selling_price*orderitem.quantity) as income
                     from product 
                         join variant using(product_id) 
                         join orderitem using(variant_id) 
-                        join orderdata using(order_id) 
-                        join payment using(order_id)
+                        join orderdata using(order_id)
                     where orderdata.order_date between $1 and $2
                     group by product.product_id
                     order by quantity desc limit 10`;
