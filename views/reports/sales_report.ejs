@@ -40,7 +40,7 @@
 <div class="row">
     <div class="col-lg-6">
         <%- include('components/bar_chart', {
-                title: 'Top 10 Bestselling Products',
+                title: 'Top 10 Best Selling Products - Quantity',
                 id: 'barchart_product_q',
                 height: '600px',
                 data:  products.map((v) => ({label: `#${v.index}`, value: v.quantity}))
@@ -48,7 +48,7 @@
     </div>
     <div class="col-lg-6">
         <%- include('components/bar_chart', {
-                title: 'Top 10 Bestselling Products',
+                title: 'Top 10 Bestselling Products - Income',
                 id: 'barchart_product_i',
                 height: '600px',
                 data:  products.map((v) => ({label: `#${v.index}`, value: v.income}))
