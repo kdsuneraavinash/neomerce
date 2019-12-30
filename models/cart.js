@@ -98,8 +98,6 @@ const proceedCheckOut = async (sessionID, loggedIn) => {
         const userInfoValues = [sessionID];
         result = await connection.query(userInfoQueryString, userInfoValues);
         [productDetailsObject.delivery_info] = result.rows;
-        // TODO:(lahiru) Fix telephone number load issue
-        productDetailsObject.delivery_info.phone_number = '1112229990';
     }
 
     const itemsInfoQueryString = `SELECT variant_id, product_id, quantity, 
