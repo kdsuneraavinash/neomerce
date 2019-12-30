@@ -163,6 +163,26 @@ const reportViewPermissionChecker = async (sessionID) => {
     }
 };
 
+const getTopCategoryLeafNodes = async () => {
+    const query = `select category_id, 
+                        category.parent_id,
+                        category.title,
+                        sum(orderitem.quantity) as quantity, 
+                        sum(variant.selling_price*orderitem.quantity) as income
+                    from category
+                        join productcategory using(category_id)
+                        join variant using(product_id)
+                        join orderitem using(variant_id)
+                    where category_id not in (
+                        select parent_id from category where parent_id is not null
+                        )
+                    group by category_id
+                    order by quantity desc
+                    limit 10;`;
+    const out = await connection.query(query);
+    return out.rows;
+};
+
 module.exports = {
     getProductCounts,
     getCategoryTreeReport,
