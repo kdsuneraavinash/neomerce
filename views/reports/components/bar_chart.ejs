@@ -1,5 +1,4 @@
 <div class="card dont-print">
-    <div class="card-header bg-dark text-white"> <%= title %></div>
     <div class="card-body">
         <div id="<%= id %>"></div>
     </div>
@@ -22,6 +21,13 @@
 
         // Add data
         chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+        chart.exporting.menu = new am4core.ExportMenu();
+        chart.exporting.title = "<%= title %>";
+        chart.exporting.filePrefix = "<%= title %>";
+        var title = chart.titles.create();
+        title.text = "<%= title %>";
+        title.fontSize = 20;
+        title.marginBottom = 30;
 
         var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
         categoryAxis.dataFields.category = "label";
@@ -50,10 +56,7 @@
         series.columns.template.column.cornerRadiusTopRight = 10;
         series.columns.template.column.fillOpacity = 0.8;
 
-        // on hover, make corner radiuses bigger
         var hoverState = series.columns.template.column.states.create("hover");
-        hoverState.properties.cornerRadiusTopLeft = 0;
-        hoverState.properties.cornerRadiusTopRight = 0;
         hoverState.properties.fillOpacity = 1;
 
         series.columns.template.adapter.add("fill", function (fill, target) {
@@ -62,6 +65,8 @@
 
         // Cursor
         chart.cursor = new am4charts.XYCursor();
+        chart.scrollbarX.exportable = false;
+        series.tooltip.exportable = false;
 
     }); // end am4core.ready()
 </script>

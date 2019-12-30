@@ -2,6 +2,7 @@
     <div class="card-header bg-dark text-white">
         <div class="float-left"> <%= title %></div>
         <div class="float-right input-group-sm form-inline">
+            <button id="download-pdf-<%=id%>" class="btn btn-outline-light mr-2 btn-sm">Print</button>
             <input class="form-control" id="input-<%=id%>" type="text" placeholder="Search <%= filterTitle %>">
         </div>
     </div>
@@ -32,6 +33,14 @@
             table.setFilter("<%=filter%>", "like", $("#input-<%=id%>").val());
         });
 
+        $("#download-pdf-<%=id%>").click(function () {
+            table.download("pdf", "<%=title%>.pdf", {
+                orientation: "portrait",
+                title: "<%= title %>",
+            });
+        });
 
-    })
+
+    });
+
 </script>
