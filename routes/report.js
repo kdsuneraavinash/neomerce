@@ -59,7 +59,7 @@ router.get('/product/', async (req, res) => {
             name: req.name,
         });
     } catch (error) {
-        res.redirect(`/report/product?error=${error}`);
+        res.redirect('/report/product?error=Product retrieval failed');
     }
 });
 

@@ -17,6 +17,18 @@
             </div>
 
             <div class="col-lg-6">
+                <div class="details_item">
+                    <h4>User Information</h4>
+                    <ul class="list">
+                        <li><a><span>Name</span> : <%= customer_info.first_name %> &nbsp;
+                                <%= customer_info.last_name %></a></li>
+                        <li><a><span>Phone Number</span> : <%= customer_info.phone_number %></a></li>
+                        <li><a><span>Email</span> : <%= customer_info.email %></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
                 <%if (orderHistoryObj.delivery_info.delivery_charge) {%>
                 <div class="details_item">
                     <h4>Delivery Address</h4>
@@ -28,18 +40,6 @@
                     </ul>
                 </div>
                 <% } %>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="details_item">
-                    <h4>User Information</h4>
-                    <ul class="list">
-                        <li><a><span>Name</span> : <%= customer_info.first_name %> &nbsp;
-                                <%= customer_info.last_name %></a></li>
-                        <li><a><span>Phone Number</span> : <%= customer_info.phone_number %></a></li>
-                        <li><a><span>Email</span> : <%= customer_info.email %></a></li>
-                    </ul>
-                </div>
             </div>
         </div>
         <div class="order_details_table">

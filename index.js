@@ -48,7 +48,7 @@ Middleware to save the sessions in the database.
 customer and session tables will be updated if a new session get created
 */
 app.use(async (req, res, next) => {
-    await auth.saveSession(req,res);
+    await auth.saveSession(req, res);
     next();
 });
 

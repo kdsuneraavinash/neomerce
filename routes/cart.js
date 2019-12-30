@@ -2,6 +2,7 @@ const router = require('express').Router();
 const helper = require('../utils/helper');
 const Cart = require('./../models/cart');
 
+// TODO: Validate cart item add data
 router.post('/add/', async (req, res) => {
     const result = await Cart.addItemToCart(
         req.body.variant,
@@ -15,6 +16,7 @@ router.post('/add/', async (req, res) => {
     }
 });
 
+// TODO: Validate order id
 router.post('/edit/:id', async (req, res) => {
     req.body.quantity -= 0;
     if (Number.isNaN(req.body.quantity)) {
@@ -32,11 +34,13 @@ router.post('/edit/:id', async (req, res) => {
     }
 });
 
+// TODO: Validate order id
 router.post('/remove/:id', async (req, res) => {
     await Cart.removeItemFromCart(req.sessionID, req.params.id);
     res.redirect('/cart');
 });
 
+// TODO: Validate order id
 router.post('/transfer/:id', async (req, res) => {
     const result = await Cart.transferCartItem(
         req.sessionID, req.params.id,
