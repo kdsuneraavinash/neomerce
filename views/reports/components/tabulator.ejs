@@ -1,0 +1,37 @@
+<div class="card dont-print">
+    <div class="card-header bg-dark text-white">
+        <div class="float-left"> <%= title %></div>
+        <div class="float-right input-group-sm form-inline">
+            <input class="form-control" id="input-<%=id%>" type="text" placeholder="Search <%= filterTitle %>">
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-striped table-sm" id="<%=id%>"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        var table = new Tabulator("#<%=id%>", {
+            data: JSON.parse(`<%- JSON.stringify(data) %>`),
+            layout: "fitColumns",
+            responsiveLayout: true,
+            tooltips: true,
+            pagination: "local",
+            paginationSize: "<%=paginationSize%>" - 0,
+            movableColumns: true,
+            resizableRows: true,
+            columns: JSON.parse(`<%- JSON.stringify(columns) %>`),
+        });
+
+        window.addEventListener('resize', function () {
+            table.redraw();
+        });
+
+        $("#input-<%=id%>").on("input", function () {
+            table.setFilter("<%=filter%>", "like", $("#input-<%=id%>").val());
+        });
+
+
+    })
+</script>
