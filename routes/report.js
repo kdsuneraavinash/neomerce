@@ -1,19 +1,22 @@
 const router = require('express').Router();
 const Report = require('../models/report');
 
-// const adminAuthChecker = async (req, res, next) => {
-//     if (req.session.user && req.session.cookie) {
-//         const { permission, name } = await Report.reportViewPermissionChecker(req.sessionID);
-//         if (permission) {
-//             req.name = name;
-//             next();
-//             return;
-//         }
-//     }
-//     res.redirect('/');
-// };
+const adminAuthChecker = async (req, res, next) => {
+    req.name = 'Guest';
+    if (req.session.user && req.session.cookie) {
+        const { permission, name } = await Report.reportViewPermissionChecker(req.sessionID);
+        if (permission) {
+            req.name = name;
+            next();
+            return;
+        }
+    }
+    // TODO: Enable Auth Checker
+    // res.redirect('/');
+    next();
+};
 
-// router.use(adminAuthChecker);
+router.use(adminAuthChecker);
 
 router.get('/example/', async (req, res) => {
     res.render('reports/example', { name: req.name });
@@ -47,23 +50,6 @@ router.get('/product/', async (req, res) => {
             orderedItems[index].value += orderedItems[index - 1].value;
         });
 
-        // Fill missing months
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'];
-        const monthDataMonths = monthlyData.map((v) => v.month - 0);
-        for (let month = 1; month <= 12; month += 1) {
-            if (monthDataMonths.indexOf(month) === -1) {
-                monthlyData.push({ month, visits: 0, orders: 0 });
-            }
-        }
-        monthlyData.sort((a, b) => a.month - b.month);
-        monthlyData.forEach((v) => {
-            // eslint-disable-next-line no-param-reassign
-            v.index = v.month;
-            // eslint-disable-next-line no-param-reassign
-            v.month = monthNames[v.month - 1];
-        });
-
         res.render('reports/product_report', {
             visitedItems,
             orderedItems,
@@ -78,12 +64,13 @@ router.get('/product/', async (req, res) => {
 });
 
 router.get('/category/', async (req, res) => {
-    const { categoryData, categoryParents } = await Report.getCategoryTreeReport();
+    const { categoryData, categoryParents, tree } = await Report.getCategoryTreeReport();
     const topCategoryData = await Report.getTopCategoryLeafNodes();
     res.render('reports/category_report', {
         topCategoryData,
         categoryData,
         categoryParents,
+        tree,
         name: req.name,
     });
 });

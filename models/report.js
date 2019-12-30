@@ -1,5 +1,93 @@
 const connection = require('../config/db');
 
+const createCategoryDataset = (categoryData, categoryParents) => {
+    for (let i = 0; i < categoryData.length; i += 1) {
+        categoryParents[i].push(categoryData[i]);
+    }
+
+    function traverse(parent) {
+        const nodes = categoryParents
+            .filter((v) => v[1] === parent.id)
+            .map((v) => ({
+                id: v[0],
+                value: v[4][2],
+                name: v[4][0],
+                fixed: parent.id === null,
+            }));
+        // eslint-disable-next-line no-param-reassign
+        parent.children = nodes;
+        nodes.forEach(((node) => {
+            traverse(node);
+        }));
+        return nodes;
+    }
+
+    const topNodes = traverse({ id: null });
+
+    for (let i = 0; i < categoryData.length; i += 1) {
+        categoryParents[i].pop();
+    }
+
+    return topNodes;
+};
+
+const orderCategoryNodes = (rows) => {
+    let categoryData = rows.map((value) => [value.title, value.quantity - 0, value.income]);
+    let categoryParents = rows.map((value) => [value.category_id, value.parent_id]);
+
+    // Algorithm to reorganize tree nodes
+    const orderedCategoryData = [];
+    const orderedCategoryParents = [];
+
+    for (let i = 0; i < categoryData.length; i += 1) {
+        categoryParents[i].push(i);
+    }
+
+    function preOrderHelper(root, level) {
+        // eslint-disable-next-line no-param-reassign
+        level += 1;
+        if (root !== null) {
+            root.push(level);
+            orderedCategoryData.push(root);
+            // eslint-disable-next-line no-param-reassign
+            [root] = root;
+        }
+        categoryParents.filter((v) => v[1] === root).forEach((v) => preOrderHelper(v, level));
+    }
+
+    preOrderHelper(null, -1);
+
+    orderedCategoryData.forEach((parent) => {
+        orderedCategoryParents.push(categoryData[parent[2]]);
+    });
+
+    categoryParents = orderedCategoryData;
+    categoryData = orderedCategoryParents;
+
+    return { categoryData, categoryParents };
+};
+
+const fillMissingMonths = (monthlyData) => {
+    // Fill missing months
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthDataMonths = monthlyData.map((v) => v.month - 0);
+    for (let month = 1; month <= 12; month += 1) {
+        if (monthDataMonths.indexOf(month) === -1) {
+            monthlyData.push({ month, visits: 0, orders: 0 });
+        }
+    }
+    monthlyData.sort((a, b) => a.month - b.month);
+    monthlyData.forEach((v) => {
+        // eslint-disable-next-line no-param-reassign
+        v.index = v.month;
+        // eslint-disable-next-line no-param-reassign
+        v.month = monthNames[v.month - 1];
+    });
+
+    return monthlyData;
+};
+
 
 const dateDataField = (a, b) => ({ date: new Date(a), value: b - 0 });
 
@@ -53,9 +141,9 @@ const getCategoryTreeReport = async () => {
                         join orderitem using(variant_id)
                     group by category_id`;
     const out = await connection.query(query);
-    const categoryData = out.rows.map((value) => [value.title, value.quantity, value.income]);
-    const categoryParents = out.rows.map((value) => [value.category_id, value.parent_id]);
-    return { categoryData, categoryParents };
+    const { categoryData, categoryParents } = orderCategoryNodes(out.rows);
+    const tree = createCategoryDataset(categoryData, categoryParents);
+    return { categoryData, categoryParents, tree };
 };
 
 
@@ -108,7 +196,7 @@ const getProductMonthlyOrdersReport = async (productId) => {
                     group by month
                 ) as orders_month using(month)`;
     const out = await connection.query(query, [productId]);
-    return out.rows;
+    return fillMissingMonths(out.rows);
 };
 
 const getProductData = async (productId) => {

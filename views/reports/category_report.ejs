@@ -16,7 +16,6 @@ topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' ta
             rawhtml: [false, false, false], 
             data: categoryData,
             parents: categoryParents
-                
         }) %>
     </div>
     <div class="col-6">
@@ -29,7 +28,7 @@ topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' ta
                 { title: "Category Name", field: "title" },
                 { title: "Quantity", field: "quantity", align: "right", width: 150 },
                 { title: "Income (LKR)", field: "income", align: "right", width: 150, 
-                    precision: 2, formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                    formatter:"money", formatterParams:{thousand:" ", precision: 2} },
                 { title: "Page", field: "category_id", formatter:"link", 
                     formatterParams: {label: "Show",urlPrefix: "/category?category=",}, width: 100 },
             ],
@@ -59,6 +58,15 @@ topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' ta
     </div>
 </div>
 
-
+<div class="row">
+    <div class="col-12">
+        <%- include('components/network_chart', {
+            title: 'Category Sales Chart (With Income - LKR)',
+            id: 'network_chart',
+            height: '800px',
+            data:  tree
+        }) %>
+    </div>
+</div>
 
 <%- include('common/footer') %>

@@ -1,0 +1,50 @@
+<div class="card dont-print">
+    <div class="card-body">
+        <div id="<%= id %>"></div>
+    </div>
+</div>
+
+<script src="https://www.amcharts.com/lib/4/plugins/forceDirected.js"></script>
+
+<script>
+    document.getElementById('<%= id %>').style.width = '100%';
+    document.getElementById('<%= id %>').style.height = '<%= height %>';
+
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_material);
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        var chart = am4core.create("<%= id %>", am4plugins_forceDirected.ForceDirectedTree);
+        var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries())
+        chart.hiddenState.properties.opacity = 0;
+
+        chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+
+        chart.exporting.menu = new am4core.ExportMenu();
+        chart.exporting.title = "<%= title %>";
+        chart.exporting.filePrefix = "<%= title %>";
+        var title = chart.titles.create();
+        title.text = "<%= title %>";
+        title.fontSize = 20;
+        title.marginBottom = 30;
+
+        networkSeries.dataFields.value = "value";
+        networkSeries.dataFields.name = "name";
+        networkSeries.dataFields.children = "children";
+        networkSeries.nodes.template.tooltipText = "{name}:{value}";
+        networkSeries.nodes.template.fillOpacity = 1;
+        networkSeries.manyBodyStrength = -20;
+        networkSeries.links.template.strength = 0.8;
+        networkSeries.minRadius = am4core.percent(2);
+        networkSeries.dataFields.fixed = "fixed";
+        networkSeries.minRadius = 40;
+        networkSeries.fontSize = 8;
+
+        networkSeries.nodes.template.label.text = "{name}"
+        networkSeries.fontSize = 10;
+
+    }); // end am4core.ready()
+</script>
