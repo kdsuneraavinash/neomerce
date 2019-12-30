@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const Order = require('../models/order');
 const helper = require('../utils/helper');
+const validator = require('../utils/validation')
 
 
 /* GET endpoint for user registration. Render the user registration page upon request */
@@ -11,17 +12,17 @@ router.get('/register', async (req, res) => {
 });
 
 /* POST endpoint for user registration. */
-router.post('/register', async (req, res) => {
-    // TODO: validation here
+router.post('/register',validator.validateRegistration,async (req, res) => {
+
     const {
         body: {
-            email, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,
+            email, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,telephoneNumber
         },
     } = req;
     const encryptedPassword = bcrypt.hashSync(password, 10);
     try {
         const success = await User.createUser(req.sessionID, email, firstName, lastName,
-            addressLine1, addressLine2, city, postalCode, encryptedPassword);
+            addressLine1, addressLine2, city, postalCode, encryptedPassword,telephoneNumber);
         if (success) {
             req.session.user = true;
             res.redirect('/user/profile');
@@ -47,7 +48,7 @@ router.get('/login', (req, res) => {
 });
 
 
-router.post('/login', async (req, res) => {
+router.post('/login',validator.validateLogin,async (req, res) => {
     const { body: { email, password } } = req;
     try {
         const passwordValidated = await User.validatePassword(email, password);
