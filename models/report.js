@@ -163,10 +163,18 @@ const reportViewPermissionChecker = async (sessionID) => {
     }
 };
 
-const getProductnames = async () => {
-    const query = `SELECT product.title,SUM(orderitem.quantity) FROM (variant INNER JOIN orderitem USING (variant_id)) INNER JOIN product USING (product_id) GROUP BY product.title;';
-    const out = await connection.query(query);
-    return out.rows;
+const getProductnames = async (date1) => {
+        const query = `select product.product_id, 
+                            product.title, 
+                            sum(orderitem.quantity) as quantity, 
+                            sum(variant.selling_price*orderitem.quantity) as income
+                        from product 
+                            join variant using(product_id) 
+                            join orderitem using(variant_id)
+                        where orderitem.order_date>=$s1
+                        group by product.product_id`;
+        const out = await connection.query(query, [date1]);
+        return out.rows;
 };
 
 module.exports = {
