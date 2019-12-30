@@ -664,7 +664,7 @@ BEGIN
     if (var_existing_email is null) then
         INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
         INSERT INTO accountcredential values (customer_id, $10); 
-        UPDATE customer SET account_type = 'user';
+        UPDATE customer SET account_type = 'user' WHERE customer_id = customer_id;
     else
         RAISE EXCEPTION 'Email % is already registered', $2;
     end if;

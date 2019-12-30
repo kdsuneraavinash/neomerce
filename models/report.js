@@ -148,6 +148,21 @@ const getPopularProductsBetweenDates = async (date1, date2) => {
     return out.rows;
 };
 
+const reportViewPermissionChecker = async (sessionID) => {
+    try {
+        const queryString = `SELECT first_name || ' ' || last_name as name, account_type='admin' as permission 
+                                from customer 
+                                    join session using(customer_id)
+                                    join userinformation using(customer_id)
+                                where session_id=$1`;
+        const values = [sessionID];
+        const result = await connection.query(queryString, values);
+        return result.rows[0] ? result.rows[0] : { permission: false, name: 'Guest' };
+    } catch (e) {
+        return { permission: false, name: 'Guest' };
+    }
+};
+
 module.exports = {
     getProductCounts,
     getCategoryTreeReport,
@@ -158,4 +173,5 @@ module.exports = {
     getProducts,
     getPopularProductsBetweenDates,
     getProductMonthlyOrdersReport,
+    reportViewPermissionChecker,
 };

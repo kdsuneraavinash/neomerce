@@ -1,20 +1,34 @@
 const router = require('express').Router();
 const Report = require('../models/report');
 
+const adminAuthChecker = async (req, res, next) => {
+    if (req.session.user && req.session.cookie) {
+        const { permission, name } = await Report.reportViewPermissionChecker(req.sessionID);
+        if (permission) {
+            req.name = name;
+            next();
+            return;
+        }
+    }
+    res.redirect('/');
+};
+
+router.use(adminAuthChecker);
+
 router.get('/example/', async (req, res) => {
-    res.render('reports/example');
+    res.render('reports/example', { name: req.name });
 });
 
 router.get('/sales/', async (req, res) => {
     const products = await Report.getProductCounts();
-    res.render('reports/sales_report', { products });
+    res.render('reports/sales_report', { products, name: req.name });
 });
 
 router.get('/product/', async (req, res) => {
     const productId = req.query.id;
     if (!productId) {
         const products = await Report.getProducts();
-        res.render('reports/product_report_overview', { products, error: req.query.error });
+        res.render('reports/product_report_overview', { products, error: req.query.error, name: req.name });
         return;
     }
 
@@ -56,6 +70,7 @@ router.get('/product/', async (req, res) => {
             productData,
             variantData,
             monthlyData,
+            name: req.name,
         });
     } catch (error) {
         res.redirect(`/report/product?error=${error}`);
@@ -69,6 +84,7 @@ router.get('/category/', async (req, res) => {
         topCategoryData,
         categoryData,
         categoryParents,
+        name: req.name,
     });
 });
 
@@ -77,7 +93,7 @@ router.get('/time/', async (req, res) => {
     try {
         const timerange = req.query.daterange;
         if (timerange == null) {
-            res.render('reports/time_report', { error: req.query.error, timerange: null });
+            res.render('reports/time_report', { error: req.query.error, timerange: null, name: req.name });
             return;
         }
         const [time1str, time2str] = timerange.split('-');
@@ -92,6 +108,7 @@ router.get('/time/', async (req, res) => {
             products,
             error: req.query.error,
             timerange,
+            name: req.name,
         });
     } catch (error) {
         res.redirect(`/report/time?error=${error}`);
@@ -100,7 +117,7 @@ router.get('/time/', async (req, res) => {
 
 
 router.get('/order/', async (req, res) => {
-    res.render('reports/order_report');
+    res.render('reports/order_report', { name: req.name });
 });
 
 module.exports = router;

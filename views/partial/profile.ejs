@@ -82,32 +82,34 @@
 
                         <%# Details %>
                         <strong><%= userInfo.email %></strong><br />
-                        <p><%= userInfo.address %></p>
-                        <a class="btn btn-success btn-block text-white mt-4" target="_blank" href="/report/sales">Admin
+                        <p class="mb-2"><%= userInfo.address %></p>
+                        <% if (userInfo.account_type === 'admin'){%>
+                        <a class="btn btn-success btn-block text-white mt-2" target="_blank" href="/report/sales">Admin
                             Panel</a>
+                        <%}%>
                         <a class="btn btn-danger btn-block text-white mt-2" href="/user/logout">Logout</a>
                         <div class="br"></div>
                     </aside>
                     <%if (recentProducts.length) { %>
-                    <aside class="single_sidebar_widget popular_post_widget">
-                        <h3 class="widget_title">Recent Items</h3>
-                        <%for (item of recentProducts) {%>
-                        <div class="mb-20">
-                            <div class="single-related-product d-flex">
-                                <a href="#"><img style="width: 50px; height: 70px; object-fit: contain;"
-                                        src="<%= item.image_url %>" alt=""></a>
-                                <div class="desc">
-                                    <a href="/item/show/<%= item.product_id %>"
-                                        class="title"><%= item.title.substring(0, 25) + "..." %></a>
-                                    <div class="price">
-                                        <h6>LKR <%= item.min_selling_price %></h6>
+                        <aside class="single_sidebar_widget popular_post_widget">
+                            <h3 class="widget_title">Recent Items</h3>
+                            <%for (item of recentProducts) {%>
+                            <div class="mb-20">
+                                <div class="single-related-product d-flex">
+                                    <a href="#"><img style="width: 50px; height: 70px; object-fit: contain;"
+                                            src="<%= item.image_url %>" alt=""></a>
+                                    <div class="desc">
+                                        <a href="/item/show/<%= item.product_id %>"
+                                            class="title"><%= item.title.substring(0, 25) + "..." %></a>
+                                        <div class="price">
+                                            <h6>LKR <%= item.min_selling_price %></h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <% } %>
+                        </aside>
                         <% } %>
-                    </aside>
-                    <% } %>
                 </div>
             </div>
         </div>
