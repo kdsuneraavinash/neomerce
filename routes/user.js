@@ -16,13 +16,13 @@ router.post('/register',validator.validateRegistration,async (req, res) => {
 
     const {
         body: {
-            email, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,
+            email, password, firstName, lastName, addressLine1, addressLine2, city, postalCode,telephoneNumber
         },
     } = req;
     const encryptedPassword = bcrypt.hashSync(password, 10);
     try {
         const success = await User.createUser(req.sessionID, email, firstName, lastName,
-            addressLine1, addressLine2, city, postalCode, encryptedPassword);
+            addressLine1, addressLine2, city, postalCode, encryptedPassword,telephoneNumber);
         if (success) {
             req.session.user = true;
             res.redirect('/user/profile');

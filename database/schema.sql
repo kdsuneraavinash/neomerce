@@ -654,7 +654,7 @@ $$;
 --   addr_line2, city, post_code, dob, last_login)
 CREATE OR REPLACE PROCEDURE createUser(SESSION_UUID, VARCHAR(255), VARCHAR(255), VARCHAR(255),
 										VARCHAR(255), VARCHAR(255), VARCHAR(127), VARCHAR(31),
-									   TIMESTAMP, CHAR(60))
+									   TIMESTAMP, CHAR(60),VALID_PHONE)
 LANGUAGE plpgsql    
 AS $$
 DECLARE
@@ -667,7 +667,8 @@ BEGIN
     end if;
     if (var_existing_email is null) then
         INSERT INTO userinformation values (var_customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
-        INSERT INTO accountcredential values (var_customer_id, $10); 
+        INSERT INTO accountcredential values (var_customer_id, $10);
+        INSERT INTO telephonenumber values (var_customer_id,$11); 
         UPDATE customer SET account_type = 'user' WHERE customer_id = var_customer_id;
     else
         RAISE EXCEPTION 'Email % is already registered', $2;
