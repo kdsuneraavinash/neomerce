@@ -45,7 +45,6 @@ const validateRegistration = async (req, res, next) => {
 };
 
 const validateLogin = async (req, res, next) => {
-    console.log(req.body);
     const { body: { email, password } } = req;
     const schema = Joi.object({
         email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
