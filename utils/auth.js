@@ -23,7 +23,4 @@ const sessionChecker = (req, res, next) => {
 };
 
 
-
-
-
-module.exports = { saveSession, sessionChecker};
+module.exports = { saveSession, sessionChecker };

@@ -26,14 +26,14 @@ const cityExists = async (city) => {
 };
 
 
-const getAllCities = async ()=> {
-    const queryString = 'SELECT city from city'
-    const result = await connection.query(queryString)
-    let cities=[];
-    result.rows.forEach(element => {
-        cities.push(element.city)
+const getAllCities = async () => {
+    const queryString = 'SELECT city from city';
+    const result = await connection.query(queryString);
+    const cities = [];
+    result.rows.forEach((element) => {
+        cities.push(element.city);
     });
-    return cities
-}
+    return cities;
+};
 
-module.exports = { getCities, cityExists ,getAllCities};
+module.exports = { getCities, cityExists, getAllCities };
