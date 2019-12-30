@@ -15,13 +15,9 @@ const getProductCounts = async () => {
                     group by product.product_id
                     order by quantity desc limit 10`;
     const out = await connection.query(query);
-    const products = out.rows.map(
-        (value, index) => [index + 1, value.title, value.quantity, value.income, value.product_id],
-    );
-    const productVsQuantity = out.rows.map(
-        (value, index) => ({ label: `#${index + 1}`, value: value.quantity - 0 }),
-    );
-    return { products, productVsQuantity };
+    // eslint-disable-next-line no-param-reassign
+    out.rows.forEach((v, i) => { v.index = i + 1; });
+    return out.rows;
 };
 
 
@@ -43,18 +39,7 @@ const getTopCategoryLeafNodes = async () => {
                     order by quantity desc
                     limit 10;`;
     const out = await connection.query(query);
-
-    const topCategoryData = out.rows.map(
-        (value) => [value.title, value.category_id, value.quantity, value.income],
-    );
-    const topCategoryVsQuantity = out.rows.map(
-        (value) => ({ label: value.title, value: value.quantity - 0 }),
-    );
-    const topCategoryVsIncome = out.rows.map(
-        (value) => ({ label: value.title, value: value.income - 0 }),
-    );
-
-    return { topCategoryData, topCategoryVsQuantity, topCategoryVsIncome };
+    return out.rows;
 };
 
 
@@ -162,13 +147,9 @@ const getPopularProductsBetweenDates = async (date1, date2) => {
                     order by quantity desc limit 10`;
 
     const out = await connection.query(query, [date1, date2]);
-    const products = out.rows.map(
-        (value, index) => [index + 1, value.title, value.quantity, value.income, value.product_id],
-    );
-    const productVsQuantity = out.rows.map(
-        (value, index) => ({ label: `#${index + 1}`, value: value.quantity - 0 }),
-    );
-    return { products, productVsQuantity };
+    // eslint-disable-next-line no-param-reassign
+    out.rows.forEach((v, i) => { v.index = i + 1; });
+    return out.rows;
 };
 
 module.exports = {

@@ -20,15 +20,22 @@ topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' ta
         }) %>
     </div>
     <div class="col-6">
-        <%- include('components/table', {
-            title: 'Top Category Sales',
-            rows: topCategoryData.length,
-            columns: 4,
-            headers: ['Category Name', 'Page', 'Quantity', 'Income (LKR)',],
-            numeric: [false, false, true, true],
-            rawhtml: [false, true, false, false], 
-            print: [true, false, true, true], 
-            data: topCategoryData
+        <%- include('components/tabulator', {
+            title: 'Top 10 Category Sales',
+            id: 'top_10_category_tbl',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "Category Name", field: "title" },
+                { title: "Quantity", field: "quantity", align: "right", width: 150 },
+                { title: "Income (LKR)", field: "income", align: "right", width: 150, 
+                    precision: 2, formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                { title: "Page", field: "category_id", formatter:"link", 
+                    formatterParams: {label: "Show",urlPrefix: "/category?category=",}, width: 100 },
+            ],
+            filter: "title",
+            filterTitle: "Category Name",
+            data: topCategoryData,
         }) %>
     </div>
 </div>
@@ -39,7 +46,7 @@ topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' ta
             title: 'Category Sales Chart (With Quantity)',
             id: 'chart_category_quantity',
             height: '600px',
-            data:  topCategoryVsQuantity
+            data:  topCategoryData.map((v) => ({label: v.title, value: v.quantity}))
         }) %>
     </div>
     <div class="col-6">
@@ -47,7 +54,7 @@ topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' ta
             title: 'Category Sales Chart (With Income - LKR)',
             id: 'chart_category_income',
             height: '600px',
-            data:  topCategoryVsIncome
+            data:  topCategoryData.map((v) => ({label: v.title, value: v.income}))
         }) %>
     </div>
 </div>

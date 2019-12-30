@@ -1,32 +1,12 @@
 <%- include('common/header', {title: 'Product Report'}) %>
 
 <%
+first_visit = ((visitedItems.length) ? visitedItems[0].date: productData.added_date).toISOString().split('T')[0] ;
+first_order = ((orderedItems.length) ? visitedItems[0].date: productData.added_date).toISOString().split('T')[0];
 last_order = orderedItems[orderedItems.length-1];
 last_visit = visitedItems[visitedItems.length-1];
-
-let monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"];
-for (month of Array(13).keys()) {
-    if (month == 0) continue;
-    if (!monthlyData.find((v) => v.month == month)) {
-        monthlyData.push({ month, visits: 0, orders: 0 })
-    }
-}
-monthlyData.sort((a, b) => a.month - b.month);
-monthlyData.forEach((v) => {
-    v.month = monthNames[v.month - 1];
-})
+if (!last_visit) last_visit = ({date: 'Not applicable', value: 0});
+if (!last_order) last_order = ({date: 'Not applicable', value: 0});
 %>
 
 <h2 class="text-center"><%= productData.title %></h2>
@@ -45,7 +25,7 @@ monthlyData.forEach((v) => {
     <div class="col-lg-5">
         <div class="card">
             <div class="card-header bg-dark text-white">Product Details</div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <ul class="list-group">
                     <li class="list-group-item"><span class="font-weight-bold">Brand: </span>
                         <%=(productData.brand) ? productData.brand : 'Not branded'%>
@@ -74,7 +54,6 @@ monthlyData.forEach((v) => {
 </div>
 
 <div class="row">
-    <%if (last_visit){%>
     <div class="col">
         <%- include('components/callout', {
                 title: 'Product Page Visits',
@@ -84,8 +63,6 @@ monthlyData.forEach((v) => {
                 helpertext: 'Last Visit on: ' + last_visit.date ,
             }) %>
     </div>
-    <%}%>
-        <%if (last_order){%>
     <div class="col">
         <%- include('components/callout', {
                 title: 'Total Product Sales',
@@ -95,7 +72,6 @@ monthlyData.forEach((v) => {
                 helpertext: 'Last Order on: ' + last_order.date,
             }) %>
     </div>
-    <%}%>
     <div class="col">
         <%- include('components/callout', {
             title: 'Remaining Stocks',
@@ -104,48 +80,27 @@ monthlyData.forEach((v) => {
             percentage: '100',
             helpertext: 'Total variants in  stock for the product',
         }) %>
-</div>
+    </div>
 </div>
 
 <div class="row">
     <div class="col-lg-6">
-        <% if (visitedItems.length){%>
         <%- include('components/line_chart', {
-            title: 'Visited Users from ' + visitedItems[0].date.toISOString().split('T')[0],
+            title: 'Visited Users from ' + first_visit,
             id: 'visited_users_chart', 
             height: '500px',
             color: '#3F51B5',
             data:  visitedItems,
         }) %>
-        <%}else{%>
-        <%- include('components/line_chart', {
-                title: 'Visited Users'  ,
-                id: 'placeholder1', 
-                height: '500px',
-                color: '',
-                data:  [],
-            }) %>
-        <%}%>
     </div>
-
     <div class="col-lg-6">
-        <% if (orderedItems.length){%>
         <%- include('components/line_chart', {
-            title: 'Orders from ' + orderedItems[0].date.toISOString().split('T')[0]  ,
+            title: 'Orders from ' + first_order,
             id: 'prd_sales_chart', 
             height: '500px',
             color: '#009688',
             data:  orderedItems,
         }) %>
-        <%}else{%>
-        <%- include('components/line_chart', {
-                title: 'Orders'  ,
-                id: 'placeholder2', 
-                height: '500px',
-                color: '',
-                data:  [],
-            }) %>
-        <%}%>
     </div>
 </div>
 
@@ -159,14 +114,20 @@ monthlyData.forEach((v) => {
         }) %>
     </div>
     <div class="col-lg-4">
-        <%- include('components/table', {
+        <%- include('components/tabulator', {
             title: 'Monthly Orders vs Visits',
-            rows: 12,
-            numeric: [false, true, true],
-            columns: 3,
-            headers: ['Month', 'Visits','Orders'],
-            rawhtml: [false, false, false],
-            data: monthlyData.map((v) => [v.month, v.visits, v.orders])
+            id: 'mon_ord_vs_vis',
+            pagination: "local",
+            paginationSize: 12,
+            columns: [
+                { title: "#", field: "index", width: 50},
+                { title: "Month", field: "month" },
+                { title: "Visits", field: "visits", align: "right", width: 150 },
+                { title: "Orders", field: "orders", align: "right", width: 150 }
+            ],
+            filter: "month",
+            filterTitle: "Month Name",
+            data: monthlyData,
         }) %>
     </div>
 </div>

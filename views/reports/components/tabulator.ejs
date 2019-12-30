@@ -6,7 +6,7 @@
         </div>
     </div>
     <div class="card-body p-0">
-        <div class="table-striped table-sm" id="<%=id%>"></div>
+        <div class="table-striped" id="<%=id%>"></div>
     </div>
 </div>
 
@@ -17,7 +17,7 @@
             layout: "fitColumns",
             responsiveLayout: true,
             tooltips: true,
-            pagination: "local",
+            pagination: "<%=pagination%>",
             paginationSize: "<%=paginationSize%>" - 0,
             movableColumns: true,
             resizableRows: true,

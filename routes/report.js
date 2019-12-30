@@ -6,11 +6,8 @@ router.get('/example/', async (req, res) => {
 });
 
 router.get('/sales/', async (req, res) => {
-    const { products, productVsQuantity } = await Report.getProductCounts();
-    res.render('reports/sales_report', {
-        products,
-        productVsQuantity,
-    });
+    const products = await Report.getProductCounts();
+    res.render('reports/sales_report', { products });
 });
 
 router.get('/product/', async (req, res) => {
@@ -36,6 +33,23 @@ router.get('/product/', async (req, res) => {
             orderedItems[index].value += orderedItems[index - 1].value;
         });
 
+        // Fill missing months
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthDataMonths = monthlyData.map((v) => v.month - 0);
+        for (let month = 1; month <= 12; month += 1) {
+            if (monthDataMonths.indexOf(month) === -1) {
+                monthlyData.push({ month, visits: 0, orders: 0 });
+            }
+        }
+        monthlyData.sort((a, b) => a.month - b.month);
+        monthlyData.forEach((v) => {
+            // eslint-disable-next-line no-param-reassign
+            v.index = v.month;
+            // eslint-disable-next-line no-param-reassign
+            v.month = monthNames[v.month - 1];
+        });
+
         res.render('reports/product_report', {
             visitedItems,
             orderedItems,
@@ -50,15 +64,9 @@ router.get('/product/', async (req, res) => {
 
 router.get('/category/', async (req, res) => {
     const { categoryData, categoryParents } = await Report.getCategoryTreeReport();
-    const {
-        topCategoryData,
-        topCategoryVsQuantity,
-        topCategoryVsIncome,
-    } = await Report.getTopCategoryLeafNodes();
+    const topCategoryData = await Report.getTopCategoryLeafNodes();
     res.render('reports/category_report', {
         topCategoryData,
-        topCategoryVsQuantity,
-        topCategoryVsIncome,
         categoryData,
         categoryParents,
     });
@@ -78,11 +86,10 @@ router.get('/time/', async (req, res) => {
         }
         const time1 = new Date(time1str);
         const time2 = new Date(time2str);
-        const { products, productVsQuantity } = await Report.getPopularProductsBetweenDates(time1,
+        const products = await Report.getPopularProductsBetweenDates(time1,
             time2);
         res.render('reports/time_report', {
             products,
-            productVsQuantity,
             error: req.query.error,
             timerange,
         });
