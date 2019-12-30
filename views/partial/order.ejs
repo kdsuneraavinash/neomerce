@@ -4,39 +4,40 @@
         <h3 class="title_confirmation">Thank you. Your order has been received.</h3>
         <% } %>
         <div class="row order_d_inner">
-            <div class="col-lg-4">
+            <div class="col-lg-12">
                 <div class="details_item">
                     <h4>Order Info</h4>
                     <ul class="list">
-                        <li><a href="#"><span>Order id</span> : <%= order_info.order_id %></a></li>
-                        <li><a href="#"><span>Date</span> : <%= order_info.order_date %></a></li>
-                        <li><a href="#"><span>Payment Method</span> : <%= order_info.payment_method %></a></li>
-                        <li><a href="#"><span>Delivery method</span> : <%= order_info.dispatch_method %></a></li>
+                        <li><a><span>Order id</span> : <%= order_info.order_id %></a></li>
+                        <li><a><span>Date</span> : <%= order_info.order_date %></a></li>
+                        <li><a><span>Payment Method</span> : <%= order_info.payment_method %></a></li>
+                        <li><a><span>Delivery method</span> : <%= order_info.dispatch_method %></a></li>
                     </ul>
                 </div>
             </div>
-            
-            <div class="col-lg-4">
-                    <%if (orderHistoryObj.delivery_info.delivery_charge) {%>
+
+            <div class="col-lg-6">
+                <%if (orderHistoryObj.delivery_info.delivery_charge) {%>
                 <div class="details_item">
                     <h4>Delivery Address</h4>
                     <ul class="list">
-                        <li><a href="#"><span>Address Line 1</span> : <%= delivery_info.addr_line1 %> </a></li>
-                        <li><a href="#"><span>Address Line 2</span> : <%= delivery_info.addr_line2 %> </a></li>
-                        <li><a href="#"><span>City</span> : <%= delivery_info.city %> </a></li>
-                        <li><a href="#"><span>Postal code </span> : <%= delivery_info.postcode %> </a></li>
+                        <li><a><span>Address Line 1</span> : <%= delivery_info.addr_line1 %> </a></li>
+                        <li><a><span>Address Line 2</span> : <%= delivery_info.addr_line2 %> </a></li>
+                        <li><a><span>City</span> : <%= delivery_info.city %> </a></li>
+                        <li><a><span>Postal code </span> : <%= delivery_info.postcode %> </a></li>
                     </ul>
                 </div>
                 <% } %>
             </div>
-            
-            <div class="col-lg-4">
+
+            <div class="col-lg-6">
                 <div class="details_item">
                     <h4>User Information</h4>
                     <ul class="list">
-                        <li><a href="#"><span>Name</span> : <%= customer_info.first_name %> &nbsp; <%= customer_info.last_name %></a></li>
-                        <li><a href="#"><span>Phone Number</span> : <%= customer_info.phone_number %></a></li>
-                        <li><a href="#"><span>Email</span> : <%= customer_info.email %></a></li>
+                        <li><a><span>Name</span> : <%= customer_info.first_name %> &nbsp;
+                                <%= customer_info.last_name %></a></li>
+                        <li><a><span>Phone Number</span> : <%= customer_info.phone_number %></a></li>
+                        <li><a><span>Email</span> : <%= customer_info.email %></a></li>
                     </ul>
                 </div>
             </div>
@@ -57,7 +58,8 @@
                         <% for (const item of items) {%>
                         <tr>
                             <td>
-                                <p><%= item.title%></p>
+                                <p data-toggle="tooltip" data-placement="left" title="<%= item.title %>">
+                                    <%= item.title%></p>
                             </td>
                             <td>
                                 <h5>x <%= item.quantity%></h5>
@@ -76,7 +78,8 @@
                                 <h5></h5>
                             </td>
                             <td>
-                                <p><%= order_info.payment_amount - (delivery_info.delivery_charge ? delivery_info.delivery_charge : 0) %></p>
+                                <p><%= order_info.payment_amount - (delivery_info.delivery_charge ? delivery_info.delivery_charge : 0) %>
+                                </p>
                             </td>
                         </tr>
                         <tr>
@@ -104,6 +107,14 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <small>Order report generated on <%= new Date() %></small>
+        </div>
+
+        <div class="mt-4 float-right dont-print">
+            <button class="btn btn-warning px-4" onclick="window.print()">Print</button>
         </div>
     </div>
 </section>

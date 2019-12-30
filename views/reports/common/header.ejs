@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/img/fav.png">
+    <meta name="author" content="teampulse">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta charset="UTF-8">
+
+    <!-- CoreUI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@coreui/coreui@3.0.0-beta.1/dist/css/coreui.min.css"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/@coreui/icons@1.0.0-beta.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-loading-bar.min.css">
+    <link rel="stylesheet" href="/css/material.css">
+    <link href="https://unpkg.com/tabulator-tables@4.5.2/dist/css/tabulator.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@4.5.2/dist/css/bootstrap/tabulator_bootstrap4.min.css"
+        rel="stylesheet">
+    <title><%= title %></title>
+    <%- include('styles', {title}) %>
+</head>
+
+<body class="c-app">
+    <!--These need to load before any chart-->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/material.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.5.2/dist/js/tabulator.min.js"></script>
+    <script src="/js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.0.5/jspdf.plugin.autotable.js"></script>
+
+
+    <div class="c-wrapper">
+
+        <nav class="c-header fixed-top c-header-dark" style="background-color: #3C4B64;">
+            <ul class="c-header-nav mx-auto">
+                <li class="c-header-nav-item active">
+                    <strong class="c-header-nav-link"><%= title %></strong>
+                </li>
+            </ul>
+
+        </nav>
+
+        <div class="c-body">
+            <%- include('sidebar', {title}) %>
+
+            <main class="c-main p-3" style="margin-top: 56px;">

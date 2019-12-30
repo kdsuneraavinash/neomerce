@@ -1,0 +1,66 @@
+<%- include('common/header', {title: 'Product Report'}) %>
+
+<% if (error != null){ %>
+<div class="mb-3">
+    <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+        <strong>Error: </strong> <%=error.replace("error: ","")%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<% }%>
+
+<form class="form-horizontal dont-print" action="/report/product" method="get">
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="input-group"><span class="input-group-prepend">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="cil-magnifying-glass"> </span> &nbsp;Search
+                    </button>
+                </span>
+                <input name="id" class="form-control" id="input1-group2" type="text" name="input1-group2"
+                    placeholder="Product ID">
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-lg-12">
+        <%- include('components/tabulator', {
+            title: 'Products List',
+            id: 'products_list',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "Product Name", field: "title" },
+                {title:"Image", field:"image_url", formatter:"image", width: 100,
+                    formatterParams:{height:50, width:50}},
+                { title: "Report", field: "product_id", formatter:"link", 
+                    formatterParams: {label: "Show", urlPrefix: "/report/product?id="}, width: 100 },
+                { title: "Minimum Selling Price", field: "min_selling_price", align: "right", width: 225, 
+                    formatter:"money", formatterParams:{symbol: "LKR ", thousand:" ", precision: 2} },
+                { title: "Product ID", field: "product_id", formatter:"link", 
+                    formatterParams: {labelField: "product_id", urlPrefix: "/item/show/", target:"_blank"}, width: 350 },
+            ],
+            filter: "title",
+            filterTitle: "Product Name",
+            data: products,
+        }) %>
+        <%#- include('components/table', {
+            title: 'Variants',
+            rows: products.length,
+            numeric: [false, false, false, true, false],
+            columns: 5,
+            headers: ['Product Title', 'View', 'Product ID','Minimum Selling Price (LKR)', 'Image'],
+            rawhtml: [false, true, true,  false, true],
+            data: products.map((v) => [ v.title, `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v.product_id}'>View</a>`,
+             `<small>${v.product_id}</small>`, v.min_selling_price, 
+             `<img class='lazy' data-src='${v.image_url}' height=50 width=50></img>'`]),
+            print: [true, false, true, true,  false]
+        }) %>
+    </div>
+</div>
+
+<%- include('common/footer') %>

@@ -1,0 +1,110 @@
+const router = require('express').Router();
+const Report = require('../models/report');
+
+const adminAuthChecker = async (req, res, next) => {
+    req.name = 'Guest';
+    if (req.session.user && req.session.cookie) {
+        const { permission, name } = await Report.reportViewPermissionChecker(req.sessionID);
+        if (permission) {
+            req.name = name;
+            next();
+            return;
+        }
+    }
+    // TODO: Enable Auth Checker
+    // res.redirect('/');
+    next();
+};
+
+router.use(adminAuthChecker);
+
+router.get('/example/', async (req, res) => {
+    res.render('reports/example', { name: req.name });
+});
+
+router.get('/sales/', async (req, res) => {
+    const products = await Report.getProductCounts();
+    res.render('reports/sales_report', { products, name: req.name });
+});
+
+router.get('/product/', async (req, res) => {
+    const productId = req.query.id;
+    if (!productId) {
+        const products = await Report.getProducts();
+        res.render('reports/product_report_overview', { products, error: req.query.error, name: req.name });
+        return;
+    }
+
+    try {
+        const { productData, variantData } = await Report.getProductData(productId);
+        const visitedItems = await Report.getProductVisitedCountReport(productId);
+        const orderedItems = await Report.getProductOrderedCountReport(productId);
+        const monthlyData = await Report.getProductMonthlyOrdersReport(productId);
+
+        visitedItems.forEach((value, index) => {
+            if (index === 0) return;
+            visitedItems[index].value += visitedItems[index - 1].value;
+        });
+        orderedItems.forEach((value, index) => {
+            if (index === 0) return;
+            orderedItems[index].value += orderedItems[index - 1].value;
+        });
+
+        res.render('reports/product_report', {
+            visitedItems,
+            orderedItems,
+            productData,
+            variantData,
+            monthlyData,
+            name: req.name,
+        });
+    } catch (error) {
+        res.redirect(`/report/product?error=${error}`);
+    }
+});
+
+router.get('/category/', async (req, res) => {
+    const { categoryData, categoryParents, tree } = await Report.getCategoryTreeReport();
+    const topCategoryData = await Report.getTopCategoryLeafNodes();
+    res.render('reports/category_report', {
+        topCategoryData,
+        categoryData,
+        categoryParents,
+        tree,
+        name: req.name,
+    });
+});
+
+
+router.get('/time/', async (req, res) => {
+    try {
+        const timerange = req.query.daterange;
+        if (timerange == null) {
+            res.render('reports/time_report', { error: req.query.error, timerange: null, name: req.name });
+            return;
+        }
+        const [time1str, time2str] = timerange.split('-');
+        if (time1str === undefined || time2str === undefined) {
+            throw Error('Invalid data format');
+        }
+        const time1 = new Date(time1str);
+        const time2 = new Date(time2str);
+        const products = await Report.getPopularProductsBetweenDates(time1,
+            time2);
+        res.render('reports/time_report', {
+            products,
+            error: req.query.error,
+            timerange,
+            name: req.name,
+        });
+    } catch (error) {
+        res.redirect(`/report/time?error=${error}`);
+    }
+});
+
+
+router.get('/order/', async (req, res) => {
+    res.render('reports/order_report', { name: req.name });
+});
+
+module.exports = router;

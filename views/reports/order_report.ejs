@@ -1,0 +1,31 @@
+<%- include('common/header', {title: 'Customer Order Report'}) %>
+
+<form class="form-horizontal dont-print" action="/report/order" method="get">
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="input-group"><span class="input-group-prepend">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="cil-magnifying-glass"> </span> &nbsp;Search
+                    </button>
+                </span>
+                <input name="id" class="form-control" id="input1-group2" type="text" name="input1-group2"
+                    placeholder="Order ID">
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row dont-print">
+    <div class="col-12">
+        <%- include('components/callout', {
+            title: 'Add a table similar to products table and redirect to /order/:id',
+            color: 'bg-red-500', 
+            value: '@Anju',
+            percentage: 100,
+            helpertext: '@Anju',
+        }) %>
+    </div>
+</div>
+
+
+<%- include('common/footer') %>

@@ -1,0 +1,72 @@
+<%- include('common/header', {title: 'Category Report'}) %>
+
+<%
+topCategoryData.forEach((v) => v[1] = `<a class='btn btn-sm btn-outline-dark' target='_blank' href='/category?category=${v[1]}'>Visit</a>`);
+%>
+
+<div class="row">
+    <div class="col-6">
+        <%- include('components/tree_table', {
+            title: 'Category Sales Overview',
+            id: 'treetable_category', 
+            rows: categoryData.length,
+            columns: 3,
+            headers: ['Category', 'Quantity', 'Income (LKR)',],
+            numeric: [false, true, true],
+            rawhtml: [false, false, false], 
+            data: categoryData,
+            parents: categoryParents
+        }) %>
+    </div>
+    <div class="col-6">
+        <%- include('components/tabulator', {
+            title: 'Top 10 Category Sales',
+            id: 'top_10_category_tbl',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "Category Name", field: "title" },
+                { title: "Quantity", field: "quantity", align: "right", width: 150 },
+                { title: "Income (LKR)", field: "income", align: "right", width: 150, 
+                    formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                { title: "Page", field: "category_id", formatter:"link", 
+                    formatterParams: {label: "Show",urlPrefix: "/category?category=",}, width: 100 },
+            ],
+            filter: "title",
+            filterTitle: "Category Name",
+            data: topCategoryData,
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <%- include('components/pie_chart', {
+            title: 'Category Sales Chart (With Quantity)',
+            id: 'chart_category_quantity',
+            height: '600px',
+            data:  topCategoryData.map((v) => ({label: v.title, value: v.quantity}))
+        }) %>
+    </div>
+    <div class="col-6">
+        <%- include('components/pie_chart', {
+            title: 'Category Sales Chart (With Income - LKR)',
+            id: 'chart_category_income',
+            height: '600px',
+            data:  topCategoryData.map((v) => ({label: v.title, value: v.income}))
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <%- include('components/network_chart', {
+            title: 'Category Sales Chart (With Income - LKR)',
+            id: 'network_chart',
+            height: '800px',
+            data:  tree
+        }) %>
+    </div>
+</div>
+
+<%- include('common/footer') %>

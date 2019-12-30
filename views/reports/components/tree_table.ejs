@@ -1,0 +1,114 @@
+<div class="card">
+    <div class="card-header bg-dark text-white"> <%= title %></div>
+    <div class="card-body p-0">
+        <table id="<%= id %>" class="table table-responsive-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <%for (i of Array(columns).keys()) {%>
+                    <%if(numeric[i]) {%>
+                    <th class="text-right"><%=headers[i]%></th>
+                    <%} else {%>
+                    <th><%=headers[i]%></th>
+                    <%} %>
+                    <%}-%>
+                </tr>
+            </thead>
+            <tbody>
+                <%for (rowi of Array(rows).keys()){%>
+                <%row = data[rowi]%>
+                <%parent = parents[rowi]%>
+                <tr data-id="<%= parent[0] %>" data-parent="<%= parent[1] %>" data-level="<%= parent[3] %>">
+                    <%for (i of Array(columns).keys()) {%>
+
+                    <%  if (i === 0) { %>
+                    <% data_attrib = 'data-column=name' %>
+                    <%}else{%>
+                    <% data_attrib = '' %>
+                    <%}%>
+
+                    <%if (rawhtml[i]) {%>
+                    <td <%= data_attrib %>><%-row[i]%></td>
+                    <%} else if(numeric[i]) {%>
+                    <td <%= data_attrib %> class="text-right"><%=row[i]%></td>
+                    <%} else {%>
+                    <td <%= data_attrib %>><%=row[i]%></td>
+                    <%} %>
+
+                    <%}%>
+                </tr>
+                <%}-%>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        let $table = $('#<%= id %>');
+        let rows = $table.find('tr');
+        let closedParent = 'cil-folder';
+        let openParent = 'cil-folder-open';
+        let leaf = 'cil-file';
+
+        rows.each(function (index, row) {
+            let $row = $(row);
+            let level = $row.data('level');
+            if (isNaN(level)) {
+                level = 0;
+            }
+
+            let id = $row.data('id');
+            let $columnName = $row.find('td[data-column="name"]');
+            let children = $table.find(`tr[data-parent="${id}"]`);
+            $columnName.css('padding-left', 25 * level);
+
+            if (children.length) {
+                $row.addClass('font-weight-bold');
+                $columnName.prepend(`<a type="button" class="${openParent} mr-1"></a>`);
+                let expander = $columnName.find('a');
+
+                expander.on('click', function (e) {
+                    var $target = $(e.target);
+                    if ($target.hasClass(openParent)) {
+                        $target.removeClass(openParent);
+                        $target.addClass(closedParent);
+                        $row.removeClass('font-weight-bold');
+
+                        reverseHide($table, $row);
+                    } else {
+                        $target.removeClass(closedParent);
+                        $target.addClass(openParent);
+                        $row.addClass('font-weight-bold');
+
+                        children.show();
+                    }
+                });
+            } else {
+                $columnName.prepend(`<i class="${leaf} mr-1"></i>`);
+            }
+        });
+
+        // Reverse hide all elements
+        reverseHide = function (table, element) {
+            var
+                $element = $(element),
+                id = $element.data('id'),
+                children = table.find(`tr[data-parent="${id}"]`);
+
+            if (children.length) {
+                children.each(function (i, e) {
+                    reverseHide(table, e);
+                    $(e).removeClass('font-weight-bold');
+                });
+
+                $element
+                    .find(`.${openParent}`)
+                    .removeClass(openParent)
+                    .addClass(closedParent);
+
+                children.hide();
+            }
+        };
+    });
+
+</script>

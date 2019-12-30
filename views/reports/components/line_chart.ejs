@@ -1,0 +1,67 @@
+<div class="card dont-print">
+    <div class="card-body">
+        <div id="<%= id %>"></div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('<%= id %>').style.width = '100%';
+    document.getElementById('<%= id %>').style.height = '<%= height %>';
+
+    am4core.ready(function () {
+        // Themes begin
+        am4core.useTheme(am4themes_material);
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("<%= id %>", am4charts.XYChart);
+
+        // Add data
+        chart.data = JSON.parse(`<%- JSON.stringify(data) %>`);
+        chart.data.forEach((v) => {
+            v.date = new Date(v.date);
+        });
+
+        chart.exporting.menu = new am4core.ExportMenu();
+        chart.exporting.title = "<%= title %>";
+        chart.exporting.filePrefix = "<%= title %>";
+        var title = chart.titles.create();
+        title.text = "<%= title %>";
+        title.fontSize = 20;
+        title.marginBottom = 30;
+
+        // Create axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.minGridDistance = 50;
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+        // Create series
+        var series = chart.series.push(new am4charts.LineSeries());
+        series.bullets.push(new am4charts.CircleBullet());
+        series.dataFields.valueY = "value";
+        series.dataFields.dateX = "date";
+        series.strokeWidth = 2;
+        series.minBulletDistance = 10;
+        series.tooltipText = "{valueY}";
+        series.tooltip.pointerOrientation = "vertical";
+        series.tooltip.background.cornerRadius = 20;
+        series.tooltip.background.fillOpacity = 0.5;
+        series.tooltip.label.padding(12, 12, 12, 12)
+
+        series.fill = am4core.color("<%= color%>");
+        series.stroke = am4core.color("<%= color%>");
+
+        // Add scrollbar
+        chart.scrollbarX = new am4charts.XYChartScrollbar();
+        chart.scrollbarX.series.push(series);
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.xAxis = dateAxis;
+        chart.cursor.snapToSeries = series;
+
+    }); // end am4core.ready()
+</script>

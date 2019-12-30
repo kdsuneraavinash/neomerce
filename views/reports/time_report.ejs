@@ -1,0 +1,101 @@
+<%- include('common/header', {title: 'Time Based Report'}) %>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+<% if (error != null){ %>
+<div class="mb-3">
+    <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+        <strong>Error: </strong> <%=error.replace("error: ","")%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<% }%>
+
+<%
+if (!timerange){
+    date = new Date();
+    day = date.getDate();
+    month = date.getMonth();
+    year = date.getFullYear();
+    timerange = `${((month - 1)%12) + 1}/01/${year} - ${month + 1}/${day}/${year}`;
+}
+%>
+
+<form class="form-horizontal dont-print" action="/report/time" method="get">
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="input-group"><span class="input-group-prepend">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="cil-magnifying-glass"> </span> &nbsp;Search
+                    </button>
+                </span>
+                <input class="form-control" type="text" name="daterange" value="<%=timerange%>" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<% if(locals.products){
+    products.forEach((v) => v[4] = `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v[4]}'>Show</a>`);
+%>
+
+<div class="row">
+    <div class="col-lg-12">
+        <%- include('components/tabulator', {
+            title: 'Top 10 Bestselling Products',
+            id: 'top_10_bestselling_prds',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "#", field: "index", width: 50},
+                { title: "Product Name", field: "title" },
+                { title: "Quantity", field: "quantity", align: "right", width: 150 },
+                { title: "Income (LKR)", field: "income", align: "right", width: 150, 
+                    formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                { title: "Report", field: "product_id", formatter:"link", 
+                    formatterParams: {label: "Show",urlPrefix: "/report/product?id=",}, width: 100 },
+            ],
+            filter: "title",
+            filterTitle: "Product Name",
+            data: products,
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                title: 'Top 10 Bestselling Products between ' + timerange,
+                id: 'barchart_product_q',
+                height: '600px',
+                data:  products.map((v) => ({label: `#${v.index}`, value: v.quantity}))
+            }) %>
+    </div>
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                title: 'Top 10 Bestselling Products between ' + timerange,
+                id: 'barchart_product_i',
+                height: '600px',
+                data:  products.map((v) => ({label: `#${v.index}`, value: v.income}))
+            }) %>
+    </div>
+</div>
+<%}%>
+
+<script>
+    $(function () {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        });
+    });
+</script>
+
+
+
+<%- include('common/footer') %>

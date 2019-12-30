@@ -1,0 +1,136 @@
+<%- include('common/header', {title: 'Product Report'}) %>
+
+<%
+first_visit = ((visitedItems.length) ? visitedItems[0].date: productData.added_date).toISOString().split('T')[0] ;
+first_order = ((orderedItems.length) ? visitedItems[0].date: productData.added_date).toISOString().split('T')[0];
+last_order = orderedItems[orderedItems.length-1];
+last_visit = visitedItems[visitedItems.length-1];
+if (!last_visit) last_visit = ({date: 'Not applicable', value: 0});
+if (!last_order) last_order = ({date: 'Not applicable', value: 0});
+%>
+
+<h2 class="text-center"><%= productData.title %></h2>
+
+<div class="text-center my-3 dont-print">
+    <a href="/item/show/<%=productData.product_id%>" target="_blank" type="button" class="btn btn-success"><span
+            class="cil-cart btn-icon mr-2"></span>
+        Visit Product Page</a>
+    <a href="/report/product/" class="btn btn-danger"><span class="cil-exit-to-app btn-icon mr-2"></span>
+        Back to Products</a>
+    <a href="/report/sales/" class="btn btn-warning"><span class="cil-money btn-icon mr-2"></span>
+        Sales Report</a>
+</div>
+
+<div class="row">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header bg-dark text-white">Product Details</div>
+            <div class="card-body p-0">
+                <ul class="list-group">
+                    <li class="list-group-item"><span class="font-weight-bold">Brand: </span>
+                        <%=(productData.brand) ? productData.brand : 'Not branded'%>
+                    </li>
+                    <li class="list-group-item"><span class="font-weight-bold">Weight (kg): </span>
+                        <%=(productData.weight_kilos) ? productData.weight_kilos : 'Not given'%>
+                    </li>
+                    <li class="list-group-item"><span class="font-weight-bold">Added Date:</span>
+                        <%=productData.added_date%>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <%- include('components/table', {
+            title: 'Variants',
+            rows: variantData.length,
+            numeric: [false, true, true, true],
+            columns: 4,
+            headers: ['Variant Name', 'Quantity','Selling Price (LKR)','Listed Price (LKR)'],
+            rawhtml: [false, false, false, false],
+            data: variantData.map((v) => [v.title, v.quantity, v.selling_price, v.listed_price])
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <%- include('components/callout', {
+                title: 'Product Page Visits',
+                color:  'bg-indigo-500', 
+                value: last_visit.value ,
+                percentage: 100,
+                helpertext: 'Last Visit on: ' + last_visit.date ,
+            }) %>
+    </div>
+    <div class="col">
+        <%- include('components/callout', {
+                title: 'Total Product Sales',
+                color: 'bg-teal-500' , 
+                value:  last_order.value,
+                percentage:(last_order.value/last_visit.value) * 100,
+                helpertext: 'Last Order on: ' + last_order.date,
+            }) %>
+    </div>
+    <div class="col">
+        <%- include('components/callout', {
+            title: 'Remaining Stocks',
+            color: 'bg-amber-500' , 
+            value: variantData.reduce((a, b) => a + b.quantity, 0),
+            percentage: '100',
+            helpertext: 'Total variants in  stock for the product',
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/line_chart', {
+            title: 'Visited Users from ' + first_visit,
+            id: 'visited_users_chart', 
+            height: '500px',
+            color: '#3F51B5',
+            data:  visitedItems,
+        }) %>
+    </div>
+    <div class="col-lg-6">
+        <%- include('components/line_chart', {
+            title: 'Orders from ' + first_order,
+            id: 'prd_sales_chart', 
+            height: '500px',
+            color: '#009688',
+            data:  orderedItems,
+        }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <%- include('components/stacked_column_chart', {
+            title: 'Monthly Orders vs Visits',
+            id: 'prd_monthly_chart', 
+            height: '800px',
+            data:  monthlyData,
+        }) %>
+    </div>
+    <div class="col-lg-4">
+        <%- include('components/tabulator', {
+            title: 'Monthly Orders vs Visits',
+            id: 'mon_ord_vs_vis',
+            pagination: "local",
+            paginationSize: 12,
+            columns: [
+                { title: "#", field: "index", width: 50},
+                { title: "Month", field: "month" },
+                { title: "Visits", field: "visits", align: "right", width: 150 },
+                { title: "Orders", field: "orders", align: "right", width: 150 }
+            ],
+            filter: "month",
+            filterTitle: "Month Name",
+            data: monthlyData,
+        }) %>
+    </div>
+</div>
+
+
+<%- include('common/footer') %>
