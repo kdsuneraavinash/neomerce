@@ -3,10 +3,10 @@ const pool = require('../config/db');
 
 
 const createUser = async (sessionID, email, firstName, lastName, addressLine1, addressLine2,
-    city, postalCode, password) => {
-    const queryString = 'CALL createUser($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)';
+    city, postalCode, password, telephoneNumber, birthday) => {
+    const queryString = 'CALL createUser($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)';
     const values = [sessionID, email, firstName, lastName, addressLine1, addressLine2,
-        city, postalCode, new Date(), password];
+        city, postalCode, birthday, password, telephoneNumber];
     await pool.query(queryString, values);
     return true;
 };

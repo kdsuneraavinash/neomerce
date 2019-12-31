@@ -28,7 +28,27 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <%- include('components/table', {
+        <%- include('components/tabulator', {
+            title: 'Products List',
+            id: 'products_list',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "Product Name", field: "title" },
+                {title:"Image", field:"image_url", formatter:"image", width: 100,
+                    formatterParams:{height:50, width:50}},
+                { title: "Report", field: "product_id", formatter:"link", 
+                    formatterParams: {label: "Show", urlPrefix: "/report/product?id="}, width: 100 },
+                { title: "Minimum Selling Price", field: "min_selling_price", align: "right", width: 225, 
+                    formatter:"money", formatterParams:{symbol: "LKR ", thousand:" ", precision: 2} },
+                { title: "Product ID", field: "product_id", formatter:"link", 
+                    formatterParams: {labelField: "product_id", urlPrefix: "/item/show/", target:"_blank"}, width: 350 },
+            ],
+            filter: "title",
+            filterTitle: "Product Name",
+            data: products,
+        }) %>
+        <%#- include('components/table', {
             title: 'Variants',
             rows: products.length,
             numeric: [false, false, false, true, false],

@@ -3,6 +3,7 @@ const UUID = require('uuid/v4');
 const Order = require('../models/order');
 const Cart = require('../models/cart');
 
+// TODO: Validate order form data
 router.post('/', async (req, res) => {
     /* Temporary adapter to map passed variables to suitable values */
     if (req.body.delivery_method === 'deliver') {

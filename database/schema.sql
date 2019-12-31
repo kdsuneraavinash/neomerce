@@ -167,9 +167,13 @@ CREATE OR REPLACE FUNCTION checkOrderHistoryPriviledge(SESSION_UUID,UUID4) RETUR
 $$
 DECLARE
 customer_id1 uuid4 := (select customer_id from session where session_id=$1);
+account_type varchar(15) := (select account_type from session join customer using(customer_id) where session_id=$1);
 customer_id2 uuid4 := (select customer_id from orderdata where order_id = $2); 
 BEGIN
-	if customer_id1 = customer_id2 then 
+    if account_type = 'admin' then
+        return true;
+	end if; 
+    if customer_id1 = customer_id2 then 
         return true;
 	else
 	    return false;
@@ -650,11 +654,11 @@ $$;
 --   addr_line2, city, post_code, dob, last_login)
 CREATE OR REPLACE PROCEDURE createUser(SESSION_UUID, VARCHAR(255), VARCHAR(255), VARCHAR(255),
 										VARCHAR(255), VARCHAR(255), VARCHAR(127), VARCHAR(31),
-									   TIMESTAMP, CHAR(60))
+									   TIMESTAMP, CHAR(60),VALID_PHONE)
 LANGUAGE plpgsql    
 AS $$
 DECLARE
-customer_id uuid4 := (select customer_id from session where session_id=$1);
+var_customer_id uuid4 := (select customer_id from session where session_id=$1);
 var_existing_email varchar(255) := (SELECT email from userinformation where email = $2);
 var_city int := (SELECT count(*) from city where city = $7);
 BEGIN
@@ -662,9 +666,10 @@ BEGIN
         RAISE EXCEPTION 'Unknown city %. Please select a valid city.', $7;
     end if;
     if (var_existing_email is null) then
-        INSERT INTO userinformation values (customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
-        INSERT INTO accountcredential values (customer_id, $10); 
-        UPDATE customer SET account_type = 'user';
+        INSERT INTO userinformation values (var_customer_id, $2, $3, $4, $5, $6, $7, $8, $9, NOW()); 
+        INSERT INTO accountcredential values (var_customer_id, $10);
+        INSERT INTO telephonenumber values (var_customer_id,$11); 
+        UPDATE customer SET account_type = 'user' WHERE customer_id = var_customer_id;
     else
         RAISE EXCEPTION 'Email % is already registered', $2;
     end if;

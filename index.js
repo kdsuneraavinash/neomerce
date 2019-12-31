@@ -48,7 +48,7 @@ Middleware to save the sessions in the database.
 customer and session tables will be updated if a new session get created
 */
 app.use(async (req, res, next) => {
-    await auth.saveSession(req,res);
+    await auth.saveSession(req, res);
     next();
 });
 
@@ -62,6 +62,10 @@ app.use(require('./routes'));
 
 const port = process.env.PORT || 3000;
 const address = process.env.SERVER_ADDRESS || '127.0.0.1';
+
+app.get('*', (req, res) => {
+    res.status(404).render('error', { code: 404, failed: 'OOPS! Not found' });
+});
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _) => {
