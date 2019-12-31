@@ -1,17 +1,26 @@
 <%- include('common/header', {title: 'Sales Report'}) %>
 
-<div class="row dont-print">
-    <div class="col-12">
-        <%- include('components/callout', {
-            title: 'Add Quartely Sales Report',
-            color: 'bg-red-500', 
-            value: '@Anju',
-            percentage: 100,
-            helpertext: '@Anju',
+<div class="row">
+    <div class="col-lg-12">
+        <%- include('components/tabulator', {
+            title: 'Quarter Report',
+            id: 'quarter_report',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "Product Name", field: "title" },
+                { title: "Quantity", field: "quantity", align: "right", width: 150 },
+                { title: "Income (LKR)", field: "income", align: "right", width: 150, 
+                    precision: 2, formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                { title: "Report", field: "product_id", formatter:"link", 
+                    formatterParams: {label: "Show",urlPrefix: "/report/product?id=",}, width: 100 },
+            ],
+            filter: "title",
+            filterTitle: "Product Name",
+            data: quarterReport,
         }) %>
     </div>
 </div>
-
 <hr />
 
 <div class="row">
