@@ -1,4 +1,5 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP PROCEDURE IF EXISTS addVariant;
 DROP PROCEDURE IF EXISTS placeOrder;
 DROP PROCEDURE IF EXISTS addVisitedRecord;
 DROP PROCEDURE IF EXISTS addTagToCategory;
@@ -631,6 +632,24 @@ BEGIN
     insert into Variant values ($2, $1, $9, $8, $7, $10, $11);
     insert into ProductCategory values ($13, $1);
     raise notice 'Added product with id %', $1;
+END;
+$$;
+
+-- Procedure to add a variant (productId,variantTitle,variantQuantity,
+-- variantSkuId,variantListedPrice,revariantSellingPrice)
+CREATE OR REPLACE PROCEDURE addVariant(
+    UUID4,
+   VARCHAR(255), INT, VARCHAR(127),
+    MONEY_UNIT, MONEY_UNIT
+) 
+LANGUAGE plpgsql
+AS $$
+DECLARE
+       var_variant_id uuid4;
+BEGIN
+    var_variant_id := generate_uuid4();
+    insert into Variant values (default, $1, $4, $3, $2, $5, $6);
+    raise notice 'Added variant with id %', var_variant_id;
 END;
 $$;
 

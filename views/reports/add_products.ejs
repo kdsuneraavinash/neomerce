@@ -1,0 +1,104 @@
+<%- include('common/header', {title: 'Add Products'}) %>
+
+
+
+<div class="row">
+    <div class="col-12">
+
+        <% if (error != null){ %>
+        <div class="mb-3">
+            <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+                <strong>Error: </strong> <%=error.replace("error: ","")%>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <% }%>
+        <% if (success != null){ %>
+        <div class="mb-3">
+            <div class="alert alert-success alert-dismissible fade show text-left" role="alert">
+                <strong>Success: </strong> <%=success%>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <% }%>
+
+        <div class="card">
+            <div class="card-header bg-dark text-white">Add Products Form</div>
+            <div class="card-body">
+                <form class="row" method="POST" action="/admin/add/product">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="title">Product Title</label>
+                            <input name="title" type="text" class="form-control" id="title" placeholder="Product Name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea name="description" class="form-control" id="description" rows="3"
+                                required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input name="weight" type="text" class="form-control" id="weight" placeholder="3" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <input name="brand" type="text" class="form-control" id="brand" placeholder="Brand"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="default_image_url">Default Image URL</label>
+                            <input name="default_image_url" class="form-control" id="default_image_url" rows="3"
+                                required></input>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="default_leaf_category_id">Default Leaf Category</label>
+                            <select name="default_leaf_category_id" class="form-control" id="default_leaf_category_id">
+                                <% for (category of categories) {%>
+                                <option value="<%=category.category_id%>"><%=category.title%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                    </div>
+
+                  <div class="col-6">
+                    <div class="form-group">
+                        <label for="default_variant_title">Default Variant Title</label>
+                        <input name="default_variant_title" type="text" class="form-control" id="default_variant_title"
+                            placeholder="Variant Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="default_variant_quantity">Default Variant Quantity</label>
+                        <input name="default_variant_quantity" type="number" class="form-control"
+                            id="default_variant_quantity" placeholder="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="default_variant_sku_id">Default Variant SKU ID</label>
+                        <input name="default_variant_sku_id" type="text" class="form-control"
+                            id="default_variant_sku_id" placeholder="001122334455" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="default_variant_listed_price">Default Variant Listed Price(LKR)</label>
+                        <input name="default_variant_listed_price" type="text" class="form-control"
+                            id="default_variant_listed_price" placeholder="250" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="default_variant_selling_price">Default Variant Selling Price(LKR)</label>
+                        <input name="default_variant_selling_price" type="text" class="form-control"
+                            id="default_variant_selling_price" placeholder="125" required>
+                    </div>
+                  </div>
+                </form>
+                <button type="submit" class="btn btn-primary mb-2 float-right">Submit</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<%- include('common/footer') %>

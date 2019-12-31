@@ -28,7 +28,22 @@
             </a>
         </li>
         <%}%>
+
+        <li class="c-sidebar-nav-title">Products Administration</li>
+
+        <%for (t of [
+            ['Add Products', '/admin/addproducts', 'cil-plus'], 
+            ['Add Variants', '/admin/addvariants', 'cil-plus'], 
+        ]) {%>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link <%= (t[0] === title) ? 'c-active' : ''%>" href="<%= t[1]%>">
+                <i class="c-sidebar-nav-icon <%= t[2] %>"></i>
+                <%=t[0] %>
+            </a>
+        </li>
+        <%}%>
         
+
         <li class="c-sidebar-nav-item mt-auto">
             <a type="button" href="/" class="c-sidebar-nav-link">
                 <i class="c-sidebar-nav-icon cil-home"></i> Home
