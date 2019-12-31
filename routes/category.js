@@ -5,13 +5,12 @@ const helper = require('../utils/helper');
 
 router.get('/', async (req, res) => {
     try {
-        const loggedIn = req.session.user != null;
         if (req.query.query === undefined && req.query.category === undefined) {
             const categories = await category.getChildren(req, res, req.query.category);
             const productDetails = await product.getProductsFromAllCategories();
 
             res.render('category', {
-                loggedIn,
+                userData: req.userData,
                 products: productDetails.result,
                 categories,
                 categorytitle: null,
@@ -26,7 +25,7 @@ router.get('/', async (req, res) => {
                 req.query.category);
 
             res.render('category', {
-                loggedIn,
+                userData: req.userData,
                 products: productDetails.result,
                 categories,
                 categorytitle: categoryDetails.title,
@@ -39,7 +38,7 @@ router.get('/', async (req, res) => {
             const productDetails = await product.getProductsFromQuery(req, res, req.query.query);
 
             res.render('category', {
-                loggedIn,
+                userData: req.userData,
                 products: productDetails.result,
                 categories,
                 categorytitle: null,

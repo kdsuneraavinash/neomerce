@@ -66,7 +66,7 @@ router.get('/:orderId', async (req, res) => {
         const orderHistoryObj = await Order.getOrderHistory(req.params.orderId);
 
         res.render('order', {
-            loggedIn: req.session.user != null,
+            userData: req.userData,
             show_thanks: false,
             orderHistoryObj,
         });

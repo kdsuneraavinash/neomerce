@@ -23,7 +23,7 @@ if (!timerange){
     day = date.getDate();
     month = date.getMonth();
     year = date.getFullYear();
-    timerange = `${((month - 1)%12) + 1}/01/${year} - ${month + 1}/${day}/${year}`;
+    timerange = `${month + 1}/${day}/${year-1} - ${month + 1}/${day}/${year}`;
 }
 %>
 

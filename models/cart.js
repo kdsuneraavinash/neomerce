@@ -33,6 +33,16 @@ const getCartItems = async (sessionID) => {
     };
 };
 
+const countCartItems = async (sessionID) => {
+    const query = `select count(*) as count
+                    from cartitem 
+                        join session using(customer_id)
+                    where session_id=$1 and cart_item_status='added'`;
+    const values = [sessionID];
+    const out = await connection.query(query, values);
+    return out.rows[0].count - 0;
+};
+
 const addItemToCart = async (variantId, qty, sessionID) => {
     const query = 'CALL addItemToCart($1, $2, $3)';
     const values = [sessionID, variantId, qty];
@@ -125,4 +135,5 @@ module.exports = {
     checkStock,
     proceedCheckOut,
     editCartItemQuantity,
+    countCartItems,
 };

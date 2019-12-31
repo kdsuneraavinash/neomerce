@@ -1,3 +1,0 @@
-select order_id from orderdata
-			where extract(quarter from orderdata.order_date)=4 and 
-				extract(year from orderdata.order_date)=2019;

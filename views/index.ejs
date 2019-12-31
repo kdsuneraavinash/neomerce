@@ -3,7 +3,7 @@
 <%- include('common/head') %>
 
 <body>
-    <%- include('common/navbar',{'loggedIn': loggedIn}) %>
+    <%- include('common/navbar',{userData}) %>
     <%- include ('partial/home', {'products': products}) %>
     <%- include('common/footer') %>
     <%- include('common/scripts') %>

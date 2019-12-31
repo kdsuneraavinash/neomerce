@@ -1,6 +1,10 @@
 const express = require('express');
+const Auth = require('../utils/auth');
 
 const router = express.Router();
+
+
+router.use(Auth.userTypeMiddleware);
 
 router.use('/', require('./root'));
 router.use('/category/', require('./category'));

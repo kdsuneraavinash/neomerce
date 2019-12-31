@@ -228,4 +228,6 @@ router.post('/add/tags/', async (req, res) => {
 });
 
 
+router.get('/', (req, res) => res.redirect('/admin/sales'));
+
 module.exports = router;
