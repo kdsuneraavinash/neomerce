@@ -1,14 +1,45 @@
 <%- include('common/header', {title: 'Sales Report'}) %>
 
-<div class="row dont-print">
-    <div class="col-12">
-        <%- include('components/callout', {
-            title: 'Add Quartely Sales Report',
-            color: 'bg-red-500', 
-            value: '@Anju',
-            percentage: 100,
-            helpertext: '@Anju',
+<div class="row">
+    <div class="col-lg-12">
+        <%- include('components/tabulator', {
+            title: 'Quarter Report',
+            id: 'quarter_report',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "Product Name", field: "title" },
+                { title: "Quantity", field: "quantity", align: "right", width: 150 },
+                { title: "Income (LKR)", field: "income", align: "right", width: 150, 
+                    precision: 2, formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                { title: "Report", field: "product_id", formatter:"link", 
+                    formatterParams: {label: "Show",urlPrefix: "/report/product?id=",}, width: 100 },
+            ],
+            filter: "title",
+            filterTitle: "Product Name",
+            data: quarterReport,
         }) %>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                    title: 'Quarterly Sales Report',
+                    id: 'barchart_quarterly_sales',
+                    height: '600px',
+                    data:  quarterlySales
+                }) %>
+    </div>
+    <div class="col-lg-6">
+        <%- include('components/line_chart', {
+                title: 'Number of Sales per day ',
+                id: 'sales_chart', 
+                height: '500px',
+                color: '#009688',
+                data:  sales,
+            }) %>
     </div>
 </div>
 
@@ -17,7 +48,7 @@
 <div class="row">
     <div class="col-lg-12">
         <%- include('components/tabulator', {
-            title: 'Top 10 Bestselling Products',
+            title: 'Top 10 Best Selling Products',
             id: 'top_10_bestselling_prds',
             pagination: "local",
             paginationSize: 10,
@@ -40,7 +71,7 @@
 <div class="row">
     <div class="col-lg-6">
         <%- include('components/bar_chart', {
-                title: 'Top 10 Bestselling Products',
+                title: 'Top 10 Best Selling Products - Quantity',
                 id: 'barchart_product_q',
                 height: '600px',
                 data:  products.map((v) => ({label: `#${v.index}`, value: v.quantity}))
@@ -48,7 +79,7 @@
     </div>
     <div class="col-lg-6">
         <%- include('components/bar_chart', {
-                title: 'Top 10 Bestselling Products',
+                title: 'Top 10 Best Selling Products - Income',
                 id: 'barchart_product_i',
                 height: '600px',
                 data:  products.map((v) => ({label: `#${v.index}`, value: v.income}))
