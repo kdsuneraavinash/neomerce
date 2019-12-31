@@ -1,4 +1,6 @@
 DROP TRIGGER IF EXISTS afterProductCategoryInsertTrigger ON ProductCategory;
+DROP TRIGGER IF EXISTS afterProductInsertTrigger ON Product;
+DROP TRIGGER IF EXISTS afterVariantInsertTrigger ON Variant;
 DROP PROCEDURE IF EXISTS addVariant;
 DROP PROCEDURE IF EXISTS placeOrder;
 DROP PROCEDURE IF EXISTS addVisitedRecord;
@@ -52,6 +54,8 @@ DROP DOMAIN IF EXISTS SESSION_UUID cascade;
 DROP DOMAIN IF EXISTS URL cascade;
 DROP VIEW IF EXISTS ProductMinPricesView cascade;
 DROP VIEW IF EXISTS ProductMainImageView cascade;
+DROP MATERIALIZED VIEW IF EXISTS ProductBasicView cascade;
+
 
 
 /*
@@ -566,6 +570,29 @@ ON ProductCategory
 FOR EACH ROW EXECUTE PROCEDURE afterProductCategoryInsert();
 
 
+/* Refreshing Materialized Views */
+
+-- Trigger refreshing materialized views statements
+CREATE OR REPLACE FUNCTION afterProductInsertRefreshViews()
+RETURNS TRIGGER AS $$
+BEGIN
+    raise notice 'Refreshing Materialized View';
+    REFRESH MATERIALIZED VIEW CONCURRENTLY ProductBasicView;
+RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger refresh materialized views
+CREATE TRIGGER afterProductInsertTrigger
+AFTER INSERT OR UPDATE
+ON Product
+FOR EACH ROW EXECUTE PROCEDURE afterProductInsertRefreshViews();
+
+CREATE TRIGGER afterVariantInsertTrigger
+AFTER INSERT OR UPDATE
+ON Variant
+FOR EACH ROW EXECUTE PROCEDURE afterProductInsertRefreshViews();
+
 /*
                                _                     
                               | |                    
@@ -877,11 +904,11 @@ $$;
  |_|_| |_|\__,_|\___/_/\_\___||___/
 */
 
-CREATE INDEX ON ProductImage(product_id);
-CREATE INDEX ON Variant(product_id);
-CREATE INDEX ON Product((lower(title)));
-CREATE INDEX ON CartItem(variant_id, customer_id);
-CREATE INDEX ON City((lower(city)));
+CREATE INDEX product_image_id ON ProductImage(product_id);
+CREATE INDEX variant_product_id ON Variant(product_id);
+CREATE INDEX product_title ON Product((lower(title)));
+CREATE INDEX cart_items ON CartItem(variant_id, customer_id);
+CREATE INDEX cities ON City((lower(city)));
 
 /*
         _                   
@@ -899,12 +926,14 @@ CREATE VIEW ProductMinPricesView AS
 
 CREATE VIEW ProductMainImageView AS
     SELECT DISTINCT ON (product_id) product_id, image_url
-    FROM ProductImage;
+    FROM ProductImage
+	ORDER BY product_id;
 
-CREATE VIEW ProductBasicView AS
+-- Materialized Views
+CREATE MATERIALIZED VIEW ProductBasicView AS
     SELECT product_id, title, min_selling_price, image_url, added_date
     FROM Product NATURAL JOIN ProductMinPricesView NATURAL JOIN ProductMainImageView;
-
+CREATE UNIQUE INDEX ON ProductBasicView(product_id);
 
 CREATE OR REPLACE VIEW ProductVariantView AS
     SELECT c.customer_id,c.variant_id,v.product_id,c.quantity,v.title variant_title,v.selling_price,p.title product_title,p.brand FROM

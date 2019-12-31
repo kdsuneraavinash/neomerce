@@ -121,12 +121,14 @@ router.get('/order/', async (req, res) => {
 
 router.get('/addproducts/', async (req, res) => {
     try {
+        const products = await Admin.getAllProducts();
         const categories = await Admin.getAllLeafCategories();
         res.render('reports/add_products', {
             name: req.name,
             error: req.query.error,
             success: req.query.success,
             categories,
+            products,
         });
     } catch (error) {
         res.redirect(`/admin/addproducts?error=${error}`);
@@ -207,6 +209,21 @@ router.post('/add/image/', async (req, res) => {
         res.redirect('/admin/addvariants?success=Image added successfully');
     } catch (error) {
         res.redirect(`/admin/addvariants?error=${error}`);
+    }
+});
+
+router.post('/add/tags/', async (req, res) => {
+    try {
+        const ignored = await Admin.addTags(
+            req.body.product,
+            req.body.tags.split(' '),
+        );
+        if (ignored.length) {
+            throw Error(`Adding failed. Ignored: ${ignored.join(', ')}`);
+        }
+        res.redirect('/admin/addproducts?success=Tags added successfully');
+    } catch (error) {
+        res.redirect(`/admin/addproducts?error=${error}`);
     }
 });
 

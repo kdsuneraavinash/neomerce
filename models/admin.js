@@ -52,6 +52,20 @@ const addImage = async (product, image) => {
     await connection.query(query, values);
 };
 
+const addTags = async (product, tags) => {
+    const ignored = [];
+    tags.forEach(async (tag) => {
+        try {
+            const query = 'call addTagToCategory($1, $2)';
+            const values = [product, tag];
+            await connection.query(query, values);
+        } catch (error) {
+            ignored.push(tag);
+        }
+    });
+    return ignored;
+};
+
 module.exports = {
     getAllProducts,
     getAllLeafCategories,
@@ -60,4 +74,5 @@ module.exports = {
     getAllCategories,
     addCategory,
     addImage,
+    addTags,
 };
