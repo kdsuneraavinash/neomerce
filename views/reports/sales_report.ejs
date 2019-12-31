@@ -12,6 +12,16 @@
     </div>
 </div>
 
+<div class="col-lg-12">
+    <%- include('components/line_chart', {
+            title: 'Number of Sales per day ',
+            id: 'sales_chart', 
+            height: '500px',
+            color: '#009688',
+            data:  sales,
+        }) %>
+</div>
+
 <hr />
 
 <div class="row">

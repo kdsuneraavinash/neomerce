@@ -3,6 +3,20 @@ const connection = require('../config/db');
 
 const dateDataField = (a, b) => ({ date: new Date(a), value: b - 0 });
 
+const getSalesReport = async () => {
+    const query = `select Date(order_date),
+                        sum(orderitem.quantity) as number_of_sales
+                    from orderitem 
+                    join variant using(variant_id)
+                    join orderdata using(order_id)
+                    group by Date(order_date)`;
+    const out = await connection.query(query);
+    const sales = out.rows.map(
+        (value) => dateDataField(value.date, value.number_of_sales),
+    );
+    return sales;
+};
+
 const getProductCounts = async () => {
     const query = `select product.product_id, 
                         product.title, 
@@ -186,4 +200,5 @@ module.exports = {
     getProductMonthlyOrdersReport,
     reportViewPermissionChecker,
     getOrderReport,
+    getSalesReport,
 };
