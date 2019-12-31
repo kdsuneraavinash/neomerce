@@ -205,6 +205,20 @@ const reportViewPermissionChecker = async (sessionID) => {
     }
 };
 
+const getProductQuarterReport = async (year, quarter) => {
+    const query = `select product_id, product.title, sum(orderitem.quantity) as quantity, 
+        sum(orderitem.quantity*variant.selling_price) as income from 
+        (select order_id from orderdata
+        where extract(quarter from orderdata.order_date)=$1 and 
+        extract(year from orderdata.order_date)=$2) as req_orders
+            join orderitem using(order_id)
+            join variant using(variant_id)
+            join product using(product_id)
+        group by product_id, product.title`;
+    const out = await connection.query(query, [quarter + 1, year]);
+    return out.rows;
+};
+
 module.exports = {
     getProductCounts,
     getCategoryTreeReport,
@@ -216,6 +230,7 @@ module.exports = {
     getPopularProductsBetweenDates,
     getProductMonthlyOrdersReport,
     reportViewPermissionChecker,
+    getProductQuarterReport,
     getOrderReport,
     getSalesReport,
     getQuarterlySalesReport,

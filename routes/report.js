@@ -20,10 +20,18 @@ router.get('/example/', async (req, res) => {
 });
 
 router.get('/sales/', async (req, res) => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const quarter = Math.floor(month / 3);
+    const quarterReport = await Report.getProductQuarterReport(year, quarter);
     const products = await Report.getProductCounts();
     const sales = await Report.getSalesReport();
     const quarterlySales = await Report.getQuarterlySalesReport();
-    res.render('reports/sales_report', { products, name: req.name, sales: sales, quarterlySales: quarterlySales });
+    res.render('reports/sales_report',
+        {
+            products, name: req.name, sales, quarterlySales, quarterReport,
+        });
 });
 
 router.get('/product/', async (req, res) => {
@@ -120,7 +128,7 @@ router.get('/time/', async (req, res) => {
 
 router.get('/order/', async (req, res) => {
     const orders = await Report.getOrderReport();
-    res.render('reports/order_report', { name: res.name, orders: orders });
+    res.render('reports/order_report', { name: res.name, orders });
 });
 
 module.exports = router;
