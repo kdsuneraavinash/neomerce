@@ -3,6 +3,23 @@ const connection = require('../config/db');
 
 const dateDataField = (a, b) => ({ date: new Date(a), value: b - 0 });
 
+
+const getQuarterlySalesReport = async () => {
+    const query = `select extract(year from order_date) as year_of_date,
+                        extract(quarter from order_date) as quarter, 
+                        sum(orderitem.quantity) as number_of_sales
+                    from orderitem 
+                    join variant using(variant_id)
+                    join orderdata using(order_id)
+                    group by year_of_date,quarter`;
+    const out = await connection.query(query);
+    const quarterlySales = out.rows.map(
+        // eslint-disable-next-line prefer-template
+        (value) => ({ label: (value.year_of_date + ' - Q' + value.quarter), value: value.number_of_sales }),
+    );
+    return quarterlySales;
+};
+
 const getSalesReport = async () => {
     const query = `select Date(order_date),
                         sum(orderitem.quantity) as number_of_sales
@@ -201,4 +218,5 @@ module.exports = {
     reportViewPermissionChecker,
     getOrderReport,
     getSalesReport,
+    getQuarterlySalesReport,
 };

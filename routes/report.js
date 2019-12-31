@@ -22,7 +22,8 @@ router.get('/example/', async (req, res) => {
 router.get('/sales/', async (req, res) => {
     const products = await Report.getProductCounts();
     const sales = await Report.getSalesReport();
-    res.render('reports/sales_report', { products, name: req.name, sales: sales });
+    const quarterlySales = await Report.getQuarterlySalesReport();
+    res.render('reports/sales_report', { products, name: req.name, sales: sales, quarterlySales: quarterlySales });
 });
 
 router.get('/product/', async (req, res) => {
