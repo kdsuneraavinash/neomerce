@@ -19,28 +19,31 @@
             filterTitle: "Product Name",
             data: quarterReport,
         }) %>
+    </div>
 </div>
-<hr />
 
 
-<div class="col-lg-12">
-    <%- include('components/bar_chart', {
-                title: 'Quarterly Sales Report',
-                id: 'barchart_quarterly_sales',
-                height: '600px',
-                data:  quarterlySales
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                    title: 'Quarterly Sales Report',
+                    id: 'barchart_quarterly_sales',
+                    height: '600px',
+                    data:  quarterlySales
+                }) %>
+    </div>
+    <div class="col-lg-6">
+        <%- include('components/line_chart', {
+                title: 'Number of Sales per day ',
+                id: 'sales_chart', 
+                height: '500px',
+                color: '#009688',
+                data:  sales,
             }) %>
+    </div>
 </div>
 
-<div class="col-lg-12">
-    <%- include('components/line_chart', {
-            title: 'Number of Sales per day ',
-            id: 'sales_chart', 
-            height: '500px',
-            color: '#009688',
-            data:  sales,
-        }) %>
-</div>
+<hr />
 
 <div class="row">
     <div class="col-lg-12">
