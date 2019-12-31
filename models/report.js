@@ -163,17 +163,17 @@ const reportViewPermissionChecker = async (sessionID) => {
     }
 };
 
-const getProductnames = async (date1) => {
-        const query = `select product.product_id, 
-                            product.title, 
-                            sum(orderitem.quantity) as quantity, 
-                            sum(variant.selling_price*orderitem.quantity) as income
-                        from product 
-                            join variant using(product_id) 
-                            join orderitem using(variant_id)
-                        where orderitem.order_date>=$s1
-                        group by product.product_id`;
-        const out = await connection.query(query, [date1]);
+const getProductnames = async (quater,year) => {
+        const query = `select product_id, product.title, sum(orderitem.quantity), 
+        sum(orderitem.quantity*variant.selling_price) from 
+        (select order_id from orderdata
+        where extract(quarter from orderdata.order_date)=4 and 
+        extract(year from orderdata.order_date)=2019) as req_orders
+            join orderitem using(order_id)
+            join variant using(variant_id)
+            join product using(product_id)
+        group by product_id, product.title`;
+        const out = await connection.query(query, [quater,year]);
         return out.rows;
 };
 
