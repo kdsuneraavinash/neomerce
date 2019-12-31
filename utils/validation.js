@@ -13,7 +13,7 @@ const validateRegistration = async (req, res, next) => {
     } = req;
     const cityList = await City.getAllCities();
     const schema = Joi.object({
-        email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+        email: Joi.string().email({ minDomainSegments: 2 }).required(),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
         retype_password: Joi.any().valid(Joi.ref('password')).required(),
         first_name: Joi.string().max(255).required(),
