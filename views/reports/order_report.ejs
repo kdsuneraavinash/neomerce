@@ -15,16 +15,14 @@
     </div>
 </form>
 
-<div class="row dont-print">
-    <div class="col-12">
-        <%- include('components/callout', {
-            title: 'Add a table similar to products table and redirect to /order/:id',
-            color: 'bg-red-500', 
-            value: '@Anju',
-            percentage: 100,
-            helpertext: '@Anju',
+<div class="col-lg-12">
+    <%- include('components/line_chart', {
+            title: 'Number of Orders per day ',
+            id: 'order_chart', 
+            height: '500px',
+            color: '#009688',
+            data:  orders,
         }) %>
-    </div>
 </div>
 
 

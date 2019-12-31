@@ -117,7 +117,8 @@ router.get('/time/', async (req, res) => {
 
 
 router.get('/order/', async (req, res) => {
-    res.render('reports/order_report', { name: req.name });
+    const orders = await Report.getOrderReport();
+    res.render('reports/order_report', { name: res.name, orders: orders });
 });
 
 module.exports = router;

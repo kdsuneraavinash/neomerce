@@ -88,6 +88,17 @@ const getProductOrderedCountReport = async (productId) => {
     return productOrders;
 };
 
+const getOrderReport = async () => {
+    const query = `select date(order_date) as date ,
+                        count(order_id) as order_count 
+                    from orderdata
+                    group by date`;
+    const out = await connection.query(query);
+    const productOrders = out.rows.map(
+        (value) => dateDataField(value.date, value.order_count),
+    );
+    return productOrders;
+};
 
 const getProductMonthlyOrdersReport = async (productId) => {
     const query = `select * from
@@ -174,4 +185,5 @@ module.exports = {
     getPopularProductsBetweenDates,
     getProductMonthlyOrdersReport,
     reportViewPermissionChecker,
+    getOrderReport,
 };
