@@ -1,6 +1,6 @@
 <%- include('common/header', {title: 'Order Report'}) %>
 
-<form class="form-horizontal dont-print" action="/report/order" method="get">
+<form target="_blank" class="form-horizontal dont-print" action="/order" method="get">
     <div class="form-group row">
         <div class="col-md-12">
             <div class="input-group"><span class="input-group-prepend">
@@ -19,7 +19,7 @@
     <%- include('components/line_chart', {
             title: 'Number of Orders per day ',
             id: 'order_chart', 
-            height: '500px',
+            height: '700px',
             color: '#009688',
             data:  orders,
         }) %>

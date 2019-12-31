@@ -2,6 +2,7 @@ const router = require('express').Router();
 const UUID = require('uuid/v4');
 const Order = require('../models/order');
 const Cart = require('../models/cart');
+const helper = require('../utils/helper');
 
 // TODO: Validate order form data
 router.post('/', async (req, res) => {
@@ -53,21 +54,35 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:orderId', async (req, res) => {
-    /* check for user permission to view order history */
-    const permission = await Order.orderHistoryPermissionChecker(req);
-    if (!permission) {
-        res.redirect('/');
-        return;
+    try {
+        /* check for user permission to view order history */
+        const permission = await Order.orderHistoryPermissionChecker(req);
+        if (!permission) {
+            res.redirect('/');
+            return;
+        }
+
+        /* Create an order history object with all the information needed for order history page */
+        const orderHistoryObj = await Order.getOrderHistory(req.params.orderId);
+
+        res.render('order', {
+            loggedIn: req.session.user != null,
+            show_thanks: false,
+            orderHistoryObj,
+        });
+    } catch (error) {
+        helper.errorResponse(res, 'Invalid order id');
     }
-
-    /* Create an order history object with all the information needed for order history page */
-    const orderHistoryObj = await Order.getOrderHistory(req.params.orderId);
-
-    res.render('order', {
-        loggedIn: req.session.user != null,
-        show_thanks: false,
-        orderHistoryObj,
-    });
 });
+
+
+router.get('/', async (req, res) => {
+    if (req.query.id) {
+        res.redirect(`/order/${req.query.id}`);
+    } else {
+        res.render('error', { code: 404, failed: 'Unspecified order id' });
+    }
+});
+
 
 module.exports = router;
