@@ -14,12 +14,12 @@
         <li class="c-sidebar-nav-title">Neomerce Report Platform</li>
 
         <%for (t of [
-            ['Sales Report', '/report/sales', 'cil-money'], 
-            ['Category Report', '/report/category', 'cil-object-group'], 
-            ['Order Report', '/report/order', 'cil-cart'], 
-            ['Product Report', '/report/product', 'cil-briefcase'], 
-            ['Time Based Report', '/report/time', 'cil-clock'], 
-            // ['Example Report', '/report/example', 'cil-chart'], 
+            ['Sales Report', '/admin/sales', 'cil-money'], 
+            ['Category Report', '/admin/category', 'cil-object-group'], 
+            ['Order Report', '/admin/order', 'cil-cart'], 
+            ['Product Report', '/admin/product', 'cil-briefcase'], 
+            ['Time Based Report', '/admin/time', 'cil-clock'], 
+            // ['Example Report', '/admin/example', 'cil-chart'], 
         ]) {%>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link <%= (t[0] === title) ? 'c-active' : ''%>" href="<%= t[1]%>">

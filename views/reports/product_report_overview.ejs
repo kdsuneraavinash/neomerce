@@ -11,7 +11,7 @@
 </div>
 <% }%>
 
-<form class="form-horizontal dont-print" action="/report/product" method="get">
+<form class="form-horizontal dont-print" action="/adminproduct" method="get">
     <div class="form-group row">
         <div class="col-md-12">
             <div class="input-group"><span class="input-group-prepend">
@@ -38,7 +38,7 @@
                 {title:"Image", field:"image_url", formatter:"image", width: 100,
                     formatterParams:{height:50, width:50}},
                 { title: "Report", field: "product_id", formatter:"link", 
-                    formatterParams: {label: "Show", urlPrefix: "/report/product?id="}, width: 100 },
+                    formatterParams: {label: "Show", urlPrefix: "/adminproduct?id="}, width: 100 },
                 { title: "Minimum Selling Price", field: "min_selling_price", align: "right", width: 225, 
                     formatter:"money", formatterParams:{symbol: "LKR ", thousand:" ", precision: 2} },
                 { title: "Product ID", field: "product_id", formatter:"link", 
@@ -55,7 +55,7 @@
             columns: 5,
             headers: ['Product Title', 'View', 'Product ID','Minimum Selling Price (LKR)', 'Image'],
             rawhtml: [false, true, true,  false, true],
-            data: products.map((v) => [ v.title, `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v.product_id}'>View</a>`,
+            data: products.map((v) => [ v.title, `<a class='btn btn-sm btn-outline-dark' href='/adminproduct?id=${v.product_id}'>View</a>`,
              `<small>${v.product_id}</small>`, v.min_selling_price, 
              `<img class='lazy' data-src='${v.image_url}' height=50 width=50></img>'`]),
             print: [true, false, true, true,  false]

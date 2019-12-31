@@ -69,7 +69,7 @@ router.get('/product/', async (req, res) => {
             name: req.name,
         });
     } catch (error) {
-        res.redirect('/report/product?error=Product retrieval failed');
+        res.redirect('/admin/product?error=Product retrieval failed');
     }
 });
 
@@ -108,14 +108,14 @@ router.get('/time/', async (req, res) => {
             name: req.name,
         });
     } catch (error) {
-        res.redirect(`/report/time?error=${error}`);
+        res.redirect(`/admin/time?error=${error}`);
     }
 });
 
 
 router.get('/order/', async (req, res) => {
     const orders = await Report.getOrderReport();
-    res.render('reports/order_report', { name: res.name, orders });
+    res.render('reports/order_report', { name: req.name, orders });
 });
 
 module.exports = router;
