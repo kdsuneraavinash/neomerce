@@ -42,40 +42,56 @@ if (!timerange){
 </form>
 
 <% if(locals.products){
-    products.forEach((v) => v[4] = `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v[4]}'>Report</a>`);
+    products.forEach((v) => v[4] = `<a class='btn btn-sm btn-outline-dark' href='/report/product?id=${v[4]}'>Show</a>`);
 %>
 
 <div class="row">
-    <div class="col-lg-6">
-        <%- include('components/table', {
-            title: 'Top 10 Bestselling Products between ' + timerange,
-            rows: products.length,
-            columns: 5,
-            headers: ['#', 'Product Name', 'Quantity','Income (LKR)', 'Report'],
-            rawhtml: [false, false, false, false, true], 
-            numeric: [true, false, true, true, false],
+    <div class="col-lg-12">
+        <%- include('components/tabulator', {
+            title: 'Top 10 Bestselling Products',
+            id: 'top_10_bestselling_prds',
+            pagination: "local",
+            paginationSize: 10,
+            columns: [
+                { title: "#", field: "index", width: 50},
+                { title: "Product Name", field: "title" },
+                { title: "Quantity", field: "quantity", align: "right", width: 150 },
+                { title: "Income (LKR)", field: "income", align: "right", width: 150, 
+                    precision: 2, formatter:"money", formatterParams:{thousand:" ", precision: 2} },
+                { title: "Report", field: "product_id", formatter:"link", 
+                    formatterParams: {label: "Show",urlPrefix: "/report/product?id=",}, width: 100 },
+            ],
+            filter: "title",
+            filterTitle: "Product Name",
             data: products,
-            print: [true, true, true, true,  false]
         }) %>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <%- include('components/bar_chart', {
+                title: 'Top 10 Bestselling Products between ' + timerange,
+                id: 'barchart_product_q',
+                height: '600px',
+                data:  products.map((v) => ({label: `#${v.index}`, value: v.quantity}))
+            }) %>
     </div>
     <div class="col-lg-6">
         <%- include('components/bar_chart', {
                 title: 'Top 10 Bestselling Products between ' + timerange,
-                id: 'barchart_product',
+                id: 'barchart_product_i',
                 height: '600px',
-                data:  productVsQuantity
+                data:  products.map((v) => ({label: `#${v.index}`, value: v.income}))
             }) %>
     </div>
 </div>
-
 <%}%>
 
 <script>
     $(function () {
         $('input[name="daterange"]').daterangepicker({
             opens: 'left'
-        }, function (start, end, label) {
-            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
     });
 </script>
