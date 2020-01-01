@@ -91,6 +91,37 @@ const fillMissingMonths = (monthlyData) => {
 
 const dateDataField = (a, b) => ({ date: new Date(a), value: b - 0 });
 
+
+const getQuarterlySalesReport = async () => {
+    const query = `select extract(year from order_date) as year_of_date,
+                        extract(quarter from order_date) as quarter, 
+                        sum(orderitem.quantity) as number_of_sales
+                    from orderitem 
+                    join variant using(variant_id)
+                    join orderdata using(order_id)
+                    group by year_of_date,quarter`;
+    const out = await connection.query(query);
+    const quarterlySales = out.rows.map(
+        // eslint-disable-next-line prefer-template
+        (value) => ({ label: (value.year_of_date + ' - Q' + value.quarter), value: value.number_of_sales }),
+    );
+    return quarterlySales;
+};
+
+const getSalesReport = async () => {
+    const query = `select Date(order_date),
+                        sum(orderitem.quantity) as number_of_sales
+                    from orderitem 
+                    join variant using(variant_id)
+                    join orderdata using(order_id)
+                    group by Date(order_date)`;
+    const out = await connection.query(query);
+    const sales = out.rows.map(
+        (value) => dateDataField(value.date, value.number_of_sales),
+    );
+    return sales;
+};
+
 const getProductCounts = async () => {
     const query = `select product.product_id, 
                         product.title, 
@@ -176,6 +207,17 @@ const getProductOrderedCountReport = async (productId) => {
     return productOrders;
 };
 
+const getOrderReport = async () => {
+    const query = `select date(order_date) as date ,
+                        count(order_id) as order_count 
+                    from orderdata
+                    group by date`;
+    const out = await connection.query(query);
+    const productOrders = out.rows.map(
+        (value) => dateDataField(value.date, value.order_count),
+    );
+    return productOrders;
+};
 
 const getProductMonthlyOrdersReport = async (productId) => {
     const query = `select * from
@@ -251,6 +293,20 @@ const reportViewPermissionChecker = async (sessionID) => {
     }
 };
 
+const getProductQuarterReport = async (year, quarter) => {
+    const query = `select product_id, product.title, sum(orderitem.quantity) as quantity, 
+        sum(orderitem.quantity*variant.selling_price) as income from 
+        (select order_id from orderdata
+        where extract(quarter from orderdata.order_date)=$1 and 
+        extract(year from orderdata.order_date)=$2) as req_orders
+            join orderitem using(order_id)
+            join variant using(variant_id)
+            join product using(product_id)
+        group by product_id, product.title`;
+    const out = await connection.query(query, [quarter + 1, year]);
+    return out.rows;
+};
+
 module.exports = {
     getProductCounts,
     getCategoryTreeReport,
@@ -262,4 +318,8 @@ module.exports = {
     getPopularProductsBetweenDates,
     getProductMonthlyOrdersReport,
     reportViewPermissionChecker,
+    getProductQuarterReport,
+    getOrderReport,
+    getSalesReport,
+    getQuarterlySalesReport,
 };

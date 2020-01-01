@@ -54,10 +54,9 @@ router.post('/transfer/:id', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const loggedIn = req.session.user != null;
         const { cartItems, subtotal } = await Cart.getCartItems(req.sessionID);
         res.render('cart', {
-            loggedIn,
+            userData: req.userData,
             items: cartItems,
             subtotal,
             error: req.query.error,

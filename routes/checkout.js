@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
         const proceedCheckOutObj = await Cart.proceedCheckOut(req.sessionID, req.session.user);
 
         res.render('checkout', {
-            loggedIn: req.session.user != null,
+            userData: req.userData,
             proceedCheckOutObj,
             error: req.query.error,
         });
