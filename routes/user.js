@@ -66,7 +66,12 @@ router.post('/login', validator.validateLogin, async (req, res) => {
             const assigned = await User.assignCustomerId(req.sessionID, email);
             if (assigned) {
                 req.session.user = true;
-                res.redirect(req.body.redirect);
+                const accountType = await User.userType(req.sessionID);
+                if (accountType === 'admin') {
+                    res.redirect('/admin');
+                } else {
+                    res.redirect(req.body.redirect);
+                }
             } else {
                 res.redirect(`/user/login?error=Something went wrong&redirect=${req.body.redirect}`);
             }

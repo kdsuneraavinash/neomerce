@@ -12,9 +12,7 @@ const adminAuthChecker = async (req, res, next) => {
             return;
         }
     }
-    // TODO: Enable Auth Checker
-    // res.redirect('/');
-    next();
+    res.redirect('/');
 };
 
 router.use(adminAuthChecker);
