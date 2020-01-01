@@ -289,3 +289,11 @@ INSERT INTO public.producttag (product_id, tag_id) VALUES ('43656a7f-e326-443a-b
 INSERT INTO public.producttag (product_id, tag_id) VALUES ('82ce8f16-b9cb-4c66-a2ba-b9608393bdc2', 'd79c919d-7f55-41fc-bcce-5fd3ba8d1ef5');
 INSERT INTO public.producttag (product_id, tag_id) VALUES ('82ce8f16-b9cb-4c66-a2ba-b9608393bdc2', '8b7e845a-3359-4e5a-83e8-a37127582028');
 -- Product Tags
+
+
+delete from producttag where product_id='30a5ebdd-ad0a-479b-8e6c-476b4e5cffca';
+delete from variant where product_id='30a5ebdd-ad0a-479b-8e6c-476b4e5cffca';
+delete from productimage where product_id='30a5ebdd-ad0a-479b-8e6c-476b4e5cffca';
+delete from productcategory where product_id='30a5ebdd-ad0a-479b-8e6c-476b4e5cffca';
+delete from visitedproduct where product_id='30a5ebdd-ad0a-479b-8e6c-476b4e5cffca';
+delete from product where product_id='30a5ebdd-ad0a-479b-8e6c-476b4e5cffca';
