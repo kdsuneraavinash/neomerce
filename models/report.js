@@ -5,7 +5,8 @@ const createCategoryDataset = (categoryData, categoryParents) => {
         categoryParents[i].push(categoryData[i]);
     }
 
-    function traverse(parent) {
+    const colors = ['#9C27B0', '#673AB7', '#03A9F4', '#009688'];
+    function traverse(parent, depth) {
         const nodes = categoryParents
             .filter((v) => v[1] === parent.id)
             .map((v) => ({
@@ -13,16 +14,17 @@ const createCategoryDataset = (categoryData, categoryParents) => {
                 value: v[4][2],
                 name: v[4][0],
                 fixed: parent.id === null,
+                color: colors[depth],
             }));
         // eslint-disable-next-line no-param-reassign
         parent.children = nodes;
         nodes.forEach(((node) => {
-            traverse(node);
+            traverse(node, depth + 1);
         }));
         return nodes;
     }
 
-    const topNodes = traverse({ id: null });
+    const topNodes = traverse({ id: null }, 0);
 
     for (let i = 0; i < categoryData.length; i += 1) {
         categoryParents[i].pop();
