@@ -114,7 +114,8 @@ router.get('/time/', async (req, res) => {
 
 router.get('/order/', async (req, res) => {
     const orders = await Report.getOrderReport();
-    res.render('reports/order_report', { name: req.name, orders });
+    const orderList = await Report.getAllOrders();
+    res.render('reports/order_report', { name: req.name, orders, orderList });
 });
 
 router.get('/addproducts/', async (req, res) => {

@@ -221,6 +221,12 @@ const getOrderReport = async () => {
     return productOrders;
 };
 
+const getAllOrders = async () => {
+    const query = 'select order_id from orderdata;';
+    const out = await connection.query(query);
+    return out.rows;
+};
+
 const getProductMonthlyOrdersReport = async (productId) => {
     const query = `select * from
                 (
@@ -324,4 +330,5 @@ module.exports = {
     getOrderReport,
     getSalesReport,
     getQuarterlySalesReport,
+    getAllOrders,
 };

@@ -42,7 +42,7 @@
         valueAxis.renderer.opposite = true;
 
         // Create series
-        function createSeries(field, name) {
+        function createSeries(field, name, color) {
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueX = field;
             series.dataFields.categoryY = "month";
@@ -50,6 +50,8 @@
             series.columns.template.tooltipText = "{name}: [bold]{valueX}[/]";
             series.columns.template.height = am4core.percent(100);
             series.sequencedInterpolation = true;
+            series.columns.template.fill = am4core.color(color);
+            series.stroke = am4core.color(color);
 
             var valueLabel = series.bullets.push(new am4charts.LabelBullet());
             valueLabel.label.text = "{valueX}";
@@ -67,8 +69,8 @@
             categoryLabel.label.truncate = false;
         }
 
-        createSeries("visits", "Visits");
-        createSeries("orders", "Orders");
+        createSeries("visits", "Visits", "#3F51B5");
+        createSeries("orders", "Orders", "#009688");
 
     }); // end am4core.ready()
 </script>

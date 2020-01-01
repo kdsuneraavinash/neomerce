@@ -29,9 +29,12 @@
                                     <%= brand === null ? 'Not branded': brand %></a></li>
                             <li><a><span>Weight (kg)</span> :
                                     <%= brand === null ? 'Not specified': weight %></a></li>
-                            <li><a><span>Availibility</span> :
+                            <li><a><span>Availibility</span>
+                                    :
                                     <%# Stock %>
-                                    {{  (variants[current].amount == 0) ? 'Out of Stock' : 'In Stock' }}
+                                    <span v-bind:class="{'text-danger': variants[current].amount == 0}">
+                                        {{  (variants[current].amount == 0) ? 'Out of Stock' : 'In Stock' }}
+                                    </span>
                                 </a></li>
                         </ul>
 
@@ -62,7 +65,8 @@
                             <div class="product_count">
                                 <label for="qty">Quantity:</label>
                                 <%# Quantity %>
-                                <input type="text" name="qty" id="sst" maxlength="12" v-model.number="selectedQuantity"
+                                <input type="text" name="qty" id="sst" maxlength="12"
+                                    v-model.number="variants[current].amount == 0 ? 0 :selectedQuantity"
                                     title="Quantity:" class="input-text qty">
                                 <button
                                     v-on:click="selectedQuantity = Math.min(selectedQuantity+1, variants[current].amount) "
@@ -75,8 +79,8 @@
 
                             <input type="text" name="variant" v-bind:value="variants[current].variant_id" hidden />
                             <div class="card_area d-flex align-items-center">
-                                <button v-if="selectedQuantity > 0" type="submit" style="border: none;" value="submit"
-                                    class="primary-btn">Add to Cart</button>
+                                <button v-if="selectedQuantity > 0 && variants[current].amount > 0" type="submit"
+                                    style="border: none;" value="submit" class="primary-btn">Add to Cart</button>
                             </div>
                         </form>
                     </div>
