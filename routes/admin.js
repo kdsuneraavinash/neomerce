@@ -50,6 +50,10 @@ router.get('/product/', async (req, res) => {
         const orderedItems = await Report.getProductOrderedCountReport(productId);
         const monthlyData = await Report.getProductMonthlyOrdersReport(productId);
 
+        if (productData == null) {
+            throw Error('Invalid product ID');
+        }
+
         visitedItems.forEach((value, index) => {
             if (index === 0) return;
             visitedItems[index].value += visitedItems[index - 1].value;
