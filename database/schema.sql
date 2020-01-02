@@ -895,6 +895,18 @@ BEGIN
 END;
 $$;
 
+-- Procedure to make a user as admin (emai)
+CREATE OR REPLACE PROCEDURE makeAdmin(VALID_EMAIL)
+LANGUAGE plpgsql    
+AS $$
+DECLARE
+var_customer_id uuid4 := (select customer_id from customer join userinformation using(customer_id) where email=$1);
+BEGIN
+	UPDATE customer set account_type = 'admin' where customer_id=var_customer_id;
+     raise notice 'Customer % with id % upgraded to ADMIN', $1, var_customer_id;
+END;
+$$;
+
 /*
   _           _                    
  (_)         | |                   
