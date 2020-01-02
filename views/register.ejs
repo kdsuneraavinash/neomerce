@@ -3,13 +3,13 @@
 <%- include('common/head') %>
 
 <body>
-    <%- include('common/navbar',{loggedIn:false}) %>
+    <%- include('common/navbar',{userData}) %>
     <%- include('common/banner', {title: 'Register', description: 'Register to our website'}) %>
     <%- include('partial/register') %>
     <%- include('common/footer') %>
     <%- include('common/scripts') %>
     <script src="/js/window-date-picker.js"></script>
-    <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
+    <script src="/js/autocomplete.min.js"></script>
 
     <script>
         let app = new Vue({

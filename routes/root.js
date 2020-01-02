@@ -4,8 +4,7 @@ const Product = require('./../models/product');
 
 router.get('/', async (req, res) => {
     const products = await Product.getRecentProducts(req, res, 18);
-    const loggedIn = req.session.user != null;
-    res.render('index', { loggedIn, products });
+    res.render('index', { userData: req.userData, products });
 });
 
 module.exports = router;

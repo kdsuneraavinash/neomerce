@@ -4,7 +4,6 @@ const Order = require('../models/order');
 const Cart = require('../models/cart');
 const helper = require('../utils/helper');
 
-// TODO: Validate order form data
 router.post('/', async (req, res) => {
     /* Temporary adapter to map passed variables to suitable values */
     if (req.body.delivery_method === 'deliver') {
@@ -66,7 +65,7 @@ router.get('/:orderId', async (req, res) => {
         const orderHistoryObj = await Order.getOrderHistory(req.params.orderId);
 
         res.render('order', {
-            loggedIn: req.session.user != null,
+            userData: req.userData,
             show_thanks: false,
             orderHistoryObj,
         });

@@ -3,7 +3,7 @@
 <%- include('common/head') %>
 
 <body id="category">
-    <%- include('common/navbar',{'loggedIn':loggedIn}) %>
+    <%- include('common/navbar',{userData}) %>
     <%- include('common/banner', {
                             title:  (categorytitle === null ? 'Search By Category' : categorytitle), 
                             description:  (categorytitle === null ? title : 'Browse shop items in ' + categorytitle + ' category ')}) %>

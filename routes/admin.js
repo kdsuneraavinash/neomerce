@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Report = require('../models/report');
+const Admin = require('../models/admin');
 
 const adminAuthChecker = async (req, res, next) => {
     req.name = 'Guest';
@@ -11,9 +12,7 @@ const adminAuthChecker = async (req, res, next) => {
             return;
         }
     }
-    // TODO: Enable Auth Checker
-    // res.redirect('/');
-    next();
+    res.redirect('/');
 };
 
 router.use(adminAuthChecker);
@@ -50,6 +49,10 @@ router.get('/product/', async (req, res) => {
         const visitedItems = await Report.getProductVisitedCountReport(productId);
         const orderedItems = await Report.getProductOrderedCountReport(productId);
         const monthlyData = await Report.getProductMonthlyOrdersReport(productId);
+
+        if (productData == null) {
+            throw Error('Invalid product ID');
+        }
 
         visitedItems.forEach((value, index) => {
             if (index === 0) return;
@@ -115,7 +118,119 @@ router.get('/time/', async (req, res) => {
 
 router.get('/order/', async (req, res) => {
     const orders = await Report.getOrderReport();
-    res.render('reports/order_report', { name: req.name, orders });
+    const orderList = await Report.getAllOrders();
+    res.render('reports/order_report', { name: req.name, orders, orderList });
 });
+
+router.get('/addproducts/', async (req, res) => {
+    try {
+        const products = await Admin.getAllProducts();
+        const categories = await Admin.getAllLeafCategories();
+        res.render('reports/add_products', {
+            name: req.name,
+            error: req.query.error,
+            success: req.query.success,
+            categories,
+            products,
+        });
+    } catch (error) {
+        res.redirect(`/admin/addproducts?error=${error}`);
+    }
+});
+
+router.get('/addvariants/', async (req, res) => {
+    try {
+        const products = await Admin.getAllProducts();
+        const categories = await Admin.getAllCategories();
+        res.render('reports/add_variants', {
+            name: req.name,
+            error: req.query.error,
+            success: req.query.success,
+            products,
+            categories,
+        });
+    } catch (error) {
+        res.redirect(`/admin/addvariants?error=${error}`);
+    }
+});
+
+router.post('/add/product/', async (req, res) => {
+    try {
+        await Admin.addProduct(
+            req.body.title,
+            req.body.description,
+            req.body.weight,
+            req.body.brand,
+            req.body.default_variant_title,
+            req.body.default_variant_quantity,
+            req.body.default_variant_sku_id,
+            req.body.default_variant_listed_price,
+            req.body.default_variant_selling_price,
+            req.body.default_image_url,
+            req.body.default_leaf_category_id,
+        );
+        res.redirect('/admin/addproducts?success=Product added successfully');
+    } catch (error) {
+        res.redirect(`/admin/addproducts?error=${error}`);
+    }
+});
+
+router.post('/add/variant/', async (req, res) => {
+    try {
+        await Admin.addVariant(
+            req.body.product,
+            req.body.variant_title,
+            req.body.variant_quantity,
+            req.body.variant_sku_id,
+            req.body.variant_listed_price,
+            req.body.variant_selling_price,
+        );
+        res.redirect('/admin/addvariants?success=Variant added successfully');
+    } catch (error) {
+        res.redirect(`/admin/addvariants?error=${error}`);
+    }
+});
+
+router.post('/add/category/', async (req, res) => {
+    try {
+        await Admin.addCategory(
+            req.body.parent,
+            req.body.category,
+        );
+        res.redirect('/admin/addvariants?success=Category added successfully');
+    } catch (error) {
+        res.redirect(`/admin/addvariants?error=${error}`);
+    }
+});
+
+router.post('/add/image/', async (req, res) => {
+    try {
+        await Admin.addImage(
+            req.body.product,
+            req.body.image,
+        );
+        res.redirect('/admin/addvariants?success=Image added successfully');
+    } catch (error) {
+        res.redirect(`/admin/addvariants?error=${error}`);
+    }
+});
+
+router.post('/add/tags/', async (req, res) => {
+    try {
+        const ignored = await Admin.addTags(
+            req.body.product,
+            req.body.tags.split(' '),
+        );
+        if (ignored.length) {
+            throw Error(`Adding failed. Ignored: ${ignored.join(', ')}`);
+        }
+        res.redirect('/admin/addproducts?success=Tags added successfully');
+    } catch (error) {
+        res.redirect(`/admin/addproducts?error=${error}`);
+    }
+});
+
+
+router.get('/', (req, res) => res.redirect('/admin/sales'));
 
 module.exports = router;

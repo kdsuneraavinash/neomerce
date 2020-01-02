@@ -8,7 +8,10 @@ const validator = require('../utils/validation');
 
 /* GET endpoint for user registration. Render the user registration page upon request */
 router.get('/register', async (req, res) => {
-    res.render('register', { error: req.query.error });
+    res.render('register', {
+        error: req.query.error,
+        userData: req.userData,
+    });
 });
 
 /* POST endpoint for user registration. */
@@ -49,7 +52,7 @@ router.get('/logout', (req, res) => {
 
 
 router.get('/login', (req, res) => {
-    res.render('login', { error: req.query.error, redirect: req.query.redirect });
+    res.render('login', { error: req.query.error, redirect: req.query.redirect, userData: req.userData });
 });
 
 
@@ -63,7 +66,12 @@ router.post('/login', validator.validateLogin, async (req, res) => {
             const assigned = await User.assignCustomerId(req.sessionID, email);
             if (assigned) {
                 req.session.user = true;
-                res.redirect(req.body.redirect);
+                const accountType = await User.userType(req.sessionID);
+                if (accountType === 'admin') {
+                    res.redirect('/admin');
+                } else {
+                    res.redirect(req.body.redirect);
+                }
             } else {
                 res.redirect(`/user/login?error=Something went wrong&redirect=${req.body.redirect}`);
             }
@@ -83,7 +91,7 @@ router.get('/profile', async (req, res) => {
     const recentProducts = await User.recentProducts(req.sessionID);
     const userInfo = await User.userInfo(req.sessionID);
     res.render('profile', {
-        loggedIn: req.session.user != null,
+        userData: req.userData,
         recentProducts,
         userInfo,
         recentOrders,

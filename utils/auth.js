@@ -1,5 +1,7 @@
 const pool = require('../config/db');
 const helper = require('../utils/helper');
+const Cart = require('../models/cart');
+const User = require('../models/user');
 
 const saveSession = async (req, res) => {
     const queryString = 'CALL assignSession($1)';
@@ -11,16 +13,20 @@ const saveSession = async (req, res) => {
     }
 };
 
-
-// middleware function to check for logged-in users
-const sessionChecker = (req, res, next) => {
-    if (req.session.user && req.session.cookie) {
-        const loggedIn = true;
-        res.render('index', { loggedIn });
+const userTypeMiddleware = async (req, res, next) => {
+    if (req.session.cookie && req.session.user && req.sessionID) {
+        const userType = await User.userType(req.sessionID);
+        req.userData = { loggedIn: true, userType, cartItems: 0 };
     } else {
-        next();
+        req.userData = { loggedIn: false, userType: 'guest', cartItems: 0 };
     }
+    if (req.sessionID) {
+        req.userData.cartItems = await Cart.countCartItems(req.sessionID);
+    }
+    next();
 };
 
-
-module.exports = { saveSession, sessionChecker };
+module.exports = {
+    saveSession,
+    userTypeMiddleware,
+};

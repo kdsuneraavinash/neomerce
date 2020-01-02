@@ -6,7 +6,6 @@ const helper = require('../utils/helper');
 
 router.get('/show/:id', async (req, res) => {
     try {
-        const loggedIn = req.session.user != null;
         const product = await Product.getProduct(req, res, req.params.id);
         const images = await ProductImage.getImages(req, res, req.params.id);
         if (images.length === 1) images.push(images[0]);
@@ -16,7 +15,7 @@ router.get('/show/:id', async (req, res) => {
         const releatedProducts = await Product.getRelatedProducts(req, res, req.params.id, 9);
 
         res.render('item', {
-            loggedIn,
+            userData: req.userData,
             name: product.title,
             description: product.description,
             weight: product.weight_kilos,

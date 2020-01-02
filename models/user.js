@@ -65,6 +65,16 @@ const recentProducts = async (sessionId) => {
     return out.rows;
 };
 
+const userType = async (sessionId) => {
+    const queryString = `select account_type
+                            from customer 
+                                join session using(customer_id)
+                            where session_id=$1`;
+    const values = [sessionId];
+    const out = await pool.query(queryString, values);
+    return out.rows[0].account_type;
+};
+
 
 module.exports = {
     createUser,
@@ -73,4 +83,5 @@ module.exports = {
     emailExists,
     recentProducts,
     userInfo,
+    userType,
 };

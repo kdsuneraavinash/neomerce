@@ -5,7 +5,8 @@ const createCategoryDataset = (categoryData, categoryParents) => {
         categoryParents[i].push(categoryData[i]);
     }
 
-    function traverse(parent) {
+    const colors = ['#9C27B0', '#673AB7', '#03A9F4', '#009688'];
+    function traverse(parent, depth) {
         const nodes = categoryParents
             .filter((v) => v[1] === parent.id)
             .map((v) => ({
@@ -13,16 +14,17 @@ const createCategoryDataset = (categoryData, categoryParents) => {
                 value: v[4][2],
                 name: v[4][0],
                 fixed: parent.id === null,
+                color: colors[depth],
             }));
         // eslint-disable-next-line no-param-reassign
         parent.children = nodes;
         nodes.forEach(((node) => {
-            traverse(node);
+            traverse(node, depth + 1);
         }));
         return nodes;
     }
 
-    const topNodes = traverse({ id: null });
+    const topNodes = traverse({ id: null }, 0);
 
     for (let i = 0; i < categoryData.length; i += 1) {
         categoryParents[i].pop();
@@ -114,7 +116,8 @@ const getSalesReport = async () => {
                     from orderitem 
                     join variant using(variant_id)
                     join orderdata using(order_id)
-                    group by Date(order_date)`;
+                    group by Date(order_date)
+                    order by Date(order_date)`;
     const out = await connection.query(query);
     const sales = out.rows.map(
         (value) => dateDataField(value.date, value.number_of_sales),
@@ -211,12 +214,19 @@ const getOrderReport = async () => {
     const query = `select date(order_date) as date ,
                         count(order_id) as order_count 
                     from orderdata
-                    group by date`;
+                    group by date
+                    order by date`;
     const out = await connection.query(query);
     const productOrders = out.rows.map(
         (value) => dateDataField(value.date, value.order_count),
     );
     return productOrders;
+};
+
+const getAllOrders = async () => {
+    const query = 'select order_id from orderdata;';
+    const out = await connection.query(query);
+    return out.rows;
 };
 
 const getProductMonthlyOrdersReport = async (productId) => {
@@ -227,7 +237,7 @@ const getProductMonthlyOrdersReport = async (productId) => {
                     from visitedproduct
                     where product_id=$1
                     group by month
-                ) as visits_month join
+                ) as visits_month full outer join
                 (    
                     select to_char(orderdata.order_date, 'mm') as month,
                         count(*) as orders
@@ -322,4 +332,5 @@ module.exports = {
     getOrderReport,
     getSalesReport,
     getQuarterlySalesReport,
+    getAllOrders,
 };

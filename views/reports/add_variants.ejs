@@ -1,0 +1,118 @@
+<%- include('common/header', {title: 'Add Variants'}) %>
+
+<% if (error != null){ %>
+<div class="mb-3">
+    <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+        <strong>Error: </strong> <%=error.replace("error: ","")%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<% }%>
+<% if (success != null){ %>
+<div class="mb-3">
+    <div class="alert alert-success alert-dismissible fade show text-left" role="alert">
+        <strong>Success: </strong> <%=success%>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<% }%>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">Add Variants Form</div>
+            <div class="card-body">
+                <form method="POST" action="/admin/add/variant">
+                    <div class="form-group">
+                        <label for="product">Product</label>
+                        <select name="product" class="form-control" id="product">
+                            <% for (product of products) {%>
+                            <option value="<%=product.product_id%>"><%=product.title%></option>
+                            <%}%>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="variant_title">Variant Title</label>
+                        <input name="variant_title" type="text" class="form-control" id="variant_title"
+                            placeholder="Variant Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="variant_quantity">Variant Quantity</label>
+                        <input name="variant_quantity" type="number" class="form-control" id="variant_quantity"
+                            placeholder="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="variant_sku_id">Variant SKU ID</label>
+                        <input name="variant_sku_id" type="text" class="form-control" id="variant_sku_id"
+                            placeholder="001122334455" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="variant_listed_price">Variant Listed Price(LKR)</label>
+                        <input name="variant_listed_price" type="text" class="form-control" id="variant_listed_price"
+                            placeholder="250" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="variant_selling_price">Variant Selling Price(LKR)</label>
+                        <input name="variant_selling_price" type="text" class="form-control" id="variant_selling_price"
+                            placeholder="125" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2 float-right">Submit</button>
+                </form>
+            </div>
+        </div>
+
+    </div> 
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">Add Product Images Form</div>
+            <div class="card-body">
+                <form method="POST" action="/admin/add/image">
+                    <div class="form-group">
+                        <label for="product">Product</label>
+                        <select name="product" class="form-control" id="product">
+                            <% for (product of products) {%>
+                            <option value="<%=product.product_id%>"><%=product.title%></option>
+                            <%}%>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Image URL</label>
+                        <input name="image" type="text" class="form-control" id="image"
+                            placeholder="Image URL" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2 float-right">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-dark text-white">Add Categories Form</div>
+            <div class="card-body">
+                <form method="POST" action="/admin/add/category">
+                    <div class="form-group">
+                        <label for="parent">Parent Category</label>
+                        <select name="parent" class="form-control" id="parent">
+                            <% for (category of categories) {%>
+                            <option value="<%=category.category_id%>"><%=category.title%></option>
+                            <%}%>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">New Category</label>
+                        <input name="category" type="text" class="form-control" id="category"
+                            placeholder="Category Name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2 float-right">Submit</button>
+                </form>
+            </div>
+        </div>
+
+    </div> 
+</div>
+
+<%- include('common/footer') %>

@@ -3,6 +3,7 @@ const session = require('express-session');
 const cors = require('cors');
 const Ouch = require('ouch');
 const bodyParser = require('body-parser');
+const helper = require('./utils/helper');
 
 /* Make all variables from our .env file available in our process */
 require('dotenv').config();
@@ -30,20 +31,6 @@ app.use(session({
 
 
 /*
-This middleware will check
-if user's cookie is still saved in browser and user is not set, then automatically log the user out.
-This usually happens when you stop your express server after login,
-your cookie still remains saved in the browser.
-*/
-// app.use((req, res, next) => {
-//     if (req.session.cookie && !req.session.user) {
-//         res.clearCookie('user_sid');
-//     }
-//     next();
-// });
-
-
-/*
 Middleware to save the sessions in the database.
 customer and session tables will be updated if a new session get created
 */
@@ -67,9 +54,11 @@ app.get('*', (req, res) => {
     res.status(404).render('error', { code: 404, failed: 'OOPS! Not found' });
 });
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, _) => {
-    (new Ouch()).pushHandler(new Ouch.handlers.PrettyPageHandler('orange'))
+app.use((err, req, res) => {
+    (new Ouch()).pushHandler(new Ouch.handlers.CallbackHandler((next, exception,
+        inspector, run, request, response) => {
+        helper.errorResponse(response, 'Internal Server Error', 500);
+    }))
         .handleException(err, req, res,
             () => {
                 console.log(`Error occurred: ${err}`);
