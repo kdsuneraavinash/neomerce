@@ -16,6 +16,11 @@ const app = express();
 /* Set view engine */
 app.set('view engine', 'ejs');
 
+app.use(async (req, res, next) => {
+    console.log(`LOG: Handling request for ${req.protocol}://${req.get('host')}${req.originalUrl}`);
+    next();
+});
+
 /* Setup the middlewares & configs */
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
