@@ -22,6 +22,7 @@ const validateRegistration = async (req, res, next) => {
         phone_number: Joi.string().max(15).required(),
         city: Joi.string().valid(...cityList).required().max(127),
         postalCode: Joi.string().required(),
+        birthday: Joi.date().required(),
     });
 
     try {
