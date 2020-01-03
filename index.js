@@ -47,9 +47,6 @@ app.use('/fonts', express.static('public/fonts'));
 app.use('/img', express.static('public/img'));
 app.use(require('./routes'));
 
-const port = process.env.PORT || 3000;
-const address = process.env.SERVER_ADDRESS || '127.0.0.1';
-
 app.get('*', (req, res) => {
     res.status(404).render('error', { code: 404, failed: 'OOPS! Not found' });
 });
@@ -66,6 +63,7 @@ app.use((err, req, res) => {
 });
 
 /* Listen on the port for requests */
-app.listen(port, address, () => console.log(`Server running on http://${address}:${port}`));
-
+app.listen(process.env.PORT || 3000, () => {
+    console.log('Express server listening on port %d in %s mode', this.address().port, app.settings.env);
+});
 module.exports = app;
