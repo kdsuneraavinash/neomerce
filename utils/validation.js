@@ -15,6 +15,7 @@ const validateRegistration = async (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().email({ minDomainSegments: 2 }).required(),
         password: Joi.string().required(),
+        retype_password: Joi.string().required(),
         first_name: Joi.string().max(255).required(),
         last_name: Joi.string().max(255).required(),
         addr_line1: Joi.string().required().max(255),
@@ -38,8 +39,8 @@ const validateRegistration = async (req, res, next) => {
             city,
         });
         next();
-    } catch (err) {
-        helper.errorResponse(res, err);
+    } catch (error) {
+        res.redirect(`/user/register?error=${error}`);
     }
 };
 
@@ -54,7 +55,7 @@ const validateLogin = async (req, res, next) => {
         await schema.validateAsync({ email, password });
         next();
     } catch (error) {
-        helper.errorResponse(res, error);
+        res.redirect(`/user/login?error=${error}`);
     }
 };
 
