@@ -14,6 +14,7 @@ const auth = require('./utils/auth');
 /* Init express */
 const app = express();
 
+/* Init helmet */
 app.use(helmet());
 
 /* Set view engine */

@@ -2,7 +2,7 @@
 
 Simple vendor e-commerce web application made for Semester 4 CS3042 Database Systems Module.
 
->  Visit demo page from [HERE](https://neomerce.herokuapp.com/). 
+>  Visit demo site from [HERE](https://neomerce.herokuapp.com/). 
 
 Admin email and password are `admin@neomerce.com` and `password`.
 
@@ -47,7 +47,8 @@ Then login to `psql` as `neomerce_app`.
 psql -U neomerce_app neomerce
 ```
 
-Then in the shell, import the current DDL and DML schema.
+Download `database` directory from this repo and then in the shell, 
+import the current DDL and DML schema.
 
 ```sql
 \i database\schema.sql
@@ -77,11 +78,11 @@ Install
 
 ```bash
 sudo pacman -S nodejs-lts-dubnium
-sudo pacman -S yarn
+sudo pacman -S npm
 npm install -g nodemon
 ```
 
- After that `cd` to the project directory and run `yarn install`.
+ After that `cd` to the project directory and run `npm install`.
 
 ```bash
 cd directory/project
