@@ -88,11 +88,7 @@ Then create a `.env` file in the root with following content.
 You may change database user/password/secret as you may wish.
 
 ```
-DATABASE_USER=neomerce_app
-DATABASE_NAME=neomerce
-DATABASE_PASSWORD=password
-DATABASE_PORT=5432
-DATABASE_HOST=localhost
+DATABASE_URL=postgres://neomerce_app:password@localhost:5432/neomerce
 
 SESSION_SECRET=secret
 PORT=3000
