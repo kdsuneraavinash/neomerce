@@ -64,6 +64,6 @@ app.use((err, req, res) => {
 
 /* Listen on the port for requests */
 app.listen(process.env.PORT || 3000, () => {
-    console.log('Express server listening on port %d in %s mode', this.address().port, app.settings.env);
+    console.log('Express server listening on port %d in %s mode', process.env.PORT, app.settings.env);
 });
 module.exports = app;
