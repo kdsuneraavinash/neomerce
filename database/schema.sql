@@ -67,7 +67,6 @@ DROP MATERIALIZED VIEW IF EXISTS ProductBasicView cascade;
   \__,_|\___/|_| |_| |_|\__,_|_|_| |_|___/
 */
 
-CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
 CREATE DOMAIN VALID_EMAIL AS VARCHAR(127);
 CREATE DOMAIN VALID_PHONE AS CHAR(15);
 CREATE DOMAIN UUID4 AS CHAR(36) CHECK(
@@ -98,6 +97,11 @@ BEGIN
     end if;
 END;
 $$ LANGUAGE PLpgSQL;
+
+
+-- Dependency
+CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
+
 
 -- Function to create a UUID
 -- https://stackoverflow.com/questions/12505158/generating-a-uuid-in-postgres-for-insert-statement
