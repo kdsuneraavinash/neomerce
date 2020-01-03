@@ -16,11 +16,6 @@ const app = express();
 /* Set view engine */
 app.set('view engine', 'ejs');
 
-app.use(async (req, res, next) => {
-    console.log(`LOG: Handling request for ${req.protocol}://${req.get('host')}${req.originalUrl}`);
-    next();
-});
-
 /* Setup the middlewares & configs */
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -71,4 +66,5 @@ app.use((err, req, res) => {
 app.listen(process.env.PORT || 3000, () => {
     console.log('Express server listening on port %d in %s mode', process.env.PORT, app.settings.env);
 });
+
 module.exports = app;
