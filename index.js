@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const session = require('express-session');
 const cors = require('cors');
 const Ouch = require('ouch');
@@ -12,6 +13,8 @@ const auth = require('./utils/auth');
 
 /* Init express */
 const app = express();
+
+app.use(helmet());
 
 /* Set view engine */
 app.set('view engine', 'ejs');
