@@ -2,6 +2,10 @@
 
 Simple vendor e-commerce web application made for Semester 4 CS3042 Database Systems Module.
 
+>  Visit demo page from [HERE](https://neomerce.herokuapp.com/). 
+
+Admin email and password are `admin@neomerce.com` and `password`.
+
 ## Screenshots 🖼️
 
 | ![Home Page](screenshots/home.png)                       | ![Products Page](screenshots/products.png)              |
@@ -68,7 +72,7 @@ git clone https://github.com/kdsuneraavinash/neomerce
 Install 
 
 * [node.js v10.17.0 dubnium](https://nodejs.org/en/) 
-* [yarn](https://yarnpkg.com/en/docs/install)
+* [npm](https://www.npmjs.com/get-npm)
 * [nodemon](https://www.npmjs.com/package/nodemon)
 
 ```bash
@@ -81,7 +85,7 @@ npm install -g nodemon
 
 ```bash
 cd directory/project
-yarn install
+npm install
 ```
 
 Then create a `.env` file in the root with following content.
