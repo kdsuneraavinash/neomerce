@@ -1,5 +1,4 @@
 const Joi = require('@hapi/joi');
-const helper = require('../utils/helper');
 const City = require('../models/city');
 
 const validateRegistration = async (req, res, next) => {
