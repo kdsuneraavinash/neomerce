@@ -7,7 +7,7 @@ const validateRegistration = async (req, res, next) => {
             // eslint-disable-next-line camelcase
             email, password, retype_password,
             firstName, lastName, addressLine1, addressLine2, telephoneNumber,
-            city, postalCode,
+            city, postalCode, birthday,
         },
     } = req;
     const cityList = await City.getAllCities();
@@ -37,6 +37,7 @@ const validateRegistration = async (req, res, next) => {
             phone_number: telephoneNumber,
             postalCode,
             city,
+            birthday,
         });
         next();
     } catch (error) {
