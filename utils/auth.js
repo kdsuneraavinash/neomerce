@@ -3,11 +3,12 @@ const helper = require('../utils/helper');
 const Cart = require('../models/cart');
 const User = require('../models/user');
 
-const saveSession = async (req, res) => {
+const saveSession = async (req, res, next) => {
     const queryString = 'CALL assignSession($1)';
     const values = [req.sessionID];
     try {
         await pool.query(queryString, values);
+        next();
     } catch (err) {
         helper.errorResponse(res, err);
     }

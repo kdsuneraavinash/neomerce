@@ -965,3 +965,26 @@ CREATE OR REPLACE VIEW UserDeliveryView AS
         LEFT JOIN telephonenumber as t ON u.customer_id = t.customer_id
         LEFT JOIN city as c ON u.city = c.city
         LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
+
+
+/*
+ _____               _             
+/  ___|             (_)            
+\ `--.  ___  ___ ___ _  ___  _ __  
+ `--. \/ _ \/ __/ __| |/ _ \| '_ \ 
+/\__/ /  __/\__ \__ \ | (_) | | | |
+\____/ \___||___/___/_|\___/|_| |_|
+*/
+
+DROP TABLE IF EXISTS session_data cascade;
+
+CREATE TABLE session_data (
+    sid varchar NOT NULL,
+    sess json NOT NULL,
+    expire timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+
+ALTER TABLE session_data ADD CONSTRAINT session_data_pkey PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX IDX_session_expire ON session_data(expire);

@@ -99,7 +99,7 @@ END;
 $$ LANGUAGE PLpgSQL;
 
 
--- Heirachical Dependency
+-- (DOMAIN) Heirachical Dependency
 CREATE DOMAIN MONEY_UNIT AS NUMERIC(12, 2) CHECK(is_positive(VALUE));
 
 
@@ -966,8 +966,18 @@ CREATE OR REPLACE VIEW UserDeliveryView AS
         LEFT JOIN city as c ON u.city = c.city
         LEFT JOIN citytype as ct ON ct.city_type=c.city_type;    
 
+---------------------------------- SESSION TABLE SCHEMA -----------------------------------
 
+CREATE TABLE session_data (
+    sid varchar NOT NULL,
+    sess json NOT NULL,
+    expire timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
 
+ALTER TABLE session_data ADD CONSTRAINT session_data_pkey PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX IDX_session_expire ON session_data(expire);
 
 ---------------------------------- SCHEMA END ---------------------------------------------
 

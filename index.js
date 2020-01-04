@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
+const PgSession = require('connect-pg-simple')(session);
 const cors = require('cors');
 const Ouch = require('ouch');
 const bodyParser = require('body-parser');
@@ -9,6 +10,7 @@ const helper = require('./utils/helper');
 /* Make all variables from our .env file available in our process */
 require('dotenv').config();
 
+const pool = require('./config/db');
 const auth = require('./utils/auth');
 
 /* Init express */
@@ -25,12 +27,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(session({
-    saveUninitialized: true,
-    key: 'user_sid',
-    secret: 'test',
+    store: new PgSession({
+        pool,
+        tableName: 'session_data',
+    }),
+    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    cookie: { maxAge: 86400000 }, // 1 day
-    rolling: true,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
 }));
 
 
@@ -38,10 +42,7 @@ app.use(session({
 Middleware to save the sessions in the database.
 customer and session tables will be updated if a new session get created
 */
-app.use(async (req, res, next) => {
-    await auth.saveSession(req, res);
-    next();
-});
+app.use(auth.saveSession);
 
 
 /* Define the static files and routes */
