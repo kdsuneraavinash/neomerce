@@ -31,7 +31,7 @@ app.use(session({
         pool,
         tableName: 'session_data',
     }),
-    saveUninitialized: false,
+    saveUninitialized: true,
     secret: process.env.SESSION_SECRET,
     resave: false,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
